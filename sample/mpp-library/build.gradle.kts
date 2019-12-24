@@ -39,3 +39,22 @@ dependencies {
 multiplatformResources {
     multiplatformResourcesPackage = "com.icerockdev.library"
 }
+
+kotlin {
+    targets
+        .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>()
+        .flatMap { it.binaries }
+        .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.Framework>()
+        .forEach { framework ->
+            val frameworks = listOf(
+                "Base" to listOf("GoogleMapsBase"),
+                "Maps" to listOf("GoogleMaps", "GoogleMapsCore")
+            ).flatMap { (frameworkPath, names) ->
+                val searchPath = project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path
+//                names.flatMap { listOf("-framework", it) }.plus("\"-F$searchPath\"")
+                listOf("-F$searchPath")
+            }
+
+            framework.linkerOpts(frameworks)
+        }
+}

@@ -12,5 +12,4 @@ platform :ios, '11.0'
 target 'TestProj' do
   # MultiPlatformLibrary
   pod 'MultiPlatformLibrary', :path => '../mpp-library'
-  pod 'GoogleMaps', '3.7.0'
 end
