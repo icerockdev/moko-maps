@@ -1,0 +1,4 @@
+language = Objective-C
+package = cocoapods.GoogleMaps
+modules = GoogleMapsBase GoogleMaps
+linkerOpts = -undefined dynamic_lookup

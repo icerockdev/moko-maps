@@ -1,0 +1,16 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+# workaround for https://github.com/CocoaPods/CocoaPods/issues/8073
+install! 'cocoapods', :disable_input_output_paths => true
+
+# ignore all warnings from all pods
+inhibit_all_warnings!
+
+use_frameworks!
+platform :ios, '11.0'
+
+target 'TestProj' do
+  # MultiPlatformLibrary
+  pod 'MultiPlatformLibrary', :path => '../mpp-library'
+  pod 'GoogleMaps', '3.7.0'
+end
