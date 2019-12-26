@@ -32,7 +32,8 @@ class TestViewController: UIViewController {
             ),
             mapsController: GoogleMapController(
                 mapView: mapView,
-                geoApiKey: "AIzaSyAQI7utH24gJIetY5atclseaZTc14ugVP8"
+                // TODO: Replace with your API Key from https://developers.google.com/maps/documentation/ios-sdk/
+                geoApiKey: "YOUR-API-KEY"
             )
         )
         
