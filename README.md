@@ -50,6 +50,11 @@ settings.gradle
 enableFeaturePreview("GRADLE_METADATA")
 ```
 
+project Podfile
+```ruby
+pod 'GoogleMaps', '3.7.0'
+```
+
 ## Usage
 TODO
 
