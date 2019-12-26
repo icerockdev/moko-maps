@@ -26,6 +26,7 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
 ## Versions
 - kotlin 1.3.61
   - 0.1.0
+  - 0.1.1
 
 ## Installation
 root build.gradle  
@@ -40,8 +41,24 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.1.0")
-    commonMainApi("dev.icerock.moko:maps-google:0.1.0")
+    commonMainApi("dev.icerock.moko:maps:0.1.1")
+    commonMainApi("dev.icerock.moko:maps-google:0.1.1")
+}
+
+kotlin {
+    targets
+        .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>()
+        .flatMap { it.binaries }
+        .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.Framework>()
+        .forEach { framework ->
+            framework.isStatic = true
+
+            val frameworks = listOf("Base", "Maps").map { frameworkPath ->
+                project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path.let { "-F$it" }
+            }
+
+            framework.linkerOpts(frameworks)
+        }
 }
 ```
 

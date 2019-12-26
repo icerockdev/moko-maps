@@ -13,7 +13,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         
-        GMSServices.provideAPIKey("AIzaSyC_rKXJJZXDv2ferSe7fhliXiTMZSp8jME")
+        // TODO: Replace with your API Key from https://developers.google.com/maps/documentation/ios-sdk/
+        GMSServices.provideAPIKey("YOUR-API-KEY")
         
         return true
     }

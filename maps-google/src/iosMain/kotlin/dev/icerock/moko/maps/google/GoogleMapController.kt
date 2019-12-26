@@ -164,6 +164,7 @@ actual class GoogleMapController(
         val marker = GMSMarker.markerWithPosition(position = latLng.toCoord2D()).also {
             it.icon = image.toUIImage()
             it.rotation = rotation.toDouble()
+            it.map = mapView
         }
         return GoogleMarker(marker)
     }
