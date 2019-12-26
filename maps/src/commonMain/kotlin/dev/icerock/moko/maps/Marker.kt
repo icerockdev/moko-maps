@@ -5,7 +5,13 @@
 package dev.icerock.moko.maps
 
 import dev.icerock.moko.geo.LatLng
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 interface Marker : MapElement {
-    fun move(position: LatLng, rotation: Float = 0.0f)
+    var position: LatLng
+    var rotation: Float
+
+    @UseExperimental(ExperimentalTime::class)
+    fun move(position: LatLng, rotation: Float = 0.0f, duration: Duration)
 }

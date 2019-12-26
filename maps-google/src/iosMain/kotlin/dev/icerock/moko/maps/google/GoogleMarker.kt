@@ -8,19 +8,36 @@ import cocoapods.GoogleMaps.GMSMarker
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.maps.Marker
 import platform.QuartzCore.CATransaction
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 actual class GoogleMarker(
     private val gmsMarker: GMSMarker
 ) : Marker {
+    override var position: LatLng
+        get() = gmsMarker.position.toLatLng()
+        set(value) {
+            gmsMarker.position = value.toCoord2D()
+        }
+
+    override var rotation: Float
+        get() = gmsMarker.rotation.toFloat()
+        set(value) {
+            gmsMarker.rotation = value.toDouble()
+        }
+
     override fun delete() {
         gmsMarker.map = null
     }
 
-    override fun move(position: LatLng, rotation: Float) {
+    @UseExperimental(ExperimentalTime::class)
+    override fun move(position: LatLng, rotation: Float, duration: Duration) {
         CATransaction.begin()
-        CATransaction.setAnimationDuration(2.0)
+        CATransaction.setAnimationDuration(duration.inSeconds)
+
         gmsMarker.position = position.toCoord2D()
         gmsMarker.rotation = rotation.toDouble()
+
         CATransaction.commit()
     }
 }
