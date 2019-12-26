@@ -39,7 +39,7 @@ class TrackerViewModel(
         }
 
         viewModelScope.launch {
-            mapsController.buildRoute(
+            val route = mapsController.buildRoute(
                 points = listOf(
                     LatLng(
                         latitude = 55.032200,
@@ -56,6 +56,15 @@ class TrackerViewModel(
                 ),
                 lineColor = Color(0xCCCC00FF),
                 markersImage = MR.images.marker
+            )
+
+            val marker = mapsController.addMarker(
+                image = MR.images.marker,
+                latLng = LatLng(
+                    latitude = 55.040853,
+                    longitude = 82.920154
+                ),
+                rotation = 0.0f
             )
         }
     }
