@@ -48,13 +48,8 @@ kotlin {
         .forEach { framework ->
             framework.isStatic = true
 
-            val frameworks = listOf(
-                "Base" to listOf("GoogleMapsBase"),
-                "Maps" to listOf("GoogleMaps", "GoogleMapsCore")
-            ).flatMap { (frameworkPath, names) ->
-                val searchPath = project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path
-//                names.flatMap { listOf("-framework", it) }.plus("\"-F$searchPath\"")
-                listOf("-F$searchPath")
+            val frameworks = listOf("Base", "Maps").map { frameworkPath ->
+                project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path.let { "-F$it" }
             }
 
             framework.linkerOpts(frameworks)
