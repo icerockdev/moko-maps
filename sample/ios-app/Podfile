@@ -13,21 +13,3 @@ target 'TestProj' do
   # MultiPlatformLibrary
   pod 'MultiPlatformLibrary', :path => '../mpp-library'
 end
-
-# GoogleMaps is statically linked to moko-maps-google, so we should remove duplication liking
-post_install do |installer|
-  host_targets = installer.aggregate_targets.select { |aggregate_target|
-    aggregate_target.name.include? "Pods-"
-  }
-
-  host_targets.each do |host_target|
-    host_target.xcconfigs.each do |config_name, config_file|
-      config_file.frameworks.delete("GoogleMaps")
-      config_file.frameworks.delete("GoogleMapsBase")
-      config_file.frameworks.delete("GoogleMapsCore")
-
-      xcconfig_path = host_target.xcconfig_path(config_name)
-      config_file.save_as(xcconfig_path)
-    end
-  end
-end

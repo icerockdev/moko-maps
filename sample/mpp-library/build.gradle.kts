@@ -46,6 +46,8 @@ kotlin {
         .flatMap { it.binaries }
         .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.Framework>()
         .forEach { framework ->
+            framework.isStatic = true
+
             val frameworks = listOf(
                 "Base" to listOf("GoogleMapsBase"),
                 "Maps" to listOf("GoogleMaps", "GoogleMapsCore")
