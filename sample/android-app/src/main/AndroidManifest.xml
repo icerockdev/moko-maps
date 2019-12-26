@@ -19,6 +19,8 @@
             </intent-filter>
         </activity>
 
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAQI7utH24gJIetY5atclseaZTc14ugVP8"/>
+
+        <!-- TODO: Replace with your API Key from https://developers.google.com/maps/documentation/ios-sdk/ -->
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="YOUR-API-KEY"/>
     </application>
 </manifest>
