@@ -25,7 +25,8 @@ interface MapController {
     suspend fun addMarker(
         image: ImageResource,
         latLng: LatLng,
-        rotation: Float = 0.0f
+        rotation: Float = 0.0f,
+        onClick: (() -> Unit)? = null
     ): Marker
 
     suspend fun buildRoute(

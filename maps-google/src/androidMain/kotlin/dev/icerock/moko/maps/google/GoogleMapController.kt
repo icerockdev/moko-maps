@@ -103,6 +103,12 @@ actual class GoogleMapController(
             isCompassEnabled = false
             isRotateGesturesEnabled = false
         }
+
+        googleMap.setOnMarkerClickListener { marker ->
+            @Suppress("UNCHECKED_CAST")
+            (marker.tag as? (() -> Unit))?.invoke()
+            false // not show info box
+        }
     }
 
     private suspend fun FusedLocationProviderClient.getLastLocationSuspended(): Location {
@@ -344,8 +350,9 @@ actual class GoogleMapController(
 
     override suspend fun addMarker(
         image: ImageResource,
-        latLng: GeoLatLng,
-        rotation: Float
+        latLng: dev.icerock.moko.geo.LatLng,
+        rotation: Float,
+        onClick: (() -> Unit)?
     ): dev.icerock.moko.maps.Marker {
         val markerOptions = MarkerOptions()
             .position(latLng.toAndroidLatLng())
@@ -354,6 +361,7 @@ actual class GoogleMapController(
             .anchor(0.5f, 0.5f)
 
         val marker = mapHolder.get().addMarker(markerOptions)
+        marker.tag = onClick
         return GoogleMarker(marker)
     }
 

@@ -9,6 +9,7 @@ import cocoapods.GoogleMaps.GMSCameraPosition
 import cocoapods.GoogleMaps.GMSCoordinateBounds
 import cocoapods.GoogleMaps.GMSGeocoder
 import cocoapods.GoogleMaps.GMSMapView
+import cocoapods.GoogleMaps.GMSMapViewDelegateProtocol
 import cocoapods.GoogleMaps.GMSMarker
 import cocoapods.GoogleMaps.GMSPath
 import cocoapods.GoogleMaps.GMSPolyline
@@ -42,6 +43,7 @@ import platform.MapKit.MKLocalSearch
 import platform.MapKit.MKLocalSearchRequest
 import platform.MapKit.MKMapItem
 import platform.UIKit.UIEdgeInsetsZero
+import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -55,6 +57,11 @@ actual class GoogleMapController(
 
     private val geoCoder = GMSGeocoder()
     private val locationManager = CLLocationManager()
+    private val delegate = MapDelegate()
+
+    init {
+        mapView.delegate = delegate
+    }
 
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
         val gmsAddress: GMSAddress = suspendCoroutine { continuation ->
@@ -160,11 +167,18 @@ actual class GoogleMapController(
         return getCurrentLocation()
     }
 
-    override suspend fun addMarker(image: ImageResource, latLng: LatLng, rotation: Float): Marker {
+    override suspend fun addMarker(
+        image: ImageResource,
+        latLng: LatLng,
+        rotation: Float,
+        onClick: (() -> Unit)?
+    ): Marker {
         val marker = GMSMarker.markerWithPosition(position = latLng.toCoord2D()).also {
             it.icon = image.toUIImage()
             it.rotation = rotation.toDouble()
             it.map = mapView
+            it.tappable = true
+            it.userData = onClick
         }
         return GoogleMarker(marker)
     }
@@ -302,5 +316,17 @@ actual class GoogleMapController(
 
     override fun zoomOut(size: Float) {
         mapView.animateToZoom(mapView.camera.zoom - size)
+    }
+
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    private inner class MapDelegate : NSObject(), GMSMapViewDelegateProtocol {
+        override fun mapView(mapView: GMSMapView, didTapMarker: GMSMarker): Boolean {
+            val marker: GMSMarker = didTapMarker
+
+            @Suppress("UNCHECKED_CAST")
+            (marker.userData as? (() -> Unit))?.invoke()
+
+            return false // not show any info box
+        }
     }
 }

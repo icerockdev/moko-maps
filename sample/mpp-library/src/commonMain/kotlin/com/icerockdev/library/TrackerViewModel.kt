@@ -58,14 +58,27 @@ class TrackerViewModel(
                 markersImage = MR.images.marker
             )
 
-            val marker = mapsController.addMarker(
+            val marker1 = mapsController.addMarker(
+                image = MR.images.marker,
+                latLng = LatLng(
+                    latitude = 55.045853,
+                    longitude = 82.920154
+                ),
+                rotation = 0.0f
+            ) {
+                println("marker 1 pressed!")
+            }
+
+            val marker2 = mapsController.addMarker(
                 image = MR.images.marker,
                 latLng = LatLng(
                     latitude = 55.040853,
                     longitude = 82.920154
                 ),
                 rotation = 0.0f
-            )
+            ) {
+                println("marker 2 pressed!")
+            }
         }
     }
 
