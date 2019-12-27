@@ -11,15 +11,3 @@ expect class GoogleMapController : MapController {
 
     fun writeUiSettings(settings: UiSettings)
 }
-
-data class UiSettings(
-    val compassEnabled: Boolean = false,
-    val myLocationEnabled: Boolean = false,
-    val myLocationButtonEnabled: Boolean = false,
-    val indoorLevelPickerEnabled: Boolean = false,
-    val scrollGesturesEnabled: Boolean = true,
-    val zoomGesturesEnabled: Boolean = true,
-    val tiltGesturesEnabled: Boolean = true,
-    val rotateGesturesEnabled: Boolean = true,
-    val scrollGesturesDuringRotateOrZoomEnabled: Boolean = true
-)
