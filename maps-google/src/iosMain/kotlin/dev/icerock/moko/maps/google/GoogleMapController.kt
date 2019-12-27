@@ -318,6 +318,34 @@ actual class GoogleMapController(
         mapView.animateToZoom(mapView.camera.zoom - size)
     }
 
+    actual suspend fun readUiSettings(): UiSettings {
+        val settings = mapView.settings
+        return UiSettings(
+            compassEnabled = settings.compassButton,
+            myLocationButtonEnabled = settings.myLocationButton,
+            indoorLevelPickerEnabled = settings.indoorPicker,
+            scrollGesturesEnabled = settings.scrollGestures,
+            zoomGesturesEnabled = settings.zoomGestures,
+            tiltGesturesEnabled = settings.tiltGestures,
+            rotateGesturesEnabled = settings.rotateGestures,
+            scrollGesturesDuringRotateOrZoomEnabled = settings.allowScrollGesturesDuringRotateOrZoom
+        )
+    }
+
+    actual fun writeUiSettings(settings: UiSettings) {
+        with(mapView.settings) {
+            compassButton = settings.compassEnabled
+            myLocationButton = settings.myLocationButtonEnabled
+            indoorPicker = settings.indoorLevelPickerEnabled
+            scrollGestures = settings.scrollGesturesEnabled
+            zoomGestures = settings.zoomGesturesEnabled
+            tiltGestures = settings.tiltGesturesEnabled
+            rotateGestures = settings.rotateGesturesEnabled
+            allowScrollGesturesDuringRotateOrZoom = settings.scrollGesturesDuringRotateOrZoomEnabled
+        }
+        mapView.myLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
+    }
+
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     private inner class MapDelegate : NSObject(), GMSMapViewDelegateProtocol {
         override fun mapView(mapView: GMSMapView, didTapMarker: GMSMarker): Boolean {

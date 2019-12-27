@@ -99,9 +99,9 @@ actual class GoogleMapController(
         })
 
         googleMap.uiSettings.apply {
-            isMyLocationButtonEnabled = false
-            isCompassEnabled = false
-            isRotateGesturesEnabled = false
+            // unsupported on iOS side at all
+            isMapToolbarEnabled = false
+            isZoomControlsEnabled = false
         }
 
         googleMap.setOnMarkerClickListener { marker ->
@@ -363,6 +363,37 @@ actual class GoogleMapController(
         val marker = mapHolder.get().addMarker(markerOptions)
         marker.tag = onClick
         return GoogleMarker(marker)
+    }
+
+    actual suspend fun readUiSettings(): UiSettings {
+        val settings = mapHolder.get().uiSettings
+        return UiSettings(
+            compassEnabled = settings.isCompassEnabled,
+            myLocationButtonEnabled = settings.isMyLocationButtonEnabled,
+            indoorLevelPickerEnabled = settings.isIndoorLevelPickerEnabled,
+            scrollGesturesEnabled = settings.isScrollGesturesEnabled,
+            zoomGesturesEnabled = settings.isZoomGesturesEnabled,
+            tiltGesturesEnabled = settings.isTiltGesturesEnabled,
+            rotateGesturesEnabled = settings.isRotateGesturesEnabled,
+            scrollGesturesDuringRotateOrZoomEnabled = settings.isScrollGesturesEnabledDuringRotateOrZoom
+        )
+    }
+
+    actual fun writeUiSettings(settings: UiSettings) {
+        mapHolder.doWith {
+            with(it.uiSettings) {
+                isCompassEnabled = settings.compassEnabled
+                isMyLocationButtonEnabled = settings.myLocationButtonEnabled
+                isIndoorLevelPickerEnabled = settings.indoorLevelPickerEnabled
+                isScrollGesturesEnabled = settings.scrollGesturesEnabled
+                isZoomControlsEnabled = settings.zoomGesturesEnabled
+                isTiltGesturesEnabled = settings.tiltGesturesEnabled
+                isRotateGesturesEnabled = settings.rotateGesturesEnabled
+                isScrollGesturesEnabledDuringRotateOrZoom = settings.scrollGesturesDuringRotateOrZoomEnabled
+            }
+
+            it.isMyLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
+        }
     }
 
     private companion object {

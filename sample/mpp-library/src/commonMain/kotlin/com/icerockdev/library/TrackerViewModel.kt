@@ -8,6 +8,7 @@ import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.maps.google.GoogleMapController
+import dev.icerock.moko.maps.google.UiSettings
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -37,6 +38,12 @@ class TrackerViewModel(
                     )
                 }
         }
+        mapsController.writeUiSettings(
+            UiSettings(
+                rotateGesturesEnabled = false,
+                myLocationButtonEnabled = true
+            )
+        )
 
         viewModelScope.launch {
             val route = mapsController.buildRoute(
