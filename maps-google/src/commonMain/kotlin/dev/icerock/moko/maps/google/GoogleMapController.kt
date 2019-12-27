@@ -10,4 +10,6 @@ expect class GoogleMapController : MapController {
     suspend fun readUiSettings(): UiSettings
 
     fun writeUiSettings(settings: UiSettings)
+
+    var onCameraScrollStateChanged: ((scrolling: Boolean) -> Unit)?
 }

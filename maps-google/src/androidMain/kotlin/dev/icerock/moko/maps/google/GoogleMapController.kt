@@ -84,6 +84,8 @@ actual class GoogleMapController(
         .apiKey(geoApiKey)
         .build()
 
+    actual var onCameraScrollStateChanged: ((scrolling: Boolean) -> Unit)? = null
+
     fun bind(lifecycle: Lifecycle, context: Context, googleMap: GoogleMap) {
         mapHolder.set(googleMap)
         locationHolder.set(LocationServices.getFusedLocationProviderClient(context))
@@ -109,6 +111,9 @@ actual class GoogleMapController(
             (marker.tag as? (() -> Unit))?.invoke()
             false // not show info box
         }
+
+        googleMap.setOnCameraIdleListener { onCameraScrollStateChanged?.invoke(false) }
+        googleMap.setOnCameraMoveStartedListener { onCameraScrollStateChanged?.invoke(true) }
     }
 
     private suspend fun FusedLocationProviderClient.getLastLocationSuspended(): Location {

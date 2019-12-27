@@ -45,6 +45,10 @@ class TrackerViewModel(
             )
         )
 
+        mapsController.onCameraScrollStateChanged = {
+            println("camera scroll state: $it")
+        }
+
         viewModelScope.launch {
             val route = mapsController.buildRoute(
                 points = listOf(
