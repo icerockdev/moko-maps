@@ -27,6 +27,7 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
 - kotlin 1.3.61
   - 0.1.0
   - 0.1.1
+  - 0.2.0
 
 ## Installation
 root build.gradle  
@@ -41,8 +42,8 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.1.1")
-    commonMainApi("dev.icerock.moko:maps-google:0.1.1")
+    commonMainApi("dev.icerock.moko:maps:0.2.0")
+    commonMainApi("dev.icerock.moko:maps-google:0.2.0")
 }
 
 kotlin {
@@ -51,8 +52,6 @@ kotlin {
         .flatMap { it.binaries }
         .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.Framework>()
         .forEach { framework ->
-            framework.isStatic = true
-
             val frameworks = listOf("Base", "Maps").map { frameworkPath ->
                 project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path.let { "-F$it" }
             }
@@ -70,6 +69,24 @@ enableFeaturePreview("GRADLE_METADATA")
 project Podfile
 ```ruby
 pod 'GoogleMaps', '3.7.0'
+
+# GoogleMaps is static library that already linked in moko-maps-google. Remove duplicated linking.
+post_install do |installer|
+  host_targets = installer.aggregate_targets.select { |aggregate_target|
+    aggregate_target.name.include? "Pods-"
+  }
+  
+  host_targets.each do |host_target|
+    host_target.xcconfigs.each do |config_name, config_file|
+      config_file.frameworks.delete("GoogleMaps")
+      config_file.frameworks.delete("GoogleMapsBase")
+      config_file.frameworks.delete("GoogleMapsCore")
+      
+      xcconfig_path = host_target.xcconfig_path(config_name)
+      config_file.save_as(xcconfig_path)
+    end
+  end
+end
 ```
 
 ## Usage
