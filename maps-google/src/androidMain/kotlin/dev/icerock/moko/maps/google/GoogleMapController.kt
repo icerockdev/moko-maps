@@ -32,6 +32,7 @@ import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.maps.MapController
 import dev.icerock.moko.maps.MapElement
+import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -84,6 +85,8 @@ actual class GoogleMapController(
         .apiKey(geoApiKey)
         .build()
 
+    actual var onCameraScrollStateChanged: ((scrolling: Boolean) -> Unit)? = null
+
     fun bind(lifecycle: Lifecycle, context: Context, googleMap: GoogleMap) {
         mapHolder.set(googleMap)
         locationHolder.set(LocationServices.getFusedLocationProviderClient(context))
@@ -99,10 +102,19 @@ actual class GoogleMapController(
         })
 
         googleMap.uiSettings.apply {
-            isMyLocationButtonEnabled = false
-            isCompassEnabled = false
-            isRotateGesturesEnabled = false
+            // unsupported on iOS side at all
+            isMapToolbarEnabled = false
+            isZoomControlsEnabled = false
         }
+
+        googleMap.setOnMarkerClickListener { marker ->
+            @Suppress("UNCHECKED_CAST")
+            (marker.tag as? (() -> Unit))?.invoke()
+            false // not show info box
+        }
+
+        googleMap.setOnCameraIdleListener { onCameraScrollStateChanged?.invoke(false) }
+        googleMap.setOnCameraMoveStartedListener { onCameraScrollStateChanged?.invoke(true) }
     }
 
     private suspend fun FusedLocationProviderClient.getLastLocationSuspended(): Location {
@@ -150,27 +162,6 @@ actual class GoogleMapController(
         }
     }
 
-    override fun zoomIn(size: Float) {
-        val update = CameraUpdateFactory.zoomBy(size)
-        mapHolder.doWith { it.moveCamera(update) }
-    }
-
-    override fun zoomOut(size: Float) {
-        val update = CameraUpdateFactory.zoomBy(-size)
-        mapHolder.doWith { it.moveCamera(update) }
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun enableCurrentGeolocation() {
-        mapHolder.doWith { it.isMyLocationEnabled = true }
-    }
-
-    @SuppressLint("MissingPermission")
-    override suspend fun requestCurrentLocation(): GeoLatLng {
-        return locationHolder.get().getLastLocationSuspended()
-            .let { GeoLatLng(latitude = it.latitude, longitude = it.longitude) }
-    }
-
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
         val geoCoder = geoCoderHolder.get()
 
@@ -216,6 +207,31 @@ actual class GoogleMapController(
                     )
                 )
             }.take(maxResults)
+        }
+    }
+
+    override suspend fun getCurrentZoom(): Float {
+        return mapHolder.get().cameraPosition.zoom
+    }
+
+    override suspend fun setCurrentZoom(zoom: Float) {
+        val update = CameraUpdateFactory.zoomTo(zoom)
+        mapHolder.get().moveCamera(update)
+    }
+
+    override suspend fun getZoomConfig(): ZoomConfig {
+        val map = mapHolder.get()
+        return ZoomConfig(
+            min = map.minZoomLevel,
+            max = map.maxZoomLevel
+        )
+    }
+
+    override suspend fun setZoomConfig(config: ZoomConfig) {
+        with(mapHolder.get()) {
+            resetMinMaxZoomPreference()
+            config.min?.also { setMinZoomPreference(it) }
+            config.max?.also { setMaxZoomPreference(it) }
         }
     }
 
@@ -344,8 +360,9 @@ actual class GoogleMapController(
 
     override suspend fun addMarker(
         image: ImageResource,
-        latLng: GeoLatLng,
-        rotation: Float
+        latLng: dev.icerock.moko.geo.LatLng,
+        rotation: Float,
+        onClick: (() -> Unit)?
     ): dev.icerock.moko.maps.Marker {
         val markerOptions = MarkerOptions()
             .position(latLng.toAndroidLatLng())
@@ -354,7 +371,39 @@ actual class GoogleMapController(
             .anchor(0.5f, 0.5f)
 
         val marker = mapHolder.get().addMarker(markerOptions)
+        marker.tag = onClick
         return GoogleMarker(marker)
+    }
+
+    actual suspend fun readUiSettings(): UiSettings {
+        val settings = mapHolder.get().uiSettings
+        return UiSettings(
+            compassEnabled = settings.isCompassEnabled,
+            myLocationButtonEnabled = settings.isMyLocationButtonEnabled,
+            indoorLevelPickerEnabled = settings.isIndoorLevelPickerEnabled,
+            scrollGesturesEnabled = settings.isScrollGesturesEnabled,
+            zoomGesturesEnabled = settings.isZoomGesturesEnabled,
+            tiltGesturesEnabled = settings.isTiltGesturesEnabled,
+            rotateGesturesEnabled = settings.isRotateGesturesEnabled,
+            scrollGesturesDuringRotateOrZoomEnabled = settings.isScrollGesturesEnabledDuringRotateOrZoom
+        )
+    }
+
+    actual fun writeUiSettings(settings: UiSettings) {
+        mapHolder.doWith {
+            with(it.uiSettings) {
+                isCompassEnabled = settings.compassEnabled
+                isMyLocationButtonEnabled = settings.myLocationButtonEnabled
+                isIndoorLevelPickerEnabled = settings.indoorLevelPickerEnabled
+                isScrollGesturesEnabled = settings.scrollGesturesEnabled
+                isZoomControlsEnabled = settings.zoomGesturesEnabled
+                isTiltGesturesEnabled = settings.tiltGesturesEnabled
+                isRotateGesturesEnabled = settings.rotateGesturesEnabled
+                isScrollGesturesEnabledDuringRotateOrZoom = settings.scrollGesturesDuringRotateOrZoomEnabled
+            }
+
+            it.isMyLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
+        }
     }
 
     private companion object {

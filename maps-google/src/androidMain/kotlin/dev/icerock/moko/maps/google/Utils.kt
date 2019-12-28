@@ -25,3 +25,8 @@ internal fun com.google.maps.model.LatLng.toGeoLatLng() = LatLng(
     latitude = lat,
     longitude = lng
 )
+
+internal fun com.google.android.gms.maps.model.LatLng.toGeoLatLng() = LatLng(
+    latitude = latitude,
+    longitude = longitude
+)

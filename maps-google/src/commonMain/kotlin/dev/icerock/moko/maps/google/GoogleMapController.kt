@@ -6,4 +6,10 @@ package dev.icerock.moko.maps.google
 
 import dev.icerock.moko.maps.MapController
 
-expect class GoogleMapController : MapController
+expect class GoogleMapController : MapController {
+    suspend fun readUiSettings(): UiSettings
+
+    fun writeUiSettings(settings: UiSettings)
+
+    var onCameraScrollStateChanged: ((scrolling: Boolean) -> Unit)?
+}

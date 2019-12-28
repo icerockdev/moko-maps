@@ -17,15 +17,13 @@ interface MapController {
         animation: Boolean = false
     )
 
-    fun zoomIn(size: Float = 1.0f)
-    fun zoomOut(size: Float = 1.0f)
-
     suspend fun getMapCenterLatLng(): LatLng
 
     suspend fun addMarker(
         image: ImageResource,
         latLng: LatLng,
-        rotation: Float = 0.0f
+        rotation: Float = 0.0f,
+        onClick: (() -> Unit)? = null
     ): Marker
 
     suspend fun buildRoute(
@@ -45,7 +43,9 @@ interface MapController {
         maxRadius: Int
     ): List<MapAddress>
 
-    fun enableCurrentGeolocation()
+    suspend fun getCurrentZoom(): Float
+    suspend fun setCurrentZoom(zoom: Float)
 
-    suspend fun requestCurrentLocation(): LatLng
+    suspend fun getZoomConfig(): ZoomConfig
+    suspend fun setZoomConfig(config: ZoomConfig)
 }

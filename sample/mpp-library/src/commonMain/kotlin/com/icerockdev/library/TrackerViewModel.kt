@@ -7,10 +7,10 @@ package com.icerockdev.library
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.graphics.Color
+import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.maps.google.GoogleMapController
+import dev.icerock.moko.maps.google.UiSettings
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class TrackerViewModel(
@@ -19,23 +19,28 @@ class TrackerViewModel(
 ) : ViewModel() {
 
     fun start() {
-        viewModelScope.launch {
-            try {
-                locationTracker.startTracking()
-            } catch (exc: Throwable) {
-                println(exc)
-            }
+        mapsController.writeUiSettings(
+            UiSettings(
+                rotateGesturesEnabled = false,
+                myLocationButtonEnabled = true
+            )
+        )
 
-            locationTracker.getLocationsFlow()
-                .distinctUntilChanged()
-                .collect {
-                    println("show location: $it")
-                    mapsController.showLocation(
-                        latLng = it,
-                        zoom = 15.0f,
-                        animation = true
-                    )
-                }
+        viewModelScope.launch {
+            val config = mapsController.getZoomConfig()
+            println("config: $config")
+
+            mapsController.setZoomConfig(
+                ZoomConfig(
+                    min = 10f,
+                    max = 18f
+                )
+            )
+            mapsController.setCurrentZoom(12f)
+        }
+
+        mapsController.onCameraScrollStateChanged = {
+            println("camera scroll state: $it")
         }
 
         viewModelScope.launch {
@@ -58,14 +63,27 @@ class TrackerViewModel(
                 markersImage = MR.images.marker
             )
 
-            val marker = mapsController.addMarker(
+            val marker1 = mapsController.addMarker(
+                image = MR.images.marker,
+                latLng = LatLng(
+                    latitude = 55.045853,
+                    longitude = 82.920154
+                ),
+                rotation = 0.0f
+            ) {
+                println("marker 1 pressed!")
+            }
+
+            val marker2 = mapsController.addMarker(
                 image = MR.images.marker,
                 latLng = LatLng(
                     latitude = 55.040853,
                     longitude = 82.920154
                 ),
                 rotation = 0.0f
-            )
+            ) {
+                println("marker 2 pressed!")
+            }
         }
     }
 

@@ -9,12 +9,15 @@ import cocoapods.GoogleMaps.GMSCameraPosition
 import cocoapods.GoogleMaps.GMSCoordinateBounds
 import cocoapods.GoogleMaps.GMSGeocoder
 import cocoapods.GoogleMaps.GMSMapView
+import cocoapods.GoogleMaps.GMSMapViewDelegateProtocol
 import cocoapods.GoogleMaps.GMSMarker
 import cocoapods.GoogleMaps.GMSPath
 import cocoapods.GoogleMaps.GMSPolyline
 import cocoapods.GoogleMaps.animateToCameraPosition
 import cocoapods.GoogleMaps.animateToZoom
 import cocoapods.GoogleMaps.create
+import cocoapods.GoogleMaps.kGMSMaxZoomLevel
+import cocoapods.GoogleMaps.kGMSMinZoomLevel
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.graphics.toUIColor
@@ -22,6 +25,7 @@ import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.maps.MapController
 import dev.icerock.moko.maps.MapElement
 import dev.icerock.moko.maps.Marker
+import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.ReceivePipelineException
@@ -42,6 +46,7 @@ import platform.MapKit.MKLocalSearch
 import platform.MapKit.MKLocalSearchRequest
 import platform.MapKit.MKMapItem
 import platform.UIKit.UIEdgeInsetsZero
+import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -55,6 +60,13 @@ actual class GoogleMapController(
 
     private val geoCoder = GMSGeocoder()
     private val locationManager = CLLocationManager()
+    private val delegate = MapDelegate()
+
+    actual var onCameraScrollStateChanged: ((scrolling: Boolean) -> Unit)? = null
+
+    init {
+        mapView.delegate = delegate
+    }
 
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
         val gmsAddress: GMSAddress = suspendCoroutine { continuation ->
@@ -89,7 +101,7 @@ actual class GoogleMapController(
         maxResults: Int,
         maxRadius: Int
     ): List<MapAddress> {
-        val location = requestCurrentLocation()
+        val location = getCurrentLocation()
 
         return suspendCoroutine { continuation ->
             val request = MKLocalSearchRequest()
@@ -156,15 +168,18 @@ actual class GoogleMapController(
         return location.coordinate.toLatLng()
     }
 
-    override suspend fun requestCurrentLocation(): LatLng {
-        return getCurrentLocation()
-    }
-
-    override suspend fun addMarker(image: ImageResource, latLng: LatLng, rotation: Float): Marker {
+    override suspend fun addMarker(
+        image: ImageResource,
+        latLng: LatLng,
+        rotation: Float,
+        onClick: (() -> Unit)?
+    ): Marker {
         val marker = GMSMarker.markerWithPosition(position = latLng.toCoord2D()).also {
             it.icon = image.toUIImage()
             it.rotation = rotation.toDouble()
             it.map = mapView
+            it.tappable = true
+            it.userData = onClick
         }
         return GoogleMarker(marker)
     }
@@ -264,11 +279,6 @@ actual class GoogleMapController(
         )
     }
 
-    override fun enableCurrentGeolocation() {
-        mapView.settings.rotateGestures = false
-        mapView.myLocationEnabled = true
-    }
-
     override suspend fun getMapCenterLatLng(): LatLng {
         return mapView.camera.target.toLatLng()
     }
@@ -296,11 +306,73 @@ actual class GoogleMapController(
         mapView.animateToCameraPosition(position)
     }
 
-    override fun zoomIn(size: Float) {
-        mapView.animateToZoom(mapView.camera.zoom + size)
+    override suspend fun getCurrentZoom(): Float {
+        return mapView.camera.zoom
     }
 
-    override fun zoomOut(size: Float) {
-        mapView.animateToZoom(mapView.camera.zoom - size)
+    override suspend fun setCurrentZoom(zoom: Float) {
+        mapView.animateToZoom(zoom)
+    }
+
+    override suspend fun getZoomConfig(): ZoomConfig {
+        return ZoomConfig(
+            min = mapView.minZoom,
+            max = mapView.maxZoom
+        )
+    }
+
+    override suspend fun setZoomConfig(config: ZoomConfig) {
+        mapView.setMinZoom(
+            minZoom = config.min ?: kGMSMinZoomLevel,
+            maxZoom = config.max ?: kGMSMaxZoomLevel
+        )
+    }
+
+    actual suspend fun readUiSettings(): UiSettings {
+        val settings = mapView.settings
+        return UiSettings(
+            compassEnabled = settings.compassButton,
+            myLocationButtonEnabled = settings.myLocationButton,
+            indoorLevelPickerEnabled = settings.indoorPicker,
+            scrollGesturesEnabled = settings.scrollGestures,
+            zoomGesturesEnabled = settings.zoomGestures,
+            tiltGesturesEnabled = settings.tiltGestures,
+            rotateGesturesEnabled = settings.rotateGestures,
+            scrollGesturesDuringRotateOrZoomEnabled = settings.allowScrollGesturesDuringRotateOrZoom
+        )
+    }
+
+    actual fun writeUiSettings(settings: UiSettings) {
+        with(mapView.settings) {
+            compassButton = settings.compassEnabled
+            myLocationButton = settings.myLocationButtonEnabled
+            indoorPicker = settings.indoorLevelPickerEnabled
+            scrollGestures = settings.scrollGesturesEnabled
+            zoomGestures = settings.zoomGesturesEnabled
+            tiltGestures = settings.tiltGesturesEnabled
+            rotateGestures = settings.rotateGesturesEnabled
+            allowScrollGesturesDuringRotateOrZoom = settings.scrollGesturesDuringRotateOrZoomEnabled
+        }
+        mapView.myLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
+    }
+
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+    private inner class MapDelegate : NSObject(), GMSMapViewDelegateProtocol {
+        override fun mapView(mapView: GMSMapView, didTapMarker: GMSMarker): Boolean {
+            val marker: GMSMarker = didTapMarker
+
+            @Suppress("UNCHECKED_CAST")
+            (marker.userData as? (() -> Unit))?.invoke()
+
+            return false // not show any info box
+        }
+
+        override fun mapView(mapView: GMSMapView, willMove: Boolean) {
+            onCameraScrollStateChanged?.invoke(true)
+        }
+
+        override fun mapView(mapView: GMSMapView, idleAtCameraPosition: GMSCameraPosition) {
+            onCameraScrollStateChanged?.invoke(false)
+        }
     }
 }
