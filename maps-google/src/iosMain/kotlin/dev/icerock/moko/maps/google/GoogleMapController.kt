@@ -16,6 +16,8 @@ import cocoapods.GoogleMaps.GMSPolyline
 import cocoapods.GoogleMaps.animateToCameraPosition
 import cocoapods.GoogleMaps.animateToZoom
 import cocoapods.GoogleMaps.create
+import cocoapods.GoogleMaps.kGMSMaxZoomLevel
+import cocoapods.GoogleMaps.kGMSMinZoomLevel
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.graphics.toUIColor
@@ -23,6 +25,7 @@ import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.maps.MapController
 import dev.icerock.moko.maps.MapElement
 import dev.icerock.moko.maps.Marker
+import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.ReceivePipelineException
@@ -98,7 +101,7 @@ actual class GoogleMapController(
         maxResults: Int,
         maxRadius: Int
     ): List<MapAddress> {
-        val location = requestCurrentLocation()
+        val location = getCurrentLocation()
 
         return suspendCoroutine { continuation ->
             val request = MKLocalSearchRequest()
@@ -163,10 +166,6 @@ actual class GoogleMapController(
             ?: throw IllegalStateException("can't get location")
 
         return location.coordinate.toLatLng()
-    }
-
-    override suspend fun requestCurrentLocation(): LatLng {
-        return getCurrentLocation()
     }
 
     override suspend fun addMarker(
@@ -280,11 +279,6 @@ actual class GoogleMapController(
         )
     }
 
-    override fun enableCurrentGeolocation() {
-        mapView.settings.rotateGestures = false
-        mapView.myLocationEnabled = true
-    }
-
     override suspend fun getMapCenterLatLng(): LatLng {
         return mapView.camera.target.toLatLng()
     }
@@ -312,12 +306,26 @@ actual class GoogleMapController(
         mapView.animateToCameraPosition(position)
     }
 
-    override fun zoomIn(size: Float) {
-        mapView.animateToZoom(mapView.camera.zoom + size)
+    override suspend fun getCurrentZoom(): Float {
+        return mapView.camera.zoom
     }
 
-    override fun zoomOut(size: Float) {
-        mapView.animateToZoom(mapView.camera.zoom - size)
+    override suspend fun setCurrentZoom(zoom: Float) {
+        mapView.animateToZoom(zoom)
+    }
+
+    override suspend fun getZoomConfig(): ZoomConfig {
+        return ZoomConfig(
+            min = mapView.minZoom,
+            max = mapView.maxZoom
+        )
+    }
+
+    override suspend fun setZoomConfig(config: ZoomConfig) {
+        mapView.setMinZoom(
+            minZoom = config.min ?: kGMSMinZoomLevel,
+            maxZoom = config.max ?: kGMSMaxZoomLevel
+        )
     }
 
     actual suspend fun readUiSettings(): UiSettings {

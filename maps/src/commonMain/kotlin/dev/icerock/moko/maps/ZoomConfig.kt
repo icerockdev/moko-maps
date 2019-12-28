@@ -4,6 +4,7 @@
 
 package dev.icerock.moko.maps
 
-interface MapElement {
-    fun delete()
-}
+data class ZoomConfig(
+    val min: Float? = null,
+    val max: Float? = null
+)

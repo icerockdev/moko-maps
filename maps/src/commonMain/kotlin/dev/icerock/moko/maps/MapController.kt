@@ -17,9 +17,6 @@ interface MapController {
         animation: Boolean = false
     )
 
-    fun zoomIn(size: Float = 1.0f)
-    fun zoomOut(size: Float = 1.0f)
-
     suspend fun getMapCenterLatLng(): LatLng
 
     suspend fun addMarker(
@@ -46,7 +43,9 @@ interface MapController {
         maxRadius: Int
     ): List<MapAddress>
 
-    fun enableCurrentGeolocation()
+    suspend fun getCurrentZoom(): Float
+    suspend fun setCurrentZoom(zoom: Float)
 
-    suspend fun requestCurrentLocation(): LatLng
+    suspend fun getZoomConfig(): ZoomConfig
+    suspend fun setZoomConfig(config: ZoomConfig)
 }

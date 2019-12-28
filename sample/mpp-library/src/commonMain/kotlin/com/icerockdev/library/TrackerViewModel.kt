@@ -7,6 +7,7 @@ package com.icerockdev.library
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.graphics.Color
+import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.maps.google.GoogleMapController
 import dev.icerock.moko.maps.google.UiSettings
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
@@ -44,6 +45,19 @@ class TrackerViewModel(
                 myLocationButtonEnabled = true
             )
         )
+
+        viewModelScope.launch {
+            val config = mapsController.getZoomConfig()
+            println("config: $config")
+
+            mapsController.setZoomConfig(
+                ZoomConfig(
+                    min = 10f,
+                    max = 18f
+                )
+            )
+            mapsController.setCurrentZoom(12f)
+        }
 
         mapsController.onCameraScrollStateChanged = {
             println("camera scroll state: $it")

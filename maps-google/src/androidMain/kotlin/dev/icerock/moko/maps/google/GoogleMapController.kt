@@ -32,6 +32,7 @@ import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.maps.MapController
 import dev.icerock.moko.maps.MapElement
+import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -114,6 +115,10 @@ actual class GoogleMapController(
 
         googleMap.setOnCameraIdleListener { onCameraScrollStateChanged?.invoke(false) }
         googleMap.setOnCameraMoveStartedListener { onCameraScrollStateChanged?.invoke(true) }
+
+        googleMap.maxZoomLevel
+        googleMap.minZoomLevel
+        googleMap.cameraPosition.zoom
     }
 
     private suspend fun FusedLocationProviderClient.getLastLocationSuspended(): Location {
@@ -161,27 +166,6 @@ actual class GoogleMapController(
         }
     }
 
-    override fun zoomIn(size: Float) {
-        val update = CameraUpdateFactory.zoomBy(size)
-        mapHolder.doWith { it.moveCamera(update) }
-    }
-
-    override fun zoomOut(size: Float) {
-        val update = CameraUpdateFactory.zoomBy(-size)
-        mapHolder.doWith { it.moveCamera(update) }
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun enableCurrentGeolocation() {
-        mapHolder.doWith { it.isMyLocationEnabled = true }
-    }
-
-    @SuppressLint("MissingPermission")
-    override suspend fun requestCurrentLocation(): GeoLatLng {
-        return locationHolder.get().getLastLocationSuspended()
-            .let { GeoLatLng(latitude = it.latitude, longitude = it.longitude) }
-    }
-
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
         val geoCoder = geoCoderHolder.get()
 
@@ -227,6 +211,31 @@ actual class GoogleMapController(
                     )
                 )
             }.take(maxResults)
+        }
+    }
+
+    override suspend fun getCurrentZoom(): Float {
+        return mapHolder.get().cameraPosition.zoom
+    }
+
+    override suspend fun setCurrentZoom(zoom: Float) {
+        val update = CameraUpdateFactory.zoomTo(zoom)
+        mapHolder.get().moveCamera(update)
+    }
+
+    override suspend fun getZoomConfig(): ZoomConfig {
+        val map = mapHolder.get()
+        return ZoomConfig(
+            min = map.minZoomLevel,
+            max = map.maxZoomLevel
+        )
+    }
+
+    override suspend fun setZoomConfig(config: ZoomConfig) {
+        with(mapHolder.get()) {
+            resetMinMaxZoomPreference()
+            config.min?.also { setMinZoomPreference(it) }
+            config.max?.also { setMaxZoomPreference(it) }
         }
     }
 
