@@ -11,8 +11,6 @@ import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.maps.google.GoogleMapController
 import dev.icerock.moko.maps.google.UiSettings
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class TrackerViewModel(
@@ -21,24 +19,6 @@ class TrackerViewModel(
 ) : ViewModel() {
 
     fun start() {
-        viewModelScope.launch {
-            try {
-                locationTracker.startTracking()
-            } catch (exc: Throwable) {
-                println(exc)
-            }
-
-            locationTracker.getLocationsFlow()
-                .distinctUntilChanged()
-                .collect {
-                    println("show location: $it")
-                    mapsController.showLocation(
-                        latLng = it,
-                        zoom = 15.0f,
-                        animation = true
-                    )
-                }
-        }
         mapsController.writeUiSettings(
             UiSettings(
                 rotateGesturesEnabled = false,
