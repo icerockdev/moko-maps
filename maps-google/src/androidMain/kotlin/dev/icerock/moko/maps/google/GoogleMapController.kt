@@ -115,10 +115,6 @@ actual class GoogleMapController(
 
         googleMap.setOnCameraIdleListener { onCameraScrollStateChanged?.invoke(false) }
         googleMap.setOnCameraMoveStartedListener { onCameraScrollStateChanged?.invoke(true) }
-
-        googleMap.maxZoomLevel
-        googleMap.minZoomLevel
-        googleMap.cameraPosition.zoom
     }
 
     private suspend fun FusedLocationProviderClient.getLastLocationSuspended(): Location {
