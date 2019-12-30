@@ -16,7 +16,9 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
 - [License](#license)
 
 ## Features
-- **** - ;
+- **Markers** - add markers to map from common code;
+- **Route** - draw route by waypoints from common code;
+- **Camera** - control camera (zoom, location) from common code.
 
 ## Requirements
 - Gradle version 5.4.1+
@@ -28,6 +30,7 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
   - 0.1.0
   - 0.1.1
   - 0.2.0
+  - 0.2.1
 
 ## Installation
 root build.gradle  
@@ -42,8 +45,8 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.2.0")
-    commonMainApi("dev.icerock.moko:maps-google:0.2.0")
+    commonMainApi("dev.icerock.moko:maps:0.2.1")
+    commonMainApi("dev.icerock.moko:maps-google:0.2.1")
 }
 
 kotlin {
@@ -90,7 +93,60 @@ end
 ```
 
 ## Usage
-TODO
+### Markers
+```kotlin
+class MarkerViewModel(
+    val mapsController: GoogleMapController
+) : ViewModel() {
+
+    fun start() {
+        viewModelScope.launch {
+            val marker1 = mapsController.addMarker(
+                image = MR.images.marker,
+                latLng = LatLng(
+                    latitude = 55.045853,
+                    longitude = 82.920154
+                ),
+                rotation = 0.0f
+            ) {
+                println("marker 1 pressed!")
+            }
+
+            marker1.rotation = 90.0f
+        }
+    }
+}
+```
+### Route
+```kotlin
+class MarkerViewModel(
+    val mapsController: GoogleMapController
+) : ViewModel() {
+
+    fun start() {
+        viewModelScope.launch {
+            val route = mapsController.buildRoute(
+                points = listOf(
+                    LatLng(
+                        latitude = 55.032200,
+                        longitude = 82.889360
+                    ),
+                    LatLng(
+                        latitude = 55.030853,
+                        longitude = 82.920154
+                    ),
+                    LatLng(
+                        latitude = 55.013109,
+                        longitude = 82.926480
+                    )
+                ),
+                lineColor = Color(0xCCCC00FF),
+                markersImage = MR.images.marker
+            )
+        }
+    }
+}
+```
 
 ## Samples
 Please see more examples in the [sample directory](sample).

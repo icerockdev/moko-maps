@@ -50,6 +50,7 @@ import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.native.ref.WeakReference
 
 actual class GoogleMapController(
     private val mapView: GMSMapView,
@@ -60,7 +61,7 @@ actual class GoogleMapController(
 
     private val geoCoder = GMSGeocoder()
     private val locationManager = CLLocationManager()
-    private val delegate = MapDelegate()
+    private val delegate = MapDelegate(this)
 
     actual var onCameraScrollStateChanged: ((scrolling: Boolean) -> Unit)? = null
 
@@ -357,7 +358,11 @@ actual class GoogleMapController(
     }
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-    private inner class MapDelegate : NSObject(), GMSMapViewDelegateProtocol {
+    private class MapDelegate(
+        mapController: GoogleMapController
+    ) : NSObject(), GMSMapViewDelegateProtocol {
+        private val mapController = WeakReference(mapController)
+
         override fun mapView(mapView: GMSMapView, didTapMarker: GMSMarker): Boolean {
             val marker: GMSMarker = didTapMarker
 
@@ -368,11 +373,11 @@ actual class GoogleMapController(
         }
 
         override fun mapView(mapView: GMSMapView, willMove: Boolean) {
-            onCameraScrollStateChanged?.invoke(true)
+            mapController.get()?.onCameraScrollStateChanged?.invoke(true)
         }
 
         override fun mapView(mapView: GMSMapView, idleAtCameraPosition: GMSCameraPosition) {
-            onCameraScrollStateChanged?.invoke(false)
+            mapController.get()?.onCameraScrollStateChanged?.invoke(false)
         }
     }
 }
