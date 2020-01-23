@@ -39,8 +39,9 @@ class TrackerViewModel(
             mapsController.setCurrentZoom(12f)
         }
 
-        mapsController.onCameraScrollStateChanged = {
-            println("camera scroll state: $it")
+        mapsController.onCameraScrollStateChanged = { scrolling, isUserGesture ->
+            println("camera scroll state: $scrolling")
+            println("scroll by user gesture: $isUserGesture ")
         }
 
         viewModelScope.launch {

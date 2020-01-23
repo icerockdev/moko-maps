@@ -63,7 +63,7 @@ actual class GoogleMapController(
     private val locationManager = CLLocationManager()
     private val delegate = MapDelegate(this)
 
-    actual var onCameraScrollStateChanged: ((scrolling: Boolean) -> Unit)? = null
+    actual var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)? = null
 
     init {
         mapView.delegate = delegate
@@ -373,11 +373,11 @@ actual class GoogleMapController(
         }
 
         override fun mapView(mapView: GMSMapView, willMove: Boolean) {
-            mapController.get()?.onCameraScrollStateChanged?.invoke(true)
+            mapController.get()?.onCameraScrollStateChanged?.invoke(true, willMove)
         }
 
         override fun mapView(mapView: GMSMapView, idleAtCameraPosition: GMSCameraPosition) {
-            mapController.get()?.onCameraScrollStateChanged?.invoke(false)
+            mapController.get()?.onCameraScrollStateChanged?.invoke(false, false)
         }
     }
 }
