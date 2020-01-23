@@ -15,6 +15,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
@@ -85,7 +86,7 @@ actual class GoogleMapController(
         .apiKey(geoApiKey)
         .build()
 
-    actual var onCameraScrollStateChanged: ((scrolling: Boolean) -> Unit)? = null
+    actual var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)? = null
 
     fun bind(lifecycle: Lifecycle, context: Context, googleMap: GoogleMap) {
         mapHolder.set(googleMap)
@@ -113,8 +114,13 @@ actual class GoogleMapController(
             false // not show info box
         }
 
-        googleMap.setOnCameraIdleListener { onCameraScrollStateChanged?.invoke(false) }
-        googleMap.setOnCameraMoveStartedListener { onCameraScrollStateChanged?.invoke(true) }
+        googleMap.setOnCameraIdleListener {
+            onCameraScrollStateChanged?.invoke(false, false)
+        }
+
+        googleMap.setOnCameraMoveStartedListener { reason ->
+            onCameraScrollStateChanged?.invoke(true, reason == REASON_GESTURE)
+        }
     }
 
     private suspend fun FusedLocationProviderClient.getLastLocationSuspended(): Location {

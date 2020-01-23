@@ -11,5 +11,5 @@ expect class GoogleMapController : MapController {
 
     fun writeUiSettings(settings: UiSettings)
 
-    var onCameraScrollStateChanged: ((scrolling: Boolean) -> Unit)?
+    var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)?
 }

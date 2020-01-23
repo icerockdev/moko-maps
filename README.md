@@ -31,6 +31,7 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
   - 0.1.1
   - 0.2.0
   - 0.2.1
+  - 0.3.0
 
 ## Installation
 root build.gradle  
@@ -45,8 +46,8 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.2.1")
-    commonMainApi("dev.icerock.moko:maps-google:0.2.1")
+    commonMainApi("dev.icerock.moko:maps:0.3.0")
+    commonMainApi("dev.icerock.moko:maps-google:0.3.0")
 }
 
 kotlin {
