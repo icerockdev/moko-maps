@@ -53,7 +53,7 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.native.ref.WeakReference
 
 actual class GoogleMapController(
-    private val mapView: GMSMapView,
+    private var mapView: GMSMapView?,
     private val geoApiKey: String
 ) : MapController {
     private val httpClient = HttpClient {}
@@ -66,7 +66,12 @@ actual class GoogleMapController(
     actual var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)? = null
 
     init {
-        mapView.delegate = delegate
+        mapView?.delegate = delegate
+    }
+
+    // call for clear memory
+    fun removeMapView() {
+        mapView = null
     }
 
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
@@ -162,7 +167,7 @@ actual class GoogleMapController(
     }
 
     private fun getCurrentLocation(): LatLng {
-        val location: CLLocation = mapView.myLocation
+        val location: CLLocation = mapView?.myLocation
             ?: locationManager.location
             ?: throw IllegalStateException("can't get location")
 
@@ -262,13 +267,13 @@ actual class GoogleMapController(
             }
 
         if (path != null) {
-            val position = mapView.cameraForBounds(
+            val position = mapView?.cameraForBounds(
                 bounds = GMSCoordinateBounds.create(path = path),
                 insets = UIEdgeInsetsZero.readValue()
             )
 
             if (position != null) {
-                mapView.animateToCameraPosition(position)
+                mapView?.animateToCameraPosition(position)
             }
         }
 
@@ -281,7 +286,7 @@ actual class GoogleMapController(
     }
 
     override suspend fun getMapCenterLatLng(): LatLng {
-        return mapView.camera.target.toLatLng()
+        return mapView?.camera?.target!!.toLatLng()
     }
 
     override fun showLocation(latLng: LatLng, zoom: Float, animation: Boolean) {
@@ -291,9 +296,9 @@ actual class GoogleMapController(
             zoom = zoom
         )
         if (animation) {
-            mapView.animateToCameraPosition(position)
+            mapView?.animateToCameraPosition(position)
         } else {
-            mapView.setCamera(position)
+            mapView?.setCamera(position)
         }
     }
 
@@ -304,33 +309,33 @@ actual class GoogleMapController(
             longitude = location.longitude,
             zoom = zoom
         )
-        mapView.animateToCameraPosition(position)
+        mapView?.animateToCameraPosition(position)
     }
 
     override suspend fun getCurrentZoom(): Float {
-        return mapView.camera.zoom
+        return mapView?.camera!!.zoom
     }
 
     override suspend fun setCurrentZoom(zoom: Float) {
-        mapView.animateToZoom(zoom)
+        mapView?.animateToZoom(zoom)
     }
 
     override suspend fun getZoomConfig(): ZoomConfig {
         return ZoomConfig(
-            min = mapView.minZoom,
-            max = mapView.maxZoom
+            min = mapView?.minZoom,
+            max = mapView?.maxZoom
         )
     }
 
     override suspend fun setZoomConfig(config: ZoomConfig) {
-        mapView.setMinZoom(
+        mapView?.setMinZoom(
             minZoom = config.min ?: kGMSMinZoomLevel,
             maxZoom = config.max ?: kGMSMaxZoomLevel
         )
     }
 
     actual suspend fun readUiSettings(): UiSettings {
-        val settings = mapView.settings
+        val settings = mapView!!.settings
         return UiSettings(
             compassEnabled = settings.compassButton,
             myLocationButtonEnabled = settings.myLocationButton,
@@ -344,7 +349,7 @@ actual class GoogleMapController(
     }
 
     actual fun writeUiSettings(settings: UiSettings) {
-        with(mapView.settings) {
+        with(mapView!!.settings) {
             compassButton = settings.compassEnabled
             myLocationButton = settings.myLocationButtonEnabled
             indoorPicker = settings.indoorLevelPickerEnabled
@@ -354,7 +359,7 @@ actual class GoogleMapController(
             rotateGestures = settings.rotateGesturesEnabled
             allowScrollGesturesDuringRotateOrZoom = settings.scrollGesturesDuringRotateOrZoomEnabled
         }
-        mapView.myLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
+        mapView?.myLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
     }
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
