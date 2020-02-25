@@ -32,6 +32,7 @@ val providersPublish: Boolean = properties.containsKey("providersPublish")
 include(":maps")
 if (!libraryPublish) {
     include(":maps-google")
+    include(":maps-mapbox")
 
     if (!providersPublish) {
         include(":sample:android-app")

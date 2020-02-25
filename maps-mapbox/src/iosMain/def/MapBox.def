@@ -1,0 +1,4 @@
+language = Objective-C
+package = cocoapods.Mapbox
+modules = Mapbox
+linkerOpts = -framework Mapbox

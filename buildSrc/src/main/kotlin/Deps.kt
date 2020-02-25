@@ -72,6 +72,11 @@ object Deps {
                 iosX64 = "dev.icerock.moko:maps-google-iosx64:${Versions.Libs.MultiPlatform.mokoMaps}",
                 iosArm64 = "dev.icerock.moko:maps-google-iosarm64:${Versions.Libs.MultiPlatform.mokoMaps}"
             )
+            val mokoMapsMapbox = MultiPlatformLibrary(
+                common = "dev.icerock.moko:maps-mapbox:${Versions.Libs.MultiPlatform.mokoMaps}",
+                iosX64 = "dev.icerock.moko:maps-mapbox-iosx64:${Versions.Libs.MultiPlatform.mokoMaps}",
+                iosArm64 = "dev.icerock.moko:maps-mapbox-iosarm64:${Versions.Libs.MultiPlatform.mokoMaps}"
+            )
             val mokoParcelize = MultiPlatformLibrary(
                 common = "dev.icerock.moko:parcelize:${Versions.Libs.MultiPlatform.mokoParcelize}",
                 iosX64 = "dev.icerock.moko:parcelize-iosx64:${Versions.Libs.MultiPlatform.mokoParcelize}",
