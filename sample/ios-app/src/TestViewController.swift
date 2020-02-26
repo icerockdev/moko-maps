@@ -5,15 +5,14 @@
 import UIKit
 import MultiPlatformLibrary
 import Mapbox
-
-class TestViewController: UIViewController {
+import GoogleMaps
+class TestViewController: UIViewController, MGLMapViewDelegate {
     @IBOutlet var textLabel: UILabel!
     
     private var viewModel: TrackerViewModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         let mapView = MGLMapView(frame: .zero)
         view = mapView
         

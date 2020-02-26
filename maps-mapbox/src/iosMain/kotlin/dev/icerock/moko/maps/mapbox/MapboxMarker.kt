@@ -1,24 +1,39 @@
 package dev.icerock.moko.maps.mapbox
 
+import cocoapods.Mapbox.MGLAnnotationImage
+import cocoapods.Mapbox.MGLMapView
+import cocoapods.Mapbox.MGLPointAnnotation
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.maps.Marker
+import platform.QuartzCore.CATransaction
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
-actual class MapboxMarker : Marker {
+actual class MapboxMarker(
+    private val annotation: MapboxAnnotation,
+    private val mapView: MGLMapView
+) : Marker {
     override fun delete() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        mapView.removeAnnotation(annotation = annotation)
     }
 
     override var position: LatLng
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        set(value) {}
+        get() = annotation.coordinate.toLatLng()
+        set(value) {
+            annotation.setCoordinate(coordinate = value.toCoord2D())
+        }
+
     override var rotation: Float
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
         set(value) {}
 
     @ExperimentalTime
     override fun move(position: LatLng, rotation: Float, duration: Duration) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(duration.inSeconds)
+
+        annotation.setCoordinate(coordinate = position.toCoord2D())
+
+        CATransaction.commit()
     }
 }

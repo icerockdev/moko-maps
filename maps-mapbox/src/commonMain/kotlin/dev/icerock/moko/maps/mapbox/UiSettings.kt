@@ -9,6 +9,6 @@ data class UiSettings(
     val myLocationEnabled: Boolean = false,
     val scrollGesturesEnabled: Boolean = true,
     val zoomGesturesEnabled: Boolean = true,
-    val tiltGesturesEnabled: Boolean = true,
+    val pitchGesturesEnabled: Boolean = true,
     val rotateGesturesEnabled: Boolean = true
 )

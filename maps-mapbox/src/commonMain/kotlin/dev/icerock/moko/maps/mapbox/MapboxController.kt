@@ -11,5 +11,5 @@ expect class MapboxController : MapController {
 
     fun writeUiSettings(settings: UiSettings)
 
-    var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)?
+    var onStartScrollCallback: ((isUserGesture: Boolean) -> Unit)?
 }

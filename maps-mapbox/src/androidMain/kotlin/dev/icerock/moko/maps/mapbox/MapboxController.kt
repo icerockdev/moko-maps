@@ -10,12 +10,11 @@ actual class MapboxController : MapController {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    actual fun writeUiSettings(settings: UiSettings) {
-    }
 
-    actual var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        set(value) {}
+
+    actual fun writeUiSettings(settings: UiSettings) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override suspend fun addMarker(
         image: ImageResource,
@@ -73,5 +72,9 @@ actual class MapboxController : MapController {
     override fun showMyLocation(zoom: Float) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    actual var onStartScrollCallback: ((isUserGesture: Boolean) -> Unit)?
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        set(value) {}
 
 }
