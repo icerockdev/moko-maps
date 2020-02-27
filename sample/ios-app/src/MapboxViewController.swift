@@ -1,15 +1,13 @@
 /*
-* Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
+* Copyright 2010 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
 */
 
-import UIKit
-import MultiPlatformLibrary
 import Mapbox
+import MultiPlatformLibrary
+import UIKit
 
-class TestViewController: UIViewController, MGLMapViewDelegate {
-    @IBOutlet var textLabel: UILabel!
-    
-    private var viewModel: TrackerViewModel!
+class MapboxViewController: UIViewController {
+    private var viewModel: MapboxViewModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,7 +15,7 @@ class TestViewController: UIViewController, MGLMapViewDelegate {
         let mapView = MGLMapView(frame: .zero)
         view = mapView
         
-        viewModel = TrackerViewModel(
+        viewModel = MapboxViewModel(
             locationTracker: LocationTracker(
                 permissionsController: PermissionsController(),
                 accuracy: kCLLocationAccuracyBest
@@ -28,5 +26,9 @@ class TestViewController: UIViewController, MGLMapViewDelegate {
         )
         
         viewModel.start()
+    }
+    
+    deinit {
+        viewModel.onCleared()
     }
 }

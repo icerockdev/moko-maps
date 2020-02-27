@@ -9,7 +9,7 @@ PODS:
     - GoogleMaps (= 3.7.0)
 
 DEPENDENCIES:
-  - Mapbox-iOS-SDK
+  - Mapbox-iOS-SDK (= 5.5.0)
   - MultiPlatformLibrary (from `../mpp-library`)
 
 SPEC REPOS:
@@ -26,6 +26,6 @@ SPEC CHECKSUMS:
   Mapbox-iOS-SDK: 7fa66a27e586acb14c7f32ec5a487343e3994451
   MultiPlatformLibrary: 0ad607f1ba8fc2e846d6b89936e5bbfb7e14bd17
 
-PODFILE CHECKSUM: 43703b5e33eee1fe2b6fb8a2bf7c1037d240e31d
+PODFILE CHECKSUM: 7999c2f3b87e560beae472a0c73261cd5eda895e
 
 COCOAPODS: 1.8.4

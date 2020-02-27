@@ -8,7 +8,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.SupportMapFragment
 import com.icerockdev.app.databinding.ActivityMainBinding
-import com.icerockdev.library.TrackerViewModel
+import com.icerockdev.library.MapboxViewModel
 import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.maps.google.GoogleMapController
 import dev.icerock.moko.mvvm.MvvmActivity
@@ -16,14 +16,14 @@ import dev.icerock.moko.mvvm.createViewModelFactory
 import dev.icerock.moko.permissions.PermissionsController
 
 
-class MainActivity : MvvmActivity<ActivityMainBinding, TrackerViewModel>() {
+class MainActivity : MvvmActivity<ActivityMainBinding, MapboxViewModel>() {
     override val layoutId: Int = R.layout.activity_main
     override val viewModelVariableId: Int = BR.viewModel
-    override val viewModelClass: Class<TrackerViewModel> = TrackerViewModel::class.java
+    override val viewModelClass: Class<MapboxViewModel> = MapboxViewModel::class.java
 
     override fun viewModelFactory(): ViewModelProvider.Factory {
         return createViewModelFactory {
-            TrackerViewModel(
+            MapboxViewModel(
                 locationTracker = LocationTracker(
                     permissionsController = PermissionsController(
                         applicationContext = applicationContext

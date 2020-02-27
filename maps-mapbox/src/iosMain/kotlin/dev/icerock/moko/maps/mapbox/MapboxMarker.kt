@@ -1,8 +1,10 @@
+/*
+ * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 package dev.icerock.moko.maps.mapbox
 
-import cocoapods.Mapbox.MGLAnnotationImage
 import cocoapods.Mapbox.MGLMapView
-import cocoapods.Mapbox.MGLPointAnnotation
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.maps.Marker
 import platform.QuartzCore.CATransaction

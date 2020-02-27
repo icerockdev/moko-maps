@@ -1,12 +1,30 @@
+/*
+ * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 package dev.icerock.moko.maps.mapbox
 
-import cocoapods.Mapbox.*
+import cocoapods.Mapbox.MGLAnnotationImage
+import cocoapods.Mapbox.MGLAnnotationProtocol
+import cocoapods.Mapbox.MGLCameraChangeReason
+import cocoapods.Mapbox.MGLCameraChangeReasonGesturePan
+import cocoapods.Mapbox.MGLCameraChangeReasonGesturePinch
+import cocoapods.Mapbox.MGLCameraChangeReasonGestureZoomIn
+import cocoapods.Mapbox.MGLCameraChangeReasonGestureZoomOut
+import cocoapods.Mapbox.MGLMapView
+import cocoapods.Mapbox.MGLMapViewDelegateProtocol
+import cocoapods.Mapbox.MGLOrnamentVisibility
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
-import dev.icerock.moko.maps.*
+import dev.icerock.moko.maps.MapAddress
+import dev.icerock.moko.maps.MapController
+import dev.icerock.moko.maps.MapElement
+import dev.icerock.moko.maps.Marker
+import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
 import platform.CoreLocation.CLLocation
 import platform.CoreLocation.CLLocationManager
+import platform.Foundation.NSURL
 import platform.darwin.NSObject
 import kotlin.native.ref.WeakReference
 
@@ -119,6 +137,10 @@ actual class MapboxController(
         mapView.addAnnotation(annotation)
 
         return MapboxMarker(annotation = annotation, mapView = mapView)
+    }
+
+    actual fun setStyleUrl(styleUrl: String) {
+        mapView.styleURL = NSURL(string = styleUrl)
     }
 
     // TODO: Need implementation

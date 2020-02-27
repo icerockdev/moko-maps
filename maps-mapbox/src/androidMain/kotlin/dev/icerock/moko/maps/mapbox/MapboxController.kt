@@ -1,8 +1,16 @@
+/*
+ * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 package dev.icerock.moko.maps.mapbox
 
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
-import dev.icerock.moko.maps.*
+import dev.icerock.moko.maps.MapAddress
+import dev.icerock.moko.maps.MapController
+import dev.icerock.moko.maps.MapElement
+import dev.icerock.moko.maps.Marker
+import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
 
 actual class MapboxController : MapController {
@@ -74,5 +82,9 @@ actual class MapboxController : MapController {
     actual var onStartScrollCallback: ((isUserGesture: Boolean) -> Unit)?
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
         set(value) {}
+
+    actual fun setStyleUrl(styleUrl: String) {
+
+    }
 
 }
