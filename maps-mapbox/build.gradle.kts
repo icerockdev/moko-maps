@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
 plugins {
@@ -31,12 +31,6 @@ dependencies {
     mppLibrary(Deps.Libs.MultiPlatform.mokoMaps)
     mppLibrary(Deps.Libs.MultiPlatform.ktorClient)
     mppLibrary(Deps.Libs.MultiPlatform.serialization)
-
-    androidLibrary(Deps.Libs.Android.appCompat)
-    androidLibrary(Deps.Libs.Android.lifecycle)
-    androidLibrary(Deps.Libs.Android.playServicesLocation)
-    androidLibrary(Deps.Libs.Android.playServicesMaps)
-    androidLibrary(Deps.Libs.Android.googleMapsServices)
 }
 
 publishing {
@@ -53,15 +47,12 @@ publishing {
 kotlin {
     targets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().forEach { target ->
         target.compilations.getByName("main") {
-            val googleMaps by cinterops.creating {
-                defFile(project.file("src/iosMain/def/GoogleMaps.def"))
+            val mapBox by cinterops.creating {
+                defFile(project.file("src/iosMain/def/MapBox.def"))
 
                 val frameworks = listOf(
-                    "Base",
-                    "Maps"
-                ).map { frameworkPath ->
-                    project.file("../sample/ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks")
-                }
+                    project.file("../sample/ios-app/Pods/Mapbox-iOS-SDK/dynamic")
+                )
 
                 val frameworksOpts = frameworks.map { "-F${it.path}" }
                 compilerOpts(*frameworksOpts.toTypedArray())

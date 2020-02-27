@@ -12,10 +12,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        
         // TODO: Replace with your API Key from https://developers.google.com/maps/documentation/ios-sdk/
         GMSServices.provideAPIKey("YOUR-API-KEY")
         
+        // For Mapbox add key "MGLMapboxAccessToken" in Info.plist
         return true
     }
 }

@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.icerockdev.library.TrackerViewModel" />
+            type="com.icerockdev.library.MapboxViewModel" />
     </data>
 
     <FrameLayout
