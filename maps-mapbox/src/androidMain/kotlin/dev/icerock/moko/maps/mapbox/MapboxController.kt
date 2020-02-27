@@ -10,8 +10,6 @@ actual class MapboxController : MapController {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-
-
     actual fun writeUiSettings(settings: UiSettings) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

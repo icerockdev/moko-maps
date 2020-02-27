@@ -13,6 +13,7 @@ actual class MapboxMarker(
     private val annotation: MapboxAnnotation,
     private val mapView: MGLMapView
 ) : Marker {
+
     override fun delete() {
         mapView.removeAnnotation(annotation = annotation)
     }
@@ -23,6 +24,7 @@ actual class MapboxMarker(
             annotation.setCoordinate(coordinate = value.toCoord2D())
         }
 
+    // TODO: Need implementation
     override var rotation: Float
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
         set(value) {}

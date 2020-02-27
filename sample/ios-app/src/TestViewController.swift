@@ -5,7 +5,7 @@
 import UIKit
 import MultiPlatformLibrary
 import Mapbox
-import GoogleMaps
+
 class TestViewController: UIViewController, MGLMapViewDelegate {
     @IBOutlet var textLabel: UILabel!
     
@@ -13,6 +13,7 @@ class TestViewController: UIViewController, MGLMapViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         let mapView = MGLMapView(frame: .zero)
         view = mapView
         

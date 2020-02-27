@@ -5,14 +5,8 @@ import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.maps.*
 import dev.icerock.moko.resources.ImageResource
-import kotlinx.cinterop.readValue
-import platform.CoreGraphics.CGRectZero
 import platform.CoreLocation.CLLocation
 import platform.CoreLocation.CLLocationManager
-import platform.UIKit.UIImage
-import platform.UIKit.UIImageView
-import platform.UIKit.UIView
-import platform.UIKit.addSubview
 import platform.darwin.NSObject
 import kotlin.native.ref.WeakReference
 
@@ -49,7 +43,7 @@ actual class MapboxController(
                 myLocationEnabled = showsUserLocation,
                 scrollGesturesEnabled = scrollEnabled,
                 zoomGesturesEnabled = zoomEnabled,
-                pitchGesturesEnabled = allowsTilting,
+                tiltGesturesEnabled = pitchEnabled,
                 rotateGesturesEnabled = rotateEnabled
             )
         }
@@ -66,7 +60,7 @@ actual class MapboxController(
             scrollEnabled = settings.scrollGesturesEnabled
             rotateEnabled = settings.rotateGesturesEnabled
             zoomEnabled = settings.zoomGesturesEnabled
-            pitchEnabled = settings.pitchGesturesEnabled
+            pitchEnabled = settings.tiltGesturesEnabled
         }
     }
 
@@ -111,6 +105,7 @@ actual class MapboxController(
         showLocation(latLng = location, zoom = zoom, animation = true)
     }
 
+    // TODO: Need implementation for rotation
     override suspend fun addMarker(
         image: ImageResource,
         latLng: LatLng,
@@ -119,13 +114,14 @@ actual class MapboxController(
     ): Marker {
         val annotation = MapboxAnnotation()
         annotation.setCoordinate(coordinate = latLng.toCoord2D())
-        annotation.onClickCallback = onClick
+        annotation.onClick = onClick
         annotation.image = image.toUIImage()
         mapView.addAnnotation(annotation)
 
         return MapboxMarker(annotation = annotation, mapView = mapView)
     }
 
+    // TODO: Need implementation
     override suspend fun buildRoute(
         points: List<LatLng>,
         lineColor: Color,
@@ -134,10 +130,12 @@ actual class MapboxController(
         TODO()
     }
 
+    // TODO: Need implementation
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
         TODO()
     }
 
+    // TODO: Need implementation
     override suspend fun getSimilarNearAddresses(
         text: String?,
         maxResults: Int,
@@ -171,12 +169,12 @@ actual class MapboxController(
         }
 
         override fun mapView(mapView: MGLMapView, imageForAnnotation: MGLAnnotationProtocol): MGLAnnotationImage? {
-            val customAnnotation = imageForAnnotation as MapboxAnnotation
-            val image = customAnnotation.image
+            val annotation = imageForAnnotation as MapboxAnnotation
+            val image = annotation.image
             return if (image != null) {
                 MGLAnnotationImage.annotationImageWithImage(
                     image = image,
-                    reuseIdentifier = "${customAnnotation.coordinate.toLatLng()}"
+                    reuseIdentifier = image.toString()
                 )
             } else {
                 null
@@ -184,11 +182,9 @@ actual class MapboxController(
         }
 
         override fun mapView(mapView: MGLMapView, didSelectAnnotation: MGLAnnotationProtocol) {
-            (didSelectAnnotation as MapboxAnnotation).onClickCallback?.invoke()
+            (didSelectAnnotation as MapboxAnnotation).onClick?.invoke()
         }
 
     }
-
-
 }
 
