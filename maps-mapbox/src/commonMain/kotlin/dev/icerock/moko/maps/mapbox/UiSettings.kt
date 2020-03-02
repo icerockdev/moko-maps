@@ -10,5 +10,7 @@ data class UiSettings(
     val scrollGesturesEnabled: Boolean = true,
     val zoomGesturesEnabled: Boolean = true,
     val tiltGesturesEnabled: Boolean = true,
-    val rotateGesturesEnabled: Boolean = true
+    val rotateGesturesEnabled: Boolean = true,
+    val logoIsVisible: Boolean = true,
+    val infoButtonIsVisible: Boolean = true
 )

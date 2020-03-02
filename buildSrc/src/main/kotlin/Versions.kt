@@ -20,6 +20,8 @@ object Versions {
             const val playServicesLocation = "16.0.0"
             const val playServicesMaps = "16.1.0"
             const val googleMapsServices = "0.2.11"
+            const val mapbox = "8.6.2"
+            const val mapboxAnnotation = "0.7.0"
         }
 
         object MultiPlatform {

@@ -4,6 +4,22 @@
 
 package dev.icerock.moko.maps.mapbox
 
+import android.content.Context
+import android.location.Geocoder
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.MapboxMap.OnCameraMoveStartedListener.REASON_API_GESTURE
+import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.mapboxsdk.utils.BitmapUtils
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.maps.MapAddress
@@ -12,14 +28,97 @@ import dev.icerock.moko.maps.MapElement
 import dev.icerock.moko.maps.Marker
 import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 actual class MapboxController : MapController {
-    actual suspend fun readUiSettings(): UiSettings {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private val contextHolder = LifecycleHolder<Context>()
+    private val mapHolder = LifecycleHolder<MapboxMap>()
+    private val mapViewHolder = LifecycleHolder<MapView>()
+    private val styleHolder = LifecycleHolder<Style>()
+    private val geoCoderHolder = LifecycleHolder<Geocoder>()
+    private val locationHolder = LifecycleHolder<FusedLocationProviderClient>()
+
+    actual var onStartScrollCallback: ((isUserGesture: Boolean) -> Unit)? = null
+
+    fun bind(
+        lifecycle: Lifecycle,
+        context: Context,
+        mapboxMap: MapboxMap,
+        mapView: MapView,
+        style: Style
+    ) {
+        contextHolder.set(context)
+        mapHolder.set(mapboxMap)
+        mapViewHolder.set(mapView)
+        styleHolder.set(style)
+        locationHolder.set(LocationServices.getFusedLocationProviderClient(context))
+        geoCoderHolder.set(Geocoder(context, Locale.getDefault()))
+
+        lifecycle.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            fun onDestroy() {
+                contextHolder.clear()
+                mapHolder.clear()
+                mapViewHolder.clear()
+                styleHolder.clear()
+                locationHolder.clear()
+                geoCoderHolder.clear()
+            }
+        })
+
+        mapboxMap.addOnCameraMoveStartedListener { reason ->
+            onStartScrollCallback?.invoke(reason == REASON_API_GESTURE)
+        }
     }
 
-    actual fun writeUiSettings(settings: UiSettings) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    actual suspend fun readUiSettings(): UiSettings {
+        val mapboxMap = mapHolder.get()
+        val settings = mapboxMap.uiSettings
+
+        mapHolder.get().locationComponent.activateLocationComponent(
+            LocationComponentActivationOptions.builder(
+                contextHolder.get(),
+                styleHolder.get()
+            ).build()
+        )
+
+        return UiSettings(
+            compassEnabled = settings.isCompassEnabled,
+            myLocationEnabled = mapboxMap.locationComponent.isLocationComponentEnabled,
+            scrollGesturesEnabled = settings.isScrollGesturesEnabled,
+            zoomGesturesEnabled = settings.isZoomGesturesEnabled,
+            tiltGesturesEnabled = settings.isTiltGesturesEnabled,
+            rotateGesturesEnabled = settings.isRotateGesturesEnabled,
+            logoIsVisible = settings.isLogoEnabled,
+            infoButtonIsVisible = settings.isAttributionEnabled
+        )
+    }
+
+    actual suspend fun writeUiSettings(settings: UiSettings) {
+        mapHolder.get().locationComponent.activateLocationComponent(
+            LocationComponentActivationOptions.builder(
+                contextHolder.get(),
+                styleHolder.get()
+            ).build()
+        )
+
+        mapHolder.doWith {
+            with(it.uiSettings) {
+                isCompassEnabled = settings.compassEnabled
+                isScrollGesturesEnabled = settings.scrollGesturesEnabled
+                isZoomGesturesEnabled = settings.zoomGesturesEnabled
+                isTiltGesturesEnabled = settings.tiltGesturesEnabled
+                isRotateGesturesEnabled = settings.rotateGesturesEnabled
+                isLogoEnabled = settings.logoIsVisible
+                isAttributionEnabled = settings.infoButtonIsVisible
+            }
+
+            it.locationComponent.isLocationComponentEnabled = settings.myLocationEnabled
+        }
     }
 
     override suspend fun addMarker(
@@ -28,7 +127,43 @@ actual class MapboxController : MapController {
         rotation: Float,
         onClick: (() -> Unit)?
     ): Marker {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val symbolManager = SymbolManager(
+            mapViewHolder.get(),
+            mapHolder.get(),
+            styleHolder.get()
+        )
+        val style = styleHolder.get()
+
+        val imageId = image.drawableResId.toString()
+        if (style.getImage(imageId) == null) {
+            val imageDrawable = BitmapUtils.getDrawableFromRes(
+                contextHolder.get(),
+                image.drawableResId
+            ) ?: throw Exception("Drawable for marker is null")
+            style.addImage(imageId, imageDrawable)
+        }
+
+        val symbol = symbolManager.create(SymbolOptions().apply {
+            withLatLng(latLng.toAndroidLatLng())
+            withIconImage(imageId)
+            withIconRotate(rotation)
+        })
+
+        symbolManager.addClickListener {
+            if (it.id == symbol.id) {
+                onClick?.invoke()
+            }
+        }
+
+        return MapboxMarker(
+            symbol = symbol,
+            updateHandler = {
+                symbolManager.update(it)
+            },
+            removeHandler = {
+                symbolManager.delete(it)
+            }
+        )
     }
 
     override suspend fun buildRoute(
@@ -40,15 +175,25 @@ actual class MapboxController : MapController {
     }
 
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val geoCoder = geoCoderHolder.get()
+
+        val locations = withContext(Dispatchers.Default) {
+            @Suppress("BlockingMethodInNonBlockingContext")
+            geoCoder.getFromLocation(latitude, longitude, SINGLE_RESULT_ADDRESS)
+        }
+
+        return locations.getOrNull(0)
+            ?.getAddressLine(0)
     }
 
     override suspend fun getCurrentZoom(): Float {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return mapHolder.get().prefetchZoomDelta.toFloat()
     }
 
     override suspend fun getMapCenterLatLng(): LatLng {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return mapHolder.get().cameraPosition.target.let {
+            LatLng(it.latitude, it.longitude)
+        }
     }
 
     override suspend fun getSimilarNearAddresses(
@@ -56,35 +201,99 @@ actual class MapboxController : MapController {
         maxResults: Int,
         maxRadius: Int
     ): List<MapAddress> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("need get nearest addresses")
     }
 
     override suspend fun getZoomConfig(): ZoomConfig {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val map = mapHolder.get()
+        return ZoomConfig(
+            min = map.minZoomLevel.toFloat(),
+            max = map.maxZoomLevel.toFloat()
+        )
     }
 
     override suspend fun setCurrentZoom(zoom: Float) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val update = CameraUpdateFactory.zoomTo(zoom.toDouble())
+        mapHolder.get().moveCamera(update)
     }
 
     override suspend fun setZoomConfig(config: ZoomConfig) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        with(mapHolder.get()) {
+            config.min?.also { setMinZoomPreference(it.toDouble()) }
+            config.max?.also { setMaxZoomPreference(it.toDouble()) }
+        }
     }
 
     override fun showLocation(latLng: LatLng, zoom: Float, animation: Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val factory = CameraUpdateFactory.newLatLngZoom(
+            com.mapbox.mapboxsdk.geometry.LatLng(latLng.latitude, latLng.longitude),
+            zoom.toDouble()
+        )
+
+        mapHolder.doWith { map ->
+            when (animation) {
+                true -> map.animateCamera(factory)
+                false -> map.moveCamera(factory)
+            }
+        }
     }
 
     override fun showMyLocation(zoom: Float) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        locationHolder.doWith { client ->
+            client.lastLocation.addOnSuccessListener { location ->
+                if (location == null) return@addOnSuccessListener
 
-    actual var onStartScrollCallback: ((isUserGesture: Boolean) -> Unit)?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        set(value) {}
+                showLocation(
+                    latLng = LatLng(
+                        latitude = location.latitude,
+                        longitude = location.longitude
+                    ),
+                    zoom = zoom
+                )
+            }
+        }
+    }
 
     actual fun setStyleUrl(styleUrl: String) {
 
     }
 
+    class LifecycleHolder<T> {
+        private var data: T? = null
+        private val actions = mutableListOf<(T) -> Unit>()
+
+        fun set(data: T) {
+            this.data = data
+
+            with(actions) {
+                forEach { it.invoke(data) }
+                clear()
+            }
+        }
+
+        fun clear() {
+            this.data = null
+        }
+
+        fun doWith(block: (T) -> Unit) {
+            val map = data
+            if (map == null) {
+                actions.add(block)
+                return
+            }
+
+            block(map)
+        }
+
+        suspend fun get(): T = suspendCoroutine { continuation ->
+            doWith { continuation.resume(it) }
+        }
+    }
+
+    private companion object {
+        const val SINGLE_RESULT_ADDRESS = 1
+        const val BOUNDS_PADDING = 250
+        const val DIVIDER_BOUND_LATITUDE_PADDING = 2
+        const val WIDTH_POLYLINE = 12.0f
+    }
 }

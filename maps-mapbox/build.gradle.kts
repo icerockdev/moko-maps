@@ -31,6 +31,12 @@ dependencies {
     mppLibrary(Deps.Libs.MultiPlatform.mokoMaps)
     mppLibrary(Deps.Libs.MultiPlatform.ktorClient)
     mppLibrary(Deps.Libs.MultiPlatform.serialization)
+
+    androidLibrary(Deps.Libs.Android.appCompat)
+    androidLibrary(Deps.Libs.Android.lifecycle)
+    androidLibrary(Deps.Libs.Android.playServicesLocation)
+    androidLibrary(Deps.Libs.Android.mapbox)
+    androidLibrary(Deps.Libs.Android.mapboxAnnotation)
 }
 
 publishing {

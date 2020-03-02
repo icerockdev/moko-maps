@@ -25,6 +25,7 @@ import dev.icerock.moko.resources.ImageResource
 import platform.CoreLocation.CLLocation
 import platform.CoreLocation.CLLocationManager
 import platform.Foundation.NSURL
+import platform.UIKit.hidden
 import platform.darwin.NSObject
 import kotlin.native.ref.WeakReference
 
@@ -62,12 +63,13 @@ actual class MapboxController(
                 scrollGesturesEnabled = scrollEnabled,
                 zoomGesturesEnabled = zoomEnabled,
                 tiltGesturesEnabled = pitchEnabled,
-                rotateGesturesEnabled = rotateEnabled
+                rotateGesturesEnabled = rotateEnabled,
+                logoIsVisible = logoView.hidden.not(),
+                infoButtonIsVisible = attributionButton.hidden.not()
             )
         }
     }
-
-    actual fun writeUiSettings(settings: UiSettings) {
+    actual suspend fun writeUiSettings(settings: UiSettings) {
         with(mapView) {
             compassView.compassVisibility = if (settings.compassEnabled) {
                 MGLOrnamentVisibility.MGLOrnamentVisibilityAdaptive
@@ -79,6 +81,8 @@ actual class MapboxController(
             rotateEnabled = settings.rotateGesturesEnabled
             zoomEnabled = settings.zoomGesturesEnabled
             pitchEnabled = settings.tiltGesturesEnabled
+            logoView.hidden = settings.logoIsVisible.not()
+            attributionButton.hidden = settings.infoButtonIsVisible.not()
         }
     }
 

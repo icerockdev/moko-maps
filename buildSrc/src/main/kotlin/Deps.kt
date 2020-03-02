@@ -35,6 +35,12 @@ object Deps {
             val googleMapsServices = AndroidLibrary(
                 name = "com.google.maps:google-maps-services:${Versions.Libs.Android.googleMapsServices}"
             )
+            val mapbox = AndroidLibrary(
+                name = "com.mapbox.mapboxsdk:mapbox-android-sdk:${Versions.Libs.Android.mapbox}"
+            )
+            val mapboxAnnotation = AndroidLibrary(
+                name = "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:${Versions.Libs.Android.mapboxAnnotation}"
+            )
         }
 
         object MultiPlatform {

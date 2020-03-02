@@ -11,25 +11,32 @@ import dev.icerock.moko.maps.mapbox.MapboxController
 import dev.icerock.moko.maps.mapbox.UiSettings
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.launch
+import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 
 class MapboxViewModel(
     val locationTracker: LocationTracker,
     val mapsController: MapboxController
 ) : ViewModel() {
 
+    @UseExperimental(ExperimentalTime::class)
     fun start() {
-        mapsController.writeUiSettings(
-            UiSettings(
-                compassEnabled = false,
-                myLocationEnabled = true,
-                scrollGesturesEnabled = true,
-                zoomGesturesEnabled = true,
-                tiltGesturesEnabled = false,
-                rotateGesturesEnabled = false
-            )
-        )
-
         viewModelScope.launch {
+            locationTracker.startTracking()
+
+            mapsController.writeUiSettings(
+                UiSettings(
+                    compassEnabled = false,
+                    myLocationEnabled = false,
+                    scrollGesturesEnabled = true,
+                    zoomGesturesEnabled = true,
+                    tiltGesturesEnabled = false,
+                    rotateGesturesEnabled = false,
+                    infoButtonIsVisible = false,
+                    logoIsVisible = false
+                )
+            )
+
             val config = mapsController.getZoomConfig()
             println("config: $config")
 
@@ -39,7 +46,8 @@ class MapboxViewModel(
                     max = 10f
                 )
             )
-            mapsController.setCurrentZoom(zoom = 3f)
+            mapsController.setCurrentZoom(zoom = 10f)
+            mapsController.showMyLocation(3f)
         }
 
         mapsController.onStartScrollCallback = { isUserGesture ->
@@ -61,12 +69,31 @@ class MapboxViewModel(
             val marker2 = mapsController.addMarker(
                 image = MR.images.marker,
                 latLng = LatLng(
-                    latitude = 55.040853,
-                    longitude = 82.920154
+                    latitude = 55.940853,
+                    longitude = 82.10154
                 ),
                 rotation = 0.0f
             ) {
                 println("marker 2 pressed!")
+                marker1.move(
+                    position = LatLng(
+                        latitude = 56.0,
+                        longitude = 83.0
+                    ),
+                    duration = 5.seconds
+                )
+            }
+
+            val marker3 = mapsController.addMarker(
+                image = MR.images.marker,
+                latLng = LatLng(
+                    latitude = 55.0,
+                    longitude = 82.0
+                ),
+                rotation = 0.0f
+            ) {
+                println("marker 3 pressed!")
+                marker2.delete()
             }
         }
     }

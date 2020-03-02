@@ -6,27 +6,12 @@ package dev.icerock.moko.maps.mapbox
 
 import dev.icerock.moko.geo.LatLng
 
-//internal fun LatLng.toAndroidLatLng() = com.google.android.gms.maps.model.LatLng(
-//    latitude,
-//    longitude
-//)
-//
-//internal fun LatLng.toMapsLatLng() = com.google.maps.model.LatLng(
-//    latitude,
-//    longitude
-//)
+internal fun LatLng.toAndroidLatLng() = com.mapbox.mapboxsdk.geometry.LatLng(
+    latitude,
+    longitude
+)
 
-//internal fun com.google.maps.model.LatLng.toAndroidLatLng() = com.google.android.gms.maps.model.LatLng(
-//    lat,
-//    lng
-//)
-//
-//internal fun com.google.maps.model.LatLng.toGeoLatLng() = LatLng(
-//    latitude = lat,
-//    longitude = lng
-//)
-//
-//internal fun com.google.android.gms.maps.model.LatLng.toGeoLatLng() = LatLng(
-//    latitude = latitude,
-//    longitude = longitude
-//)
+internal fun com.mapbox.mapboxsdk.geometry.LatLng.toGeoLatLng() = LatLng(
+    latitude = latitude,
+    longitude = longitude
+)

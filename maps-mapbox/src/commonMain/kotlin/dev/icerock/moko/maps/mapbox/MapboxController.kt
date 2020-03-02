@@ -9,7 +9,7 @@ import dev.icerock.moko.maps.MapController
 expect class MapboxController : MapController {
     suspend fun readUiSettings(): UiSettings
 
-    fun writeUiSettings(settings: UiSettings)
+    suspend fun writeUiSettings(settings: UiSettings)
 
     fun setStyleUrl(styleUrl: String)
 

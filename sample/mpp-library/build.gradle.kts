@@ -33,6 +33,7 @@ dependencies {
 
     androidLibrary(Deps.Libs.Android.lifecycle)
     androidLibrary(Deps.Libs.Android.playServicesLocation)
+    androidLibrary(Deps.Libs.Android.mapbox)
 
     libs.forEach { mppLibrary(it) }
 }

@@ -6,11 +6,13 @@ package com.icerockdev.app
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.maps.SupportMapFragment
 import com.icerockdev.app.databinding.ActivityMainBinding
 import com.icerockdev.library.MapboxViewModel
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import dev.icerock.moko.geo.LocationTracker
-import dev.icerock.moko.maps.google.GoogleMapController
+import dev.icerock.moko.maps.mapbox.MapboxController
 import dev.icerock.moko.mvvm.MvvmActivity
 import dev.icerock.moko.mvvm.createViewModelFactory
 import dev.icerock.moko.permissions.PermissionsController
@@ -29,26 +31,62 @@ class MainActivity : MvvmActivity<ActivityMainBinding, MapboxViewModel>() {
                         applicationContext = applicationContext
                     )
                 ),
-                mapsController = GoogleMapController(
-                    // TODO: Replace with your API Key from https://developers.google.com/maps/documentation/ios-sdk/
-                    geoApiKey = "YOUR-API-KEY"
-                )
+                mapsController = MapboxController()
             ).apply { start() }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Mapbox.getInstance(applicationContext, "YOUR-ACCESS-TOKEN")
         super.onCreate(savedInstanceState)
-
         viewModel.locationTracker.bind(lifecycle, this, supportFragmentManager)
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync {
-            viewModel.mapsController.bind(
-                lifecycle = lifecycle,
-                googleMap = it,
-                context = this
-            )
+        binding.map.onCreate(savedInstanceState)
+        binding.map.getMapAsync { mapboxMap ->
+            mapboxMap.setStyle(Style.MAPBOX_STREETS) {
+                viewModel.mapsController.bind(
+                    lifecycle = lifecycle,
+                    context = this,
+                    mapboxMap = mapboxMap,
+                    mapView = binding.map,
+                    style = it
+                )
+            }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        binding.map.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.map.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.map.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.map.onStop()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.map.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        binding.map.onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.map.onDestroy()
     }
 }
