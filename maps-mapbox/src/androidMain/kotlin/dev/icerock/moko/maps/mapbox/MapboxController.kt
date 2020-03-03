@@ -192,7 +192,7 @@ actual class MapboxController : MapController {
     }
 
     override suspend fun getCurrentZoom(): Float {
-        return mapHolder.get().prefetchZoomDelta.toFloat()
+        return mapHolder.get().cameraPosition.zoom.toFloat()
     }
 
     override suspend fun getMapCenterLatLng(): LatLng {
