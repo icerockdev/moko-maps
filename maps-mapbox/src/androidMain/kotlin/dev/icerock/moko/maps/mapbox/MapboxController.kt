@@ -92,7 +92,7 @@ actual class MapboxController : MapController {
         val mapboxMap = mapHolder.get()
         val settings = mapboxMap.uiSettings
 
-        mapHolder.get().locationComponent.activateLocationComponent(
+        mapboxMap.locationComponent.activateLocationComponent(
             LocationComponentActivationOptions.builder(
                 contextHolder.get(),
                 styleHolder.get()
@@ -231,7 +231,7 @@ actual class MapboxController : MapController {
 
     override fun showLocation(latLng: LatLng, zoom: Float, animation: Boolean) {
         val factory = CameraUpdateFactory.newLatLngZoom(
-            com.mapbox.mapboxsdk.geometry.LatLng(latLng.latitude, latLng.longitude),
+            latLng.toAndroidLatLng(),
             zoom.toDouble()
         )
 
