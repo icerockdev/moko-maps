@@ -42,6 +42,9 @@ actual class MapboxController : MapController {
     private val geoCoderHolder = LifecycleHolder<Geocoder>()
     private val locationHolder = LifecycleHolder<FusedLocationProviderClient>()
 
+    private lateinit var symbolManager: SymbolManager
+    private val symbolActionMap: MutableMap<Long, (() -> Unit)?> = mutableMapOf()
+
     actual var onStartScrollCallback: ((isUserGesture: Boolean) -> Unit)? = null
 
     fun bind(
@@ -58,6 +61,12 @@ actual class MapboxController : MapController {
         locationHolder.set(LocationServices.getFusedLocationProviderClient(context))
         geoCoderHolder.set(Geocoder(context, Locale.getDefault()))
 
+        symbolManager = SymbolManager(
+            mapView,
+            mapboxMap,
+            style
+        )
+
         lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             fun onDestroy() {
@@ -69,6 +78,10 @@ actual class MapboxController : MapController {
                 geoCoderHolder.clear()
             }
         })
+
+        symbolManager.addClickListener {
+            symbolActionMap[it.id]?.invoke()
+        }
 
         mapboxMap.addOnCameraMoveStartedListener { reason ->
             onStartScrollCallback?.invoke(reason == REASON_API_GESTURE)
@@ -127,11 +140,6 @@ actual class MapboxController : MapController {
         rotation: Float,
         onClick: (() -> Unit)?
     ): Marker {
-        val symbolManager = SymbolManager(
-            mapViewHolder.get(),
-            mapHolder.get(),
-            styleHolder.get()
-        )
         val style = styleHolder.get()
 
         val imageId = image.drawableResId.toString()
@@ -149,11 +157,7 @@ actual class MapboxController : MapController {
             withIconRotate(rotation)
         })
 
-        symbolManager.addClickListener {
-            if (it.id == symbol.id) {
-                onClick?.invoke()
-            }
-        }
+        symbolActionMap[symbol.id] = onClick
 
         return MapboxMarker(
             symbol = symbol,
@@ -161,6 +165,7 @@ actual class MapboxController : MapController {
                 symbolManager.update(it)
             },
             removeHandler = {
+                symbolActionMap.remove(it.id)
                 symbolManager.delete(it)
             }
         )
