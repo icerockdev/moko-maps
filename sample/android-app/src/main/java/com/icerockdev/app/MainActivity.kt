@@ -10,7 +10,6 @@ import com.icerockdev.app.databinding.ActivityMainBinding
 import com.icerockdev.library.MapboxViewModel
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.maps.mapbox.MapboxController
 import dev.icerock.moko.mvvm.MvvmActivity
@@ -37,7 +36,7 @@ class MainActivity : MvvmActivity<ActivityMainBinding, MapboxViewModel>() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Mapbox.getInstance(applicationContext, "YOUR-ACCESS-TOKEN")
+        Mapbox.getInstance(applicationContext, "YOUR-ACCESS-TOKEN") // or in the application class
         super.onCreate(savedInstanceState)
         viewModel.locationTracker.bind(lifecycle, this, supportFragmentManager)
 

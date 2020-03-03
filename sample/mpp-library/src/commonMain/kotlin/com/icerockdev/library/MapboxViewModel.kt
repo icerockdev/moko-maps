@@ -43,11 +43,10 @@ class MapboxViewModel(
             mapsController.setZoomConfig(
                 ZoomConfig(
                     min = null,
-                    max = 10f
+                    max = 12f
                 )
             )
-            mapsController.setCurrentZoom(zoom = 10f)
-            mapsController.showMyLocation(3f)
+            mapsController.showMyLocation(8f)
         }
 
         mapsController.onStartScrollCallback = { isUserGesture ->
@@ -64,6 +63,14 @@ class MapboxViewModel(
                 rotation = 0.0f
             ) {
                 println("marker 1 pressed!")
+                mapsController.showLocation(
+                    latLng = LatLng(
+                        latitude = 55.940853,
+                        longitude = 82.10154
+                    ),
+                    zoom = 8.0f,
+                    animation = true
+                )
             }
 
             val marker2 = mapsController.addMarker(

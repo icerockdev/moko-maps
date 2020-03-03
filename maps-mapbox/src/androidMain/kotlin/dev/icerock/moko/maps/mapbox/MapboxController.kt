@@ -171,7 +171,7 @@ actual class MapboxController : MapController {
         lineColor: Color,
         markersImage: ImageResource?
     ): MapElement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
     }
 
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
@@ -255,7 +255,9 @@ actual class MapboxController : MapController {
     }
 
     actual fun setStyleUrl(styleUrl: String) {
-
+        mapHolder.doWith {
+            it.setStyle(styleUrl)
+        }
     }
 
     class LifecycleHolder<T> {
