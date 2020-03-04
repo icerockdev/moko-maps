@@ -13,11 +13,11 @@ import kotlin.time.ExperimentalTime
 
 actual class MapboxMarker(
     private val annotation: MapboxAnnotation,
-    private val mapView: MGLMapView
+    private val onDeleteCallback: (() -> Unit)?
 ) : Marker {
 
     override fun delete() {
-        mapView.removeAnnotation(annotation = annotation)
+        onDeleteCallback?.invoke()
     }
 
     override var position: LatLng

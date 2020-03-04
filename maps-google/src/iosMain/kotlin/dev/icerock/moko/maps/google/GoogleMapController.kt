@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package dev.icerock.moko.maps.google
@@ -53,7 +53,7 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.native.ref.WeakReference
 
 actual class GoogleMapController(
-    private val mapView: GMSMapView,
+    mapView: GMSMapView,
     private val geoApiKey: String
 ) : MapController {
     private val httpClient = HttpClient {}
@@ -62,11 +62,12 @@ actual class GoogleMapController(
     private val geoCoder = GMSGeocoder()
     private val locationManager = CLLocationManager()
     private val delegate = MapDelegate(this)
+    private val weakMapView = WeakReference(mapView)
 
     actual var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)? = null
 
     init {
-        mapView.delegate = delegate
+        weakMapView.get()?.delegate = delegate
     }
 
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
@@ -162,7 +163,7 @@ actual class GoogleMapController(
     }
 
     private fun getCurrentLocation(): LatLng {
-        val location: CLLocation = mapView.myLocation
+        val location: CLLocation = weakMapView.get()?.myLocation
             ?: locationManager.location
             ?: throw IllegalStateException("can't get location")
 
@@ -178,7 +179,7 @@ actual class GoogleMapController(
         val marker = GMSMarker.markerWithPosition(position = latLng.toCoord2D()).also {
             it.icon = image.toUIImage()
             it.rotation = rotation.toDouble()
-            it.map = mapView
+            it.map = weakMapView.get()
             it.tappable = true
             it.userData = onClick
         }
@@ -228,14 +229,14 @@ actual class GoogleMapController(
 
         routeLine.strokeColor = lineColor.toUIColor()
         routeLine.strokeWidth = 3.0
-        routeLine.map = mapView
+        routeLine.map = weakMapView.get()
 
         val startMarker = route.legs.firstOrNull()?.start_location
             ?.takeIf { markersImage != null }
             ?.let {
                 GMSMarker.markerWithPosition(it.coord2D()).apply {
                     icon = markersImage!!.toUIImage()
-                    map = mapView
+                    map = weakMapView.get()
                 }
             }
 
@@ -244,7 +245,7 @@ actual class GoogleMapController(
             ?.let {
                 GMSMarker.markerWithPosition(it.coord2D()).apply {
                     icon = markersImage!!.toUIImage()
-                    map = mapView
+                    map = weakMapView.get()
                 }
             }
 
@@ -256,19 +257,19 @@ actual class GoogleMapController(
                     val step = firstLeg.steps[it.step_index]
                     GMSMarker.markerWithPosition(step.end_location.coord2D()).apply {
                         icon = markersImage!!.toUIImage()
-                        map = mapView
+                        map = weakMapView.get()
                     }
                 }
             }
 
         if (path != null) {
-            val position = mapView.cameraForBounds(
+            val position = weakMapView.get()?.cameraForBounds(
                 bounds = GMSCoordinateBounds.create(path = path),
                 insets = UIEdgeInsetsZero.readValue()
             )
 
             if (position != null) {
-                mapView.animateToCameraPosition(position)
+                weakMapView.get()?.animateToCameraPosition(position)
             }
         }
 
@@ -281,7 +282,7 @@ actual class GoogleMapController(
     }
 
     override suspend fun getMapCenterLatLng(): LatLng {
-        return mapView.camera.target.toLatLng()
+        return weakMapView.get()?.camera?.target?.toLatLng() ?: LatLng(latitude = 0.0, longitude = 0.0)
     }
 
     override fun showLocation(latLng: LatLng, zoom: Float, animation: Boolean) {
@@ -291,9 +292,9 @@ actual class GoogleMapController(
             zoom = zoom
         )
         if (animation) {
-            mapView.animateToCameraPosition(position)
+            weakMapView.get()?.animateToCameraPosition(position)
         } else {
-            mapView.setCamera(position)
+            weakMapView.get()?.setCamera(position)
         }
     }
 
@@ -304,57 +305,57 @@ actual class GoogleMapController(
             longitude = location.longitude,
             zoom = zoom
         )
-        mapView.animateToCameraPosition(position)
+        weakMapView.get()?.animateToCameraPosition(position)
     }
 
     override suspend fun getCurrentZoom(): Float {
-        return mapView.camera.zoom
+        return weakMapView.get()?.camera?.zoom ?: 0f
     }
 
     override suspend fun setCurrentZoom(zoom: Float) {
-        mapView.animateToZoom(zoom)
+        weakMapView.get()?.animateToZoom(zoom)
     }
 
     override suspend fun getZoomConfig(): ZoomConfig {
         return ZoomConfig(
-            min = mapView.minZoom,
-            max = mapView.maxZoom
+            min = weakMapView.get()?.minZoom,
+            max = weakMapView.get()?.maxZoom
         )
     }
 
     override suspend fun setZoomConfig(config: ZoomConfig) {
-        mapView.setMinZoom(
+        weakMapView.get()?.setMinZoom(
             minZoom = config.min ?: kGMSMinZoomLevel,
             maxZoom = config.max ?: kGMSMaxZoomLevel
         )
     }
 
     actual suspend fun readUiSettings(): UiSettings {
-        val settings = mapView.settings
+        val settings = weakMapView.get()?.settings
         return UiSettings(
-            compassEnabled = settings.compassButton,
-            myLocationButtonEnabled = settings.myLocationButton,
-            indoorLevelPickerEnabled = settings.indoorPicker,
-            scrollGesturesEnabled = settings.scrollGestures,
-            zoomGesturesEnabled = settings.zoomGestures,
-            tiltGesturesEnabled = settings.tiltGestures,
-            rotateGesturesEnabled = settings.rotateGestures,
-            scrollGesturesDuringRotateOrZoomEnabled = settings.allowScrollGesturesDuringRotateOrZoom
+            compassEnabled = settings?.compassButton ?: false,
+            myLocationButtonEnabled = settings?.myLocationButton ?: false,
+            indoorLevelPickerEnabled = settings?.indoorPicker ?: false,
+            scrollGesturesEnabled = settings?.scrollGestures ?: false,
+            zoomGesturesEnabled = settings?.zoomGestures ?: false,
+            tiltGesturesEnabled = settings?.tiltGestures ?: false,
+            rotateGesturesEnabled = settings?.rotateGestures ?: false,
+            scrollGesturesDuringRotateOrZoomEnabled = settings?.allowScrollGesturesDuringRotateOrZoom ?: false
         )
     }
 
     actual fun writeUiSettings(settings: UiSettings) {
-        with(mapView.settings) {
-            compassButton = settings.compassEnabled
-            myLocationButton = settings.myLocationButtonEnabled
-            indoorPicker = settings.indoorLevelPickerEnabled
-            scrollGestures = settings.scrollGesturesEnabled
-            zoomGestures = settings.zoomGesturesEnabled
-            tiltGestures = settings.tiltGesturesEnabled
-            rotateGestures = settings.rotateGesturesEnabled
-            allowScrollGesturesDuringRotateOrZoom = settings.scrollGesturesDuringRotateOrZoomEnabled
+        weakMapView.get()?.settings?.let {
+            it.compassButton = settings.compassEnabled
+            it.myLocationButton = settings.myLocationButtonEnabled
+            it.indoorPicker = settings.indoorLevelPickerEnabled
+            it.scrollGestures = settings.scrollGesturesEnabled
+            it.zoomGestures = settings.zoomGesturesEnabled
+            it.tiltGestures = settings.tiltGesturesEnabled
+            it.rotateGestures = settings.rotateGesturesEnabled
+            it.allowScrollGesturesDuringRotateOrZoom = settings.scrollGesturesDuringRotateOrZoomEnabled
         }
-        mapView.myLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
+        weakMapView.get()?.myLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
     }
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -380,4 +381,6 @@ actual class GoogleMapController(
             mapController.get()?.onCameraScrollStateChanged?.invoke(false, false)
         }
     }
+
 }
+
