@@ -30,7 +30,7 @@ import platform.darwin.NSObject
 import kotlin.native.ref.WeakReference
 
 actual class MapboxController(
-    private val mapView: MGLMapView
+    mapView: MGLMapView
 ) : MapController {
 
     private val locationManager = CLLocationManager()
@@ -39,16 +39,18 @@ actual class MapboxController(
     private val defaultMinimumZoom: Double = 0.0
     private val defaultMaximumZoom: Double = 22.0
 
+    private val weakMapView = WeakReference(mapView)
+
     private var isMapLoaded: Boolean = false
 
     actual var onStartScrollCallback: ((isUserGesture: Boolean) -> Unit)? = null
 
     init {
-        mapView.delegate = delegate
+        weakMapView.get()?.delegate = delegate
     }
 
     private fun getCurrentLocation(): LatLng {
-        val location: CLLocation = mapView.userLocation?.location
+        val location: CLLocation = weakMapView.get()?.userLocation?.location
             ?: locationManager.location
             ?: throw IllegalStateException("can't get location")
 
@@ -56,62 +58,62 @@ actual class MapboxController(
     }
 
     actual suspend fun readUiSettings(): UiSettings {
-        with(mapView) {
-            return UiSettings(
-                compassEnabled = compassView.compassVisibility != MGLOrnamentVisibility.MGLOrnamentVisibilityHidden,
-                myLocationEnabled = showsUserLocation,
-                scrollGesturesEnabled = scrollEnabled,
-                zoomGesturesEnabled = zoomEnabled,
-                tiltGesturesEnabled = pitchEnabled,
-                rotateGesturesEnabled = rotateEnabled,
-                logoIsVisible = logoView.hidden.not(),
-                infoButtonIsVisible = attributionButton.hidden.not()
-            )
-        }
+        val mapView = weakMapView.get()
+        return UiSettings(
+            compassEnabled = mapView?.compassView?.compassVisibility != MGLOrnamentVisibility.MGLOrnamentVisibilityHidden,
+            myLocationEnabled = mapView?.showsUserLocation ?: false,
+            scrollGesturesEnabled = mapView?.scrollEnabled ?: false,
+            zoomGesturesEnabled = mapView?.zoomEnabled ?: false,
+            tiltGesturesEnabled = mapView?.pitchEnabled ?: false,
+            rotateGesturesEnabled = mapView?.rotateEnabled ?: false,
+            logoIsVisible = mapView?.logoView?.hidden?.not() ?: false,
+            infoButtonIsVisible = mapView?.attributionButton?.hidden?.not() ?: false
+        )
     }
+
     actual suspend fun writeUiSettings(settings: UiSettings) {
-        with(mapView) {
-            compassView.compassVisibility = if (settings.compassEnabled) {
+        weakMapView.get()?.let {
+            it.compassView.compassVisibility = if (settings.compassEnabled) {
                 MGLOrnamentVisibility.MGLOrnamentVisibilityAdaptive
             } else {
                 MGLOrnamentVisibility.MGLOrnamentVisibilityHidden
             }
-            showsUserLocation = settings.myLocationEnabled
-            scrollEnabled = settings.scrollGesturesEnabled
-            rotateEnabled = settings.rotateGesturesEnabled
-            zoomEnabled = settings.zoomGesturesEnabled
-            pitchEnabled = settings.tiltGesturesEnabled
-            logoView.hidden = settings.logoIsVisible.not()
-            attributionButton.hidden = settings.infoButtonIsVisible.not()
+            it.showsUserLocation = settings.myLocationEnabled
+            it.scrollEnabled = settings.scrollGesturesEnabled
+            it.rotateEnabled = settings.rotateGesturesEnabled
+            it.zoomEnabled = settings.zoomGesturesEnabled
+            it.pitchEnabled = settings.tiltGesturesEnabled
+            it.logoView.hidden = settings.logoIsVisible.not()
+            it.attributionButton.hidden = settings.infoButtonIsVisible.not()
         }
     }
 
     override suspend fun getCurrentZoom(): Float {
-        return mapView.zoomLevel.toFloat()
+        return weakMapView.get()?.zoomLevel?.toFloat() ?: 0f
     }
 
     override suspend fun setCurrentZoom(zoom: Float) {
-        mapView.zoomLevel = zoom.toDouble()
+        weakMapView.get()?.zoomLevel = zoom.toDouble()
     }
 
     override suspend fun getZoomConfig(): ZoomConfig {
         return ZoomConfig(
-            min = mapView.minimumZoomLevel.toFloat(),
-            max = mapView.maximumZoomLevel.toFloat()
+            min = weakMapView.get()?.minimumZoomLevel?.toFloat(),
+            max = weakMapView.get()?.maximumZoomLevel?.toFloat()
         )
     }
 
     override suspend fun setZoomConfig(config: ZoomConfig) {
-        mapView.minimumZoomLevel = config.min?.toDouble() ?: defaultMinimumZoom
-        mapView.maximumZoomLevel = config.max?.toDouble() ?: defaultMaximumZoom
+        weakMapView.get()?.minimumZoomLevel = config.min?.toDouble() ?: defaultMinimumZoom
+        weakMapView.get()?.maximumZoomLevel = config.max?.toDouble() ?: defaultMaximumZoom
     }
 
     override suspend fun getMapCenterLatLng(): LatLng {
-        return mapView.camera.centerCoordinate.toLatLng()
+        return weakMapView.get()?.camera?.centerCoordinate?.toLatLng() ?: LatLng(latitude = 0.0, longitude = 0.0)
     }
 
     override fun showLocation(latLng: LatLng, zoom: Float, animation: Boolean) {
-        mapView.setCenterCoordinate(
+        weakMapView.get()?.setCenterCoordinate(
             centerCoordinate = latLng.toCoord2D(),
             zoomLevel = zoom.toDouble(),
             animated = if (isMapLoaded) {
@@ -138,13 +140,17 @@ actual class MapboxController(
         annotation.setCoordinate(coordinate = latLng.toCoord2D())
         annotation.onClick = onClick
         annotation.image = image.toUIImage()
-        mapView.addAnnotation(annotation)
+        weakMapView.get()?.addAnnotation(annotation)
 
-        return MapboxMarker(annotation = annotation, mapView = mapView)
+        return MapboxMarker(
+            annotation = annotation,
+            onDeleteCallback = {
+                weakMapView.get()?.removeAnnotation(annotation = annotation)
+            })
     }
 
     actual fun setStyleUrl(styleUrl: String) {
-        mapView.styleURL = NSURL(string = styleUrl)
+        weakMapView.get()?.styleURL = NSURL(string = styleUrl)
     }
 
     // TODO: Need implementation
