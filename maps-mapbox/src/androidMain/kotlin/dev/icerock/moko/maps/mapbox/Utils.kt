@@ -6,7 +6,7 @@ package dev.icerock.moko.maps.mapbox
 
 import dev.icerock.moko.geo.LatLng
 
-internal fun LatLng.toAndroidLatLng() = com.mapbox.mapboxsdk.geometry.LatLng(
+internal fun LatLng.toMapboxLatLng() = com.mapbox.mapboxsdk.geometry.LatLng(
     latitude,
     longitude
 )
