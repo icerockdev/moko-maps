@@ -50,6 +50,8 @@ dependencies {
 
     implementation(Deps.Libs.Android.appCompat.name)
     implementation(Deps.Libs.Android.playServicesLocation.name)
+    implementation(Deps.Libs.Android.playServicesMaps.name)
+    implementation(Deps.Libs.Android.googleMapsServices.name)
     implementation(Deps.Libs.Android.mapbox.name)
     implementation(Deps.Libs.Android.mapboxAnnotation.name)
 

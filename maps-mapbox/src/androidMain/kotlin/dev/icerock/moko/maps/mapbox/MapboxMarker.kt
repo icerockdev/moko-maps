@@ -18,7 +18,7 @@ actual class MapboxMarker(
     override var position: LatLng
         get() = symbol.latLng.toGeoLatLng()
         set(value) {
-            symbol.latLng = value.toAndroidLatLng()
+            symbol.latLng = value.toMapboxLatLng()
         }
 
     override var rotation: Float
@@ -34,7 +34,7 @@ actual class MapboxMarker(
     @ExperimentalTime
     override fun move(position: LatLng, rotation: Float, duration: Duration) {
         val currentPosition = symbol.latLng
-        val newPosition = position.toAndroidLatLng()
+        val newPosition = position.toMapboxLatLng()
 
         val latDiff = newPosition.latitude - currentPosition.latitude
         val lngDiff = newPosition.longitude - currentPosition.longitude

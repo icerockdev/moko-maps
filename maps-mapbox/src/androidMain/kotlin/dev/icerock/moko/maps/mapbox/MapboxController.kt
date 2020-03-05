@@ -152,7 +152,7 @@ actual class MapboxController : MapController {
         }
 
         val symbol = symbolManager.create(SymbolOptions().apply {
-            withLatLng(latLng.toAndroidLatLng())
+            withLatLng(latLng.toMapboxLatLng())
             withIconImage(imageId)
             withIconRotate(rotation)
         })
@@ -231,7 +231,7 @@ actual class MapboxController : MapController {
 
     override fun showLocation(latLng: LatLng, zoom: Float, animation: Boolean) {
         val factory = CameraUpdateFactory.newLatLngZoom(
-            latLng.toAndroidLatLng(),
+            latLng.toMapboxLatLng(),
             zoom.toDouble()
         )
 
