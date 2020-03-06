@@ -12,7 +12,6 @@ Pod::Spec.new do |spec|
     spec.module_name              = "#{spec.name}_umbrella"
 
     spec.static_framework = true
-    spec.dependency 'GoogleMaps', '3.7.0'
 
     spec.pod_target_xcconfig = {
         'MPP_LIBRARY_NAME' => 'MultiPlatformLibrary',
