@@ -35,6 +35,12 @@ object Deps {
             val googleMapsServices = AndroidLibrary(
                 name = "com.google.maps:google-maps-services:${Versions.Libs.Android.googleMapsServices}"
             )
+            val mapbox = AndroidLibrary(
+                name = "com.mapbox.mapboxsdk:mapbox-android-sdk:${Versions.Libs.Android.mapbox}"
+            )
+            val mapboxAnnotation = AndroidLibrary(
+                name = "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:${Versions.Libs.Android.mapboxAnnotation}"
+            )
         }
 
         object MultiPlatform {
@@ -71,6 +77,11 @@ object Deps {
                 common = "dev.icerock.moko:maps-google:${Versions.Libs.MultiPlatform.mokoMaps}",
                 iosX64 = "dev.icerock.moko:maps-google-iosx64:${Versions.Libs.MultiPlatform.mokoMaps}",
                 iosArm64 = "dev.icerock.moko:maps-google-iosarm64:${Versions.Libs.MultiPlatform.mokoMaps}"
+            )
+            val mokoMapsMapbox = MultiPlatformLibrary(
+                common = "dev.icerock.moko:maps-mapbox:${Versions.Libs.MultiPlatform.mokoMaps}",
+                iosX64 = "dev.icerock.moko:maps-mapbox-iosx64:${Versions.Libs.MultiPlatform.mokoMaps}",
+                iosArm64 = "dev.icerock.moko:maps-mapbox-iosarm64:${Versions.Libs.MultiPlatform.mokoMaps}"
             )
             val mokoParcelize = MultiPlatformLibrary(
                 common = "dev.icerock.moko:parcelize:${Versions.Libs.MultiPlatform.mokoParcelize}",

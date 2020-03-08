@@ -20,6 +20,8 @@ object Versions {
             const val playServicesLocation = "16.0.0"
             const val playServicesMaps = "16.1.0"
             const val googleMapsServices = "0.2.11"
+            const val mapbox = "8.6.2"
+            const val mapboxAnnotation = "0.7.0"
         }
 
         object MultiPlatform {
@@ -27,7 +29,7 @@ object Versions {
             const val coroutines = "1.3.3"
             const val ktorClient = "1.2.6"
             const val mokoGeo = "0.1.1"
-            const val mokoMaps = "0.3.0"
+            const val mokoMaps = "0.4.0-dev-1"
             const val mokoParcelize = "0.2.0"
             const val mokoPermissions = "0.3.0"
             const val mokoMvvm = "0.4.0"

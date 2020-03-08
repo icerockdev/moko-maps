@@ -4,51 +4,26 @@
 
 package com.icerockdev.app
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.maps.SupportMapFragment
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.icerockdev.app.databinding.ActivityMainBinding
-import com.icerockdev.library.TrackerViewModel
-import dev.icerock.moko.geo.LocationTracker
-import dev.icerock.moko.maps.google.GoogleMapController
-import dev.icerock.moko.mvvm.MvvmActivity
-import dev.icerock.moko.mvvm.createViewModelFactory
-import dev.icerock.moko.permissions.PermissionsController
 
-
-class MainActivity : MvvmActivity<ActivityMainBinding, TrackerViewModel>() {
-    override val layoutId: Int = R.layout.activity_main
-    override val viewModelVariableId: Int = BR.viewModel
-    override val viewModelClass: Class<TrackerViewModel> = TrackerViewModel::class.java
-
-    override fun viewModelFactory(): ViewModelProvider.Factory {
-        return createViewModelFactory {
-            TrackerViewModel(
-                locationTracker = LocationTracker(
-                    permissionsController = PermissionsController(
-                        applicationContext = applicationContext
-                    )
-                ),
-                mapsController = GoogleMapController(
-                    // TODO: Replace with your API Key from https://developers.google.com/maps/documentation/ios-sdk/
-                    geoApiKey = "YOUR-API-KEY"
-                )
-            ).apply { start() }
-        }
-    }
-
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val binding: ActivityMainBinding = DataBindingUtil.setContentView(
+            this,
+            R.layout.activity_main
+        )
 
-        viewModel.locationTracker.bind(lifecycle, this, supportFragmentManager)
+        binding.googleMaps.setOnClickListener {
+            startActivity(Intent(this, GoogleMapsActivity::class.java))
+        }
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync {
-            viewModel.mapsController.bind(
-                lifecycle = lifecycle,
-                googleMap = it,
-                context = this
-            )
+        binding.mapbox.setOnClickListener {
+            startActivity(Intent(this, MapboxActivity::class.java))
         }
     }
 }

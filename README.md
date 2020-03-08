@@ -32,6 +32,7 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
   - 0.2.0
   - 0.2.1
   - 0.3.0
+  - 0.4.0-dev-1
 
 ## Installation
 root build.gradle  
@@ -46,8 +47,8 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.3.0")
-    commonMainApi("dev.icerock.moko:maps-google:0.3.0")
+    commonMainApi("dev.icerock.moko:maps:0.4.0-dev-1")
+    commonMainApi("dev.icerock.moko:maps-google:0.4.0-dev-1")
 }
 
 kotlin {
@@ -58,7 +59,9 @@ kotlin {
         .forEach { framework ->
             val frameworks = listOf("Base", "Maps").map { frameworkPath ->
                 project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path.let { "-F$it" }
-            }
+            }.plus(
+                project.file("../ios-app/Pods/Mapbox-iOS-SDK/dynamic").path.let { "-F$it" }
+            )
 
             framework.linkerOpts(frameworks)
         }
@@ -155,8 +158,9 @@ Please see more examples in the [sample directory](sample).
 ## Set Up Locally 
 - The [maps directory](maps) contains the base classes for all maps providers;
 - The [maps-google directory](maps-google) contains the Google Maps implementation;
+- The [maps-mapbox directory](maps-mapbox) contains the mapbox implementation;
 - In [sample directory](sample) contains sample apps for Android and iOS; plus the mpp-library connected to the apps;
-- For local testing use the `:maps:publishToMavenLocal :maps-google:publishToMavenLocal` gradle task - so that sample apps use the locally published version.
+- For local testing use the `./publishToMavenLocal.sh` script - so that sample apps use the locally published version.
 ```bash
 ./gradlew -PlibraryPublish :maps:publishToMavenLocal # build core classes
 (cd sample/ios-app && pod install) && ./gradlew -PprovidersPublish :maps-google:publishToMavenLocal # install pods with GoogleMaps (required for cinterop of maps-google) and build GoogleMaps integration lib 

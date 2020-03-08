@@ -19,6 +19,7 @@ val libs = listOf(
     Deps.Libs.MultiPlatform.mokoMvvm,
     Deps.Libs.MultiPlatform.mokoPermissions,
     Deps.Libs.MultiPlatform.mokoMaps,
+    Deps.Libs.MultiPlatform.mokoMapsMapbox,
     Deps.Libs.MultiPlatform.mokoMapsGoogle
 )
 
@@ -32,6 +33,7 @@ dependencies {
 
     androidLibrary(Deps.Libs.Android.lifecycle)
     androidLibrary(Deps.Libs.Android.playServicesLocation)
+    androidLibrary(Deps.Libs.Android.mapbox)
 
     libs.forEach { mppLibrary(it) }
 }
@@ -39,6 +41,7 @@ dependencies {
 multiplatformResources {
     multiplatformResourcesPackage = "com.icerockdev.library"
 }
+
 
 kotlin {
     targets
@@ -48,9 +51,13 @@ kotlin {
         .forEach { framework ->
             framework.isStatic = true
 
-            val frameworks = listOf("Base", "Maps").map { frameworkPath ->
+            var frameworks = listOf("Base", "Maps").map { frameworkPath ->
                 project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path.let { "-F$it" }
             }
+
+            frameworks.plus(
+                project.file("../sample/ios-app/Pods/Mapbox-iOS-SDK/dynamic").path.let { "-F$it" }
+            )
 
             framework.linkerOpts(frameworks)
         }

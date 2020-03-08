@@ -1,4 +1,4 @@
-source 'https://github.com/CocoaPods/Specs.git'
+source 'https://cdn.cocoapods.org/'
 
 # workaround for https://github.com/CocoaPods/CocoaPods/issues/8073
 install! 'cocoapods', :disable_input_output_paths => true
@@ -12,4 +12,7 @@ platform :ios, '11.0'
 target 'TestProj' do
   # MultiPlatformLibrary
   pod 'MultiPlatformLibrary', :path => '../mpp-library'
+  pod 'Mapbox-iOS-SDK', '5.5.0'
+  pod 'GoogleMaps', '3.7.0'
+
 end

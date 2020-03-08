@@ -13,13 +13,13 @@ import dev.icerock.moko.maps.google.UiSettings
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.launch
 
-class TrackerViewModel(
+class GoogleMapViewModel(
     val locationTracker: LocationTracker,
-    val mapsController: GoogleMapController
+    val googleMapController: GoogleMapController
 ) : ViewModel() {
 
     fun start() {
-        mapsController.writeUiSettings(
+        googleMapController.writeUiSettings(
             UiSettings(
                 rotateGesturesEnabled = false,
                 myLocationButtonEnabled = true
@@ -27,25 +27,25 @@ class TrackerViewModel(
         )
 
         viewModelScope.launch {
-            val config = mapsController.getZoomConfig()
+            val config = googleMapController.getZoomConfig()
             println("config: $config")
 
-            mapsController.setZoomConfig(
+            googleMapController.setZoomConfig(
                 ZoomConfig(
                     min = 10f,
                     max = 18f
                 )
             )
-            mapsController.setCurrentZoom(12f)
+            googleMapController.setCurrentZoom(12f)
         }
 
-        mapsController.onCameraScrollStateChanged = { scrolling, isUserGesture ->
+        googleMapController.onCameraScrollStateChanged = { scrolling, isUserGesture ->
             println("camera scroll state: $scrolling")
             println("scroll by user gesture: $isUserGesture ")
         }
 
         viewModelScope.launch {
-            val route = mapsController.buildRoute(
+            val route = googleMapController.buildRoute(
                 points = listOf(
                     LatLng(
                         latitude = 55.032200,
@@ -64,7 +64,7 @@ class TrackerViewModel(
                 markersImage = MR.images.marker
             )
 
-            val marker1 = mapsController.addMarker(
+            val marker1 = googleMapController.addMarker(
                 image = MR.images.marker,
                 latLng = LatLng(
                     latitude = 55.045853,
@@ -75,7 +75,7 @@ class TrackerViewModel(
                 println("marker 1 pressed!")
             }
 
-            val marker2 = mapsController.addMarker(
+            val marker2 = googleMapController.addMarker(
                 image = MR.images.marker,
                 latLng = LatLng(
                     latitude = 55.040853,

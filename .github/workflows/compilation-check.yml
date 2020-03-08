@@ -16,9 +16,11 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Build Core module
+      run: ./gradlew -PlibraryPublish :maps:publishToMavenLocal
     - name: Cocoapods install
       run: (cd sample/ios-app && pod install)
-    - name: Build and publish local
-      run: |
-        ./gradlew -PlibraryPublish :maps:publishToMavenLocal
-        ./gradlew -PprovidersPublish :maps-google:publishToMavenLocal
+    - name: Build GoogleMaps module
+      run: ./gradlew -PprovidersPublish :maps-google:publishToMavenLocal
+    - name: Build MapBox module
+      run: ./gradlew -PprovidersPublish :maps-mapbox:publishToMavenLocal
