@@ -1,5 +1,5 @@
 ![moko-maps](https://user-images.githubusercontent.com/5010169/71351401-27c14d80-25a6-11ea-9183-17821f6d4212.png)  
-[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://api.bintray.com/packages/icerockdev/moko/moko-maps/images/download.svg) ](https://bintray.com/icerockdev/moko/moko-maps/_latestVersion) ![kotlin-version](https://img.shields.io/badge/kotlin-1.3.61-orange)
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://api.bintray.com/packages/icerockdev/moko/moko-maps/images/download.svg) ](https://bintray.com/icerockdev/moko/moko-maps/_latestVersion) ![kotlin-version](https://img.shields.io/badge/kotlin-1.3.70-orange)
 
 # Mobile Kotlin maps module
 This is a Kotlin Multiplatform library that provides controls of maps to common code.
@@ -33,6 +33,8 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
   - 0.2.1
   - 0.3.0
   - 0.4.0-dev-1
+- kotlin 1.3.70
+  - 0.4.0-dev-2
 
 ## Installation
 root build.gradle  
@@ -47,8 +49,9 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.4.0-dev-1")
-    commonMainApi("dev.icerock.moko:maps-google:0.4.0-dev-1")
+    commonMainApi("dev.icerock.moko:maps:0.4.0-dev-2")
+    commonMainApi("dev.icerock.moko:maps-google:0.4.0-dev-2")
+    commonMainApi("dev.icerock.moko:maps-mapbox:0.4.0-dev-2")
 }
 
 kotlin {
@@ -68,14 +71,10 @@ kotlin {
 }
 ```
 
-settings.gradle  
-```groovy
-enableFeaturePreview("GRADLE_METADATA")
-```
-
 project Podfile
 ```ruby
 pod 'GoogleMaps', '3.7.0'
+pod 'Mapbox-iOS-SDK', '5.5.0'
 
 # GoogleMaps is static library that already linked in moko-maps-google. Remove duplicated linking.
 post_install do |installer|
