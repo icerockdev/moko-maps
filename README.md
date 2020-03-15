@@ -21,7 +21,7 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
 - **Camera** - control camera (zoom, location) from common code.
 
 ## Requirements
-- Gradle version 5.4.1+
+- Gradle version 5.6.4+
 - Android API 16+
 - iOS version 9.0+
 
