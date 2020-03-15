@@ -5,8 +5,8 @@ object Versions {
         const val minSdk = 16
     }
 
-    const val kotlin = "1.3.61"
-    private const val mokoResources = "0.6.0"
+    const val kotlin = "1.3.70"
+    private const val mokoResources = "0.9.0"
 
     object Plugins {
         const val mokoResources = Versions.mokoResources
@@ -25,16 +25,16 @@ object Versions {
         }
 
         object MultiPlatform {
-            const val serialization = "0.14.0"
-            const val coroutines = "1.3.3"
-            const val ktorClient = "1.2.6"
-            const val mokoGeo = "0.1.1"
-            const val mokoMaps = "0.4.0-dev-1"
-            const val mokoParcelize = "0.2.0"
-            const val mokoPermissions = "0.3.0"
-            const val mokoMvvm = "0.4.0"
+            const val serialization = "0.20.0"
+            const val coroutines = "1.3.4"
+            const val ktorClient = "1.3.2"
+            const val mokoGeo = "0.2.0"
+            const val mokoMaps = "0.4.0-dev-2"
+            const val mokoParcelize = "0.3.0"
+            const val mokoPermissions = "0.5.0"
+            const val mokoMvvm = "0.6.0"
             const val mokoResources = Versions.mokoResources
-            const val mokoGraphics = "0.2.0"
+            const val mokoGraphics = "0.3.0"
         }
     }
 }
