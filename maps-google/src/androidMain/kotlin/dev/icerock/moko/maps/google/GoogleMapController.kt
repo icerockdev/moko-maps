@@ -30,10 +30,7 @@ import com.google.maps.errors.NotFoundException
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.LatLng
 import dev.icerock.moko.graphics.Color
-import dev.icerock.moko.maps.MapAddress
-import dev.icerock.moko.maps.MapController
-import dev.icerock.moko.maps.MapElement
-import dev.icerock.moko.maps.ZoomConfig
+import dev.icerock.moko.maps.*
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -245,6 +242,18 @@ actual class GoogleMapController(
         return mapHolder.get().cameraPosition.target.let {
             GeoLatLng(it.latitude, it.longitude)
         }
+    }
+
+    override suspend fun drawPolygon(
+        pointList: List<List<dev.icerock.moko.geo.LatLng>>,
+        backgroundColor: Color,
+        lineColor: Color,
+        backgroundOpacity: Float,
+        lineWidth: Float,
+        lineOpacity: Float,
+        lineType: LineType
+    ): MapElement {
+        TODO("Not yet implemented")
     }
 
     override suspend fun buildRoute(

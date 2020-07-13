@@ -11,6 +11,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.mapbox.geojson.Point
+import com.mapbox.geojson.Polygon
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.maps.MapView
@@ -19,20 +21,24 @@ import com.mapbox.mapboxsdk.maps.MapboxMap.OnCameraMoveStartedListener.REASON_AP
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.mapboxsdk.style.layers.FillLayer
+import com.mapbox.mapboxsdk.style.layers.LineLayer
+import com.mapbox.mapboxsdk.style.layers.Property.LINE_CAP_ROUND
+import com.mapbox.mapboxsdk.style.layers.Property.LINE_JOIN_ROUND
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.mapbox.mapboxsdk.utils.BitmapUtils
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
-import dev.icerock.moko.maps.MapAddress
-import dev.icerock.moko.maps.MapController
-import dev.icerock.moko.maps.MapElement
-import dev.icerock.moko.maps.Marker
-import dev.icerock.moko.maps.ZoomConfig
+import dev.icerock.moko.graphics.colorInt
+import dev.icerock.moko.maps.*
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+
 
 actual class MapboxController : MapController {
     private val contextHolder = LifecycleHolder<Context>()
@@ -171,6 +177,66 @@ actual class MapboxController : MapController {
         )
     }
 
+
+    override suspend fun drawPolygon(
+        pointList: List<List<LatLng>>,
+        backgroundColor: Color,
+        lineColor: Color,
+        backgroundOpacity: Float,
+        lineWidth: Float,
+        lineOpacity: Float,
+        lineType: LineType
+    ): MapElement {
+        val style = styleHolder.get()
+
+        val id: String = pointList.hashCode().toString()
+        val sourceId: String = "source-$id"
+        val fillLayerId: String = "fill-polygon-$id"
+        val lineLayerId: String = "line-polygon-$id"
+
+        val mapboxPointList: List<List<Point>> = pointList.map { list ->
+            list.map {
+                Point.fromLngLat(it.longitude, it.latitude)
+            }
+        }
+
+        style.addSource(
+            GeoJsonSource(
+                sourceId,
+                Polygon.fromLngLats(mapboxPointList)
+            )
+        )
+
+        val fillLayer: FillLayer = FillLayer(fillLayerId, sourceId)
+            .withProperties(
+                fillColor(backgroundColor.colorInt()),
+                fillOpacity(backgroundOpacity)
+            )
+
+        val lineLayer: LineLayer = LineLayer(lineLayerId, sourceId)
+            .withProperties(
+                lineWidth(lineWidth),
+                lineColor(lineColor.colorInt()),
+                lineOpacity(lineOpacity),
+                lineCap(LINE_CAP_ROUND),
+                lineJoin(LINE_JOIN_ROUND),
+                when (lineType) {
+                    LineType.SOLID -> null
+                    LineType.DASHED -> lineDasharray(arrayOf(2f, 2f))
+                }
+            )
+
+        style.addLayerBelow(fillLayer, SETTLEMENT_LABEL)
+        style.addLayerBelow(lineLayer, SETTLEMENT_LABEL)
+
+        return MapboxPolygon(
+            onDelete = {
+                style.removeLayer(fillLayer)
+                style.removeLayer(lineLayer)
+            }
+        )
+    }
+
     override suspend fun buildRoute(
         points: List<LatLng>,
         lineColor: Color,
@@ -302,5 +368,6 @@ actual class MapboxController : MapController {
         const val BOUNDS_PADDING = 250
         const val DIVIDER_BOUND_LATITUDE_PADDING = 2
         const val WIDTH_POLYLINE = 12.0f
+        const val SETTLEMENT_LABEL = "settlement-label"
     }
 }

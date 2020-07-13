@@ -16,11 +16,7 @@ import cocoapods.Mapbox.MGLMapViewDelegateProtocol
 import cocoapods.Mapbox.MGLOrnamentVisibility
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
-import dev.icerock.moko.maps.MapAddress
-import dev.icerock.moko.maps.MapController
-import dev.icerock.moko.maps.MapElement
-import dev.icerock.moko.maps.Marker
-import dev.icerock.moko.maps.ZoomConfig
+import dev.icerock.moko.maps.*
 import dev.icerock.moko.resources.ImageResource
 import platform.CoreLocation.CLLocation
 import platform.CoreLocation.CLLocationManager
@@ -151,6 +147,18 @@ actual class MapboxController(
 
     actual fun setStyleUrl(styleUrl: String) {
         weakMapView.get()?.styleURL = NSURL(string = styleUrl)
+    }
+
+    override suspend fun drawPolygon(
+        pointList: List<List<LatLng>>,
+        backgroundColor: Color,
+        lineColor: Color,
+        backgroundOpacity: Float,
+        lineWidth: Float,
+        lineOpacity: Float,
+        lineType: LineType
+    ): MapElement {
+        TODO("Not yet implemented")
     }
 
     // TODO: Need implementation

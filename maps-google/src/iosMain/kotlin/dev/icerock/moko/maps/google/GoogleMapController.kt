@@ -21,11 +21,7 @@ import cocoapods.GoogleMaps.kGMSMinZoomLevel
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.graphics.toUIColor
-import dev.icerock.moko.maps.MapAddress
-import dev.icerock.moko.maps.MapController
-import dev.icerock.moko.maps.MapElement
-import dev.icerock.moko.maps.Marker
-import dev.icerock.moko.maps.ZoomConfig
+import dev.icerock.moko.maps.*
 import dev.icerock.moko.resources.ImageResource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.ReceivePipelineException
@@ -217,6 +213,18 @@ actual class GoogleMapController(
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
         }
+    }
+
+    override suspend fun drawPolygon(
+        pointList: List<List<dev.icerock.moko.geo.LatLng>>,
+        backgroundColor: Color,
+        lineColor: Color,
+        backgroundOpacity: Float,
+        lineWidth: Float,
+        lineOpacity: Float,
+        lineType: LineType
+    ): MapElement {
+        TODO("Not yet implemented")
     }
 
     private fun buildRoute(from: String, lineColor: Color, markersImage: ImageResource?): MapElement {
