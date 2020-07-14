@@ -231,8 +231,10 @@ actual class MapboxController : MapController {
 
         return MapboxPolygon(
             onDelete = {
-                style.removeLayer(fillLayer)
-                style.removeLayer(lineLayer)
+                if (style.getLayer(fillLayerId) != null && style.getLayer(lineLayerId) != null) {
+                    style.removeLayer(fillLayer)
+                    style.removeLayer(lineLayer)
+                }
             }
         )
     }
