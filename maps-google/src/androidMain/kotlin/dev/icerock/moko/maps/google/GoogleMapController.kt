@@ -30,7 +30,11 @@ import com.google.maps.errors.NotFoundException
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.LatLng
 import dev.icerock.moko.graphics.Color
-import dev.icerock.moko.maps.*
+import dev.icerock.moko.maps.MapController
+import dev.icerock.moko.maps.MapElement
+import dev.icerock.moko.maps.ZoomConfig
+import dev.icerock.moko.maps.LineType
+import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
