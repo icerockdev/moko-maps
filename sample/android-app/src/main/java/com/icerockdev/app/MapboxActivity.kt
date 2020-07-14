@@ -45,7 +45,7 @@ class MapboxActivity : MvvmActivity<ActivityMapboxBinding, MapboxViewModel>() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Mapbox.getInstance(applicationContext, "pk.eyJ1IjoibHV2IiwiYSI6ImNpZmkyNzQzbDAwdmN1Nmx5cnRkZno5NDkifQ.nR8a_kXuMZEHjn404_A_kQ") // or in the application class
+        Mapbox.getInstance(applicationContext, "YOUR-ACCESS-TOKEN") // or in the application class
         super.onCreate(savedInstanceState)
         viewModel.locationTracker.bind(lifecycle, this, supportFragmentManager)
 
