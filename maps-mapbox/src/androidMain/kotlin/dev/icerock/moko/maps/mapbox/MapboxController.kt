@@ -31,7 +31,12 @@ import com.mapbox.mapboxsdk.utils.BitmapUtils
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.graphics.colorInt
-import dev.icerock.moko.maps.*
+import dev.icerock.moko.maps.MapController
+import dev.icerock.moko.maps.MapElement
+import dev.icerock.moko.maps.ZoomConfig
+import dev.icerock.moko.maps.LineType
+import dev.icerock.moko.maps.MapAddress
+import dev.icerock.moko.maps.Marker
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
