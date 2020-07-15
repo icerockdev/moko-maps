@@ -4,22 +4,32 @@
 
 package com.icerockdev.app
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.icerockdev.app.databinding.ActivityMapboxBinding
 import com.icerockdev.library.MapboxViewModel
+import com.mapbox.geojson.Point
+import com.mapbox.geojson.Polygon
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.style.layers.FillLayer
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillColor
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.maps.mapbox.MapboxController
 import dev.icerock.moko.mvvm.MvvmActivity
 import dev.icerock.moko.mvvm.createViewModelFactory
 import dev.icerock.moko.permissions.PermissionsController
 
+
 class MapboxActivity : MvvmActivity<ActivityMapboxBinding, MapboxViewModel>() {
     override val layoutId: Int = R.layout.activity_mapbox
     override val viewModelVariableId: Int = BR.viewModel
     override val viewModelClass: Class<MapboxViewModel> = MapboxViewModel::class.java
+
+
 
     override fun viewModelFactory(): ViewModelProvider.Factory {
         return createViewModelFactory {

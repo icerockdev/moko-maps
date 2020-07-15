@@ -32,6 +32,16 @@ interface MapController {
         markersImage: ImageResource? = null
     ): MapElement
 
+    suspend fun drawPolygon(
+        pointList: List<LatLng>,
+        backgroundColor: Color,
+        lineColor: Color,
+        backgroundOpacity: Float = 1.0f,
+        lineWidth: Float = 3.0f,
+        lineOpacity: Float = 1.0f,
+        lineType: LineType = LineType.SOLID
+    ): MapElement
+
     suspend fun getAddressByLatLng(
         latitude: Double,
         longitude: Double
