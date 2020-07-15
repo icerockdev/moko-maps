@@ -172,7 +172,7 @@ actual class MapboxController(
     }
 
     override suspend fun drawPolygon(
-        pointList: List<List<LatLng>>,
+        pointList: List<LatLng>,
         backgroundColor: Color,
         lineColor: Color,
         backgroundOpacity: Float,

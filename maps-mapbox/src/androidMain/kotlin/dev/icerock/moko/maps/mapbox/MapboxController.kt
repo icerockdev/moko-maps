@@ -31,7 +31,12 @@ import com.mapbox.mapboxsdk.utils.BitmapUtils
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.graphics.colorInt
-import dev.icerock.moko.maps.*
+import dev.icerock.moko.maps.MapController
+import dev.icerock.moko.maps.MapElement
+import dev.icerock.moko.maps.ZoomConfig
+import dev.icerock.moko.maps.LineType
+import dev.icerock.moko.maps.MapAddress
+import dev.icerock.moko.maps.Marker
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -179,7 +184,7 @@ actual class MapboxController : MapController {
 
 
     override suspend fun drawPolygon(
-        pointList: List<List<LatLng>>,
+        pointList: List<LatLng>,
         backgroundColor: Color,
         lineColor: Color,
         backgroundOpacity: Float,
@@ -194,16 +199,18 @@ actual class MapboxController : MapController {
         val fillLayerId: String = "fill-polygon-$id"
         val lineLayerId: String = "line-polygon-$id"
 
-        val mapboxPointList: List<List<Point>> = pointList.map { list ->
-            list.map {
-                Point.fromLngLat(it.longitude, it.latitude)
-            }
+        val mapboxPointList: List<Point> = pointList.map {
+            Point.fromLngLat(it.longitude, it.latitude)
         }
 
         style.addSource(
             GeoJsonSource(
                 sourceId,
-                Polygon.fromLngLats(mapboxPointList)
+                Polygon.fromLngLats(
+                    listOf(
+                        mapboxPointList
+                    )
+                )
             )
         )
 
