@@ -221,7 +221,7 @@ actual class GoogleMapController(
     }
 
     override suspend fun drawPolygon(
-        pointList: List<List<dev.icerock.moko.geo.LatLng>>,
+        pointList: List<dev.icerock.moko.geo.LatLng>,
         backgroundColor: Color,
         lineColor: Color,
         backgroundOpacity: Float,

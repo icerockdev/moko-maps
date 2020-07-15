@@ -33,7 +33,7 @@ interface MapController {
     ): MapElement
 
     suspend fun drawPolygon(
-        pointList: List<List<LatLng>>,
+        pointList: List<LatLng>,
         backgroundColor: Color,
         lineColor: Color,
         backgroundOpacity: Float = 1.0f,

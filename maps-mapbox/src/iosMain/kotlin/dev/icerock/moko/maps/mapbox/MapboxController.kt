@@ -172,7 +172,7 @@ actual class MapboxController(
     }
 
     override suspend fun drawPolygon(
-        pointList: List<List<LatLng>>,
+        pointList: List<LatLng>,
         backgroundColor: Color,
         lineColor: Color,
         backgroundOpacity: Float,
@@ -183,7 +183,7 @@ actual class MapboxController(
 
         val polygon: MGLPolygonFeature = memScoped {
 
-            val coordinates = pointList.first().map {
+            val coordinates = pointList.map {
                 CLLocationCoordinate2DMake(latitude = it.latitude, longitude = it.longitude)
             }
 

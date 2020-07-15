@@ -184,7 +184,7 @@ actual class MapboxController : MapController {
 
 
     override suspend fun drawPolygon(
-        pointList: List<List<LatLng>>,
+        pointList: List<LatLng>,
         backgroundColor: Color,
         lineColor: Color,
         backgroundOpacity: Float,
@@ -199,16 +199,18 @@ actual class MapboxController : MapController {
         val fillLayerId: String = "fill-polygon-$id"
         val lineLayerId: String = "line-polygon-$id"
 
-        val mapboxPointList: List<List<Point>> = pointList.map { list ->
-            list.map {
-                Point.fromLngLat(it.longitude, it.latitude)
-            }
+        val mapboxPointList: List<Point> = pointList.map {
+            Point.fromLngLat(it.longitude, it.latitude)
         }
 
         style.addSource(
             GeoJsonSource(
                 sourceId,
-                Polygon.fromLngLats(mapboxPointList)
+                Polygon.fromLngLats(
+                    listOf(
+                        mapboxPointList
+                    )
+                )
             )
         )
 
