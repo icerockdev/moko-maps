@@ -26,6 +26,7 @@ import dev.icerock.moko.maps.MapController
 import dev.icerock.moko.maps.MapElement
 import dev.icerock.moko.maps.Marker
 import dev.icerock.moko.maps.ZoomConfig
+import dev.icerock.moko.maps.LineType
 import dev.icerock.moko.resources.ImageResource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.ReceivePipelineException
@@ -217,6 +218,18 @@ actual class GoogleMapController(
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
         }
+    }
+
+    override suspend fun drawPolygon(
+        pointList: List<dev.icerock.moko.geo.LatLng>,
+        backgroundColor: Color,
+        lineColor: Color,
+        backgroundOpacity: Float,
+        lineWidth: Float,
+        lineOpacity: Float,
+        lineType: LineType
+    ): MapElement {
+        TODO("Not yet implemented")
     }
 
     private fun buildRoute(from: String, lineColor: Color, markersImage: ImageResource?): MapElement {

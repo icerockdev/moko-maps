@@ -35,6 +35,9 @@ dependencies {
     androidLibrary(Deps.Libs.Android.playServicesLocation)
     androidLibrary(Deps.Libs.Android.mapbox)
     androidLibrary(Deps.Libs.Android.mapboxAnnotation)
+
+    iosArm64Implementation("org.jetbrains.kotlin.native.xcode:kotlin-native-xcode-11-4-workaround:1.3.72.0")
+    iosX64Implementation("org.jetbrains.kotlin.native.xcode:kotlin-native-xcode-11-4-workaround:1.3.72.0")
 }
 
 publishing {

@@ -11,20 +11,35 @@ import cocoapods.Mapbox.MGLCameraChangeReasonGesturePan
 import cocoapods.Mapbox.MGLCameraChangeReasonGesturePinch
 import cocoapods.Mapbox.MGLCameraChangeReasonGestureZoomIn
 import cocoapods.Mapbox.MGLCameraChangeReasonGestureZoomOut
+import cocoapods.Mapbox.MGLLineStyleLayer
 import cocoapods.Mapbox.MGLMapView
 import cocoapods.Mapbox.MGLMapViewDelegateProtocol
 import cocoapods.Mapbox.MGLOrnamentVisibility
+import cocoapods.Mapbox.MGLPolygon
+import cocoapods.Mapbox.MGLPolygonFeature
+import cocoapods.Mapbox.MGLShape
+import cocoapods.Mapbox.MGLShapeSource
+import cocoapods.Mapbox.MGLStyle
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
+import dev.icerock.moko.graphics.toUIColor
+import dev.icerock.moko.maps.LineType
 import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.maps.MapController
 import dev.icerock.moko.maps.MapElement
 import dev.icerock.moko.maps.Marker
 import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
+import kotlinx.cinterop.createValues
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.useContents
 import platform.CoreLocation.CLLocation
+import platform.CoreLocation.CLLocationCoordinate2D
+import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.CoreLocation.CLLocationManager
+import platform.Foundation.NSExpression
 import platform.Foundation.NSURL
+import platform.UIKit.UIColor
 import platform.UIKit.hidden
 import platform.darwin.NSObject
 import kotlin.native.ref.WeakReference
@@ -109,7 +124,10 @@ actual class MapboxController(
     }
 
     override suspend fun getMapCenterLatLng(): LatLng {
-        return weakMapView.get()?.camera?.centerCoordinate?.toLatLng() ?: LatLng(latitude = 0.0, longitude = 0.0)
+        return weakMapView.get()?.camera?.centerCoordinate?.toLatLng() ?: LatLng(
+            latitude = 0.0,
+            longitude = 0.0
+        )
     }
 
     override fun showLocation(latLng: LatLng, zoom: Float, animation: Boolean) {
@@ -153,6 +171,53 @@ actual class MapboxController(
         weakMapView.get()?.styleURL = NSURL(string = styleUrl)
     }
 
+    override suspend fun drawPolygon(
+        pointList: List<LatLng>,
+        backgroundColor: Color,
+        lineColor: Color,
+        backgroundOpacity: Float,
+        lineWidth: Float,
+        lineOpacity: Float,
+        lineType: LineType
+    ): MapElement {
+
+        val polygon: MGLPolygonFeature = memScoped {
+
+            val items = createValues<CLLocationCoordinate2D>(pointList.count()) { pos ->
+                this.longitude = pointList[pos].longitude
+                this.latitude = pointList[pos].latitude
+            }
+            MGLPolygonFeature.polygonWithCoordinates(
+                coords = items.ptr,
+                count = pointList.count().toULong()
+            )
+        }
+        val settings = MapboxPolygonSettings(
+            fillColor = backgroundColor.toUIColor()
+                .colorWithAlphaComponent(backgroundOpacity.toDouble()),
+            lineColor = lineColor.toUIColor().colorWithAlphaComponent(lineOpacity.toDouble())
+        )
+        delegate.polygonSettings[polygon.hashCode()] = settings
+
+        val source = MGLShapeSource(identifier = "line", shape = polygon, options = null)
+        delegate.style?.addSource(source)
+
+        val layer = MGLLineStyleLayer(identifier = "line-layer", source = source)
+        if (lineType == LineType.DASHED) {
+            layer.lineDashPattern =
+                NSExpression.expressionForConstantValue(List<Double>(2) { 2.0 })
+        }
+        layer.lineWidth = NSExpression.expressionForConstantValue(lineWidth)
+        layer.lineColor = NSExpression.expressionForConstantValue(lineColor.toUIColor().colorWithAlphaComponent(lineOpacity.toDouble()))
+        delegate.style?.addLayer(layer)
+
+        weakMapView.get()?.addOverlay(polygon)
+        return MapboxPolygon {
+            weakMapView.get()?.removeOverlay(polygon)
+            delegate.style?.removeLayer(layer)
+        }
+    }
+
     // TODO: Need implementation
     override suspend fun buildRoute(
         points: List<LatLng>,
@@ -182,8 +247,16 @@ actual class MapboxController(
     ) : NSObject(), MGLMapViewDelegateProtocol {
         private val mapController = WeakReference(mapController)
 
+        var polygonSettings: MutableMap<Int, MapboxPolygonSettings> = mutableMapOf()
+
+        var style: MGLStyle? = null
+
         override fun mapViewDidFinishLoadingMap(mapView: MGLMapView) {
             mapController.get()?.isMapLoaded = true
+        }
+
+        override fun mapView(mapView: MGLMapView, didFinishLoadingStyle: MGLStyle) {
+            style = didFinishLoadingStyle
         }
 
         override fun mapView(
@@ -195,12 +268,17 @@ actual class MapboxController(
                 MGLCameraChangeReasonGesturePan,
                 MGLCameraChangeReasonGestureZoomIn,
                 MGLCameraChangeReasonGestureZoomOut,
-                MGLCameraChangeReasonGesturePinch -> mapController.get()?.onStartScrollCallback?.invoke(true)
+                MGLCameraChangeReasonGesturePinch -> mapController.get()?.onStartScrollCallback?.invoke(
+                    true
+                )
                 else -> mapController.get()?.onStartScrollCallback?.invoke(false)
             }
         }
 
-        override fun mapView(mapView: MGLMapView, imageForAnnotation: MGLAnnotationProtocol): MGLAnnotationImage? {
+        override fun mapView(
+            mapView: MGLMapView,
+            imageForAnnotation: MGLAnnotationProtocol
+        ): MGLAnnotationImage? {
             val annotation = imageForAnnotation as MapboxAnnotation
             val image = annotation.image
             return if (image != null) {
@@ -215,6 +293,31 @@ actual class MapboxController(
 
         override fun mapView(mapView: MGLMapView, didSelectAnnotation: MGLAnnotationProtocol) {
             (didSelectAnnotation as MapboxAnnotation).onClick?.invoke()
+        }
+
+        override fun mapView(
+            mapView: MGLMapView,
+            fillColorForPolygonAnnotation: MGLPolygon
+        ): UIColor {
+
+            return try {
+                val settings = polygonSettings.getValue(fillColorForPolygonAnnotation.hashCode())
+                settings.fillColor
+            } catch (exception: NoSuchElementException) {
+                UIColor.blueColor()
+            }
+        }
+
+        override fun mapView(
+            mapView: MGLMapView,
+            strokeColorForShapeAnnotation: MGLShape
+        ): UIColor {
+            return try {
+                val settings = polygonSettings.getValue(strokeColorForShapeAnnotation.hashCode())
+                settings.lineColor
+            } catch (exception: NoSuchElementException) {
+                UIColor.blueColor()
+            }
         }
 
     }
