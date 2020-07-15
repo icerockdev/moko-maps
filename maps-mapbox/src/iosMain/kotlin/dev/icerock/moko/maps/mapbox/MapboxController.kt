@@ -183,15 +183,13 @@ actual class MapboxController(
 
         val polygon: MGLPolygonFeature = memScoped {
 
-            val coordinates = pointList.first()
-
-            val items = createValues<CLLocationCoordinate2D>(coordinates.count()) { pos ->
-                this.longitude = coordinates[pos].longitude
-                this.latitude = coordinates[pos].latitude
+            val items = createValues<CLLocationCoordinate2D>(pointList.count()) { pos ->
+                this.longitude = pointList[pos].longitude
+                this.latitude = pointList[pos].latitude
             }
             MGLPolygonFeature.polygonWithCoordinates(
                 coords = items.ptr,
-                count = coordinates.count().toULong()
+                count = pointList.count().toULong()
             )
         }
         val settings = MapboxPolygonSettings(
