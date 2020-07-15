@@ -183,17 +183,13 @@ actual class MapboxController(
 
         val polygon: MGLPolygonFeature = memScoped {
 
-            val coordinates = pointList.map {
-                CLLocationCoordinate2DMake(latitude = it.latitude, longitude = it.longitude)
-            }
-
-            val items = createValues<CLLocationCoordinate2D>(coordinates.count()) { pos ->
-                this.longitude = coordinates[pos].useContents { longitude }
-                this.latitude = coordinates[pos].useContents { latitude }
+            val items = createValues<CLLocationCoordinate2D>(pointList.count()) { pos ->
+                this.longitude = pointList[pos].longitude
+                this.latitude = pointList[pos].latitude
             }
             MGLPolygonFeature.polygonWithCoordinates(
                 coords = items.ptr,
-                count = coordinates.count().toULong()
+                count = pointList.count().toULong()
             )
         }
         val settings = MapboxPolygonSettings(
@@ -218,6 +214,7 @@ actual class MapboxController(
         weakMapView.get()?.addOverlay(polygon)
         return MapboxPolygon {
             weakMapView.get()?.removeOverlay(polygon)
+            delegate.style?.removeLayer(layer)
         }
     }
 
