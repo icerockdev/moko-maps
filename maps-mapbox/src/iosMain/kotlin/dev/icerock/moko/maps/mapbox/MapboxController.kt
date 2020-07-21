@@ -291,8 +291,9 @@ actual class MapboxController(
             }
         }
 
+        //it also called for polygons (may be useful in feature)
         override fun mapView(mapView: MGLMapView, didSelectAnnotation: MGLAnnotationProtocol) {
-            (didSelectAnnotation as MapboxAnnotation).onClick?.invoke()
+            (didSelectAnnotation as? MapboxAnnotation)?.onClick?.invoke()
         }
 
         override fun mapView(
