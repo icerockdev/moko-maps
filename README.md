@@ -36,6 +36,7 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
 - kotlin 1.3.70
   - 0.4.0-dev-2
   - 0.4.0-dev-3
+  - 0.4.0-dev-4
 
 ## Installation
 root build.gradle  
@@ -50,9 +51,9 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.4.0-dev-3")
-    commonMainApi("dev.icerock.moko:maps-google:0.4.0-dev-3")
-    commonMainApi("dev.icerock.moko:maps-mapbox:0.4.0-dev-3")
+    commonMainApi("dev.icerock.moko:maps:0.4.0-dev-4")
+    commonMainApi("dev.icerock.moko:maps-google:0.4.0-dev-4")
+    commonMainApi("dev.icerock.moko:maps-mapbox:0.4.0-dev-4")
 }
 
 kotlin {
