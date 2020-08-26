@@ -180,7 +180,6 @@ actual class MapboxController(
         lineOpacity: Float,
         lineType: LineType
     ): MapElement {
-
         val polygon: MGLPolygonFeature = memScoped {
 
             val items = createValues<CLLocationCoordinate2D>(pointList.count()) { pos ->
@@ -199,10 +198,10 @@ actual class MapboxController(
         )
         delegate.polygonSettings[polygon.hashCode()] = settings
 
-        val source = MGLShapeSource(identifier = "line", shape = polygon, options = null)
+        val source = MGLShapeSource(identifier = "line:${(0..Int.MAX_VALUE).random()}", shape = polygon, options = null)
         delegate.style?.addSource(source)
 
-        val layer = MGLLineStyleLayer(identifier = "line-layer", source = source)
+        val layer = MGLLineStyleLayer(identifier = "line-layer:${(0..Int.MAX_VALUE).random()}", source = source)
         if (lineType == LineType.DASHED) {
             layer.lineDashPattern =
                 NSExpression.expressionForConstantValue(List<Double>(2) { 2.0 })
