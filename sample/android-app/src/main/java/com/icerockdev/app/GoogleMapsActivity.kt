@@ -29,7 +29,7 @@ class GoogleMapsActivity : MvvmActivity<ActivityGoogleMapsBinding, GoogleMapView
                     )
                 ),
                 googleMapController = GoogleMapController(
-                    // TODO: Replace with your API Key from https://developers.google.com/maps/documentation/ios-sdk/
+                    // TODO: Replace with your API Key from https://developers.google.com/maps/documentation/android-sdk/
                     geoApiKey = "YOUR-API-KEY"
                 )
             ).apply { start() }
