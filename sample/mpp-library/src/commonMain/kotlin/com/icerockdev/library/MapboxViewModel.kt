@@ -52,6 +52,8 @@ class MapboxViewModel(
                     max = 12f
                 )
             )
+
+            @Suppress("TooGenericExceptionCaught")
             try {
                 mapsController.showMyLocation(8f)
             } catch (throwable: Throwable) {
