@@ -15,8 +15,6 @@ version = Deps.mokoMapsVersion
 
 dependencies {
     commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
-    commonMainImplementation(Deps.Libs.MultiPlatform.ktorClient)
-    commonMainImplementation(Deps.Libs.MultiPlatform.kotlinSerialization)
 
     commonMainApi(project(":maps"))
     commonMainImplementation(Deps.Libs.MultiPlatform.mokoGeo)

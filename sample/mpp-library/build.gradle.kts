@@ -11,7 +11,7 @@ dependencies {
 
     commonMainApi(Deps.Libs.MultiPlatform.mokoGeo)
     commonMainApi(Deps.Libs.MultiPlatform.mokoMvvm)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoPermissions)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoPermissions.common)
     commonMainApi(Deps.Libs.MultiPlatform.mokoMaps.common)
     commonMainApi(Deps.Libs.MultiPlatform.mokoMapsGoogle.common)
     commonMainApi(Deps.Libs.MultiPlatform.mokoMapsMapbox.common)
@@ -30,6 +30,7 @@ multiplatformResources {
 }
 
 framework {
+    export(Deps.Libs.MultiPlatform.mokoPermissions)
     export(Deps.Libs.MultiPlatform.mokoMaps)
     export(Deps.Libs.MultiPlatform.mokoMapsGoogle)
     export(Deps.Libs.MultiPlatform.mokoMapsMapbox)

@@ -58,7 +58,7 @@ actual class GoogleMapController(
     mapView: GMSMapView,
     private val geoApiKey: String
 ) : MapController {
-    private val httpClient = HttpClient {}
+    private val httpClient = HttpClient()
     private val json = Json {
         ignoreUnknownKeys = true
     }

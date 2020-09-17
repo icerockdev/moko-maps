@@ -86,6 +86,8 @@ object Deps {
                 "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:$mapboxAnnotationVersion"
             const val multidex =
                 "androidx.multidex:multidex:$multidexVersion"
+            const val ktorClientOkHttp =
+                "io.ktor:ktor-client-okhttp:$ktorClientVersion"
 
             object Tests {
                 const val espressoCore =
@@ -122,8 +124,11 @@ object Deps {
                 "dev.icerock.moko:mvvm:$mokoMvvmVersion"
             const val mokoGeo =
                 "dev.icerock.moko:geo:$mokoGeoVersion"
-            const val mokoPermissions =
-                "dev.icerock.moko:permissions:$mokoPermissionsVersion"
+            val mokoPermissions = MultiPlatformLibrary(
+                common = "dev.icerock.moko:permissions:$mokoPermissionsVersion",
+                iosX64 = "dev.icerock.moko:permissions-iosx64:$mokoPermissionsVersion",
+                iosArm64 = "dev.icerock.moko:permissions-iosarm64:$mokoPermissionsVersion"
+            )
             val mokoMaps = MultiPlatformLibrary(
                 common = "dev.icerock.moko:maps:$mokoMapsVersion",
                 iosX64 = "dev.icerock.moko:maps-iosx64:$mokoMapsVersion",
@@ -146,6 +151,11 @@ object Deps {
                 const val kotlinTestAnnotations =
                     "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
             }
+        }
+
+        object Ios {
+            const val ktorClientIos =
+                "io.ktor:ktor-client-ios:$ktorClientVersion"
         }
 
         object Detekt {

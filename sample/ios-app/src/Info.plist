@@ -60,5 +60,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
+	<true/>
 </dict>
 </plist>

@@ -49,11 +49,14 @@ class MapboxViewModel(
 
             mapsController.setZoomConfig(
                 ZoomConfig(
-                    min = null,
                     max = 12f
                 )
             )
-            mapsController.showMyLocation(8f)
+            try {
+                mapsController.showMyLocation(8f)
+            } catch (throwable: Throwable) {
+                println(throwable.toString())
+            }
 
             createMarkers()
             createArea()

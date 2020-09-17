@@ -28,6 +28,9 @@ dependencies {
     androidMainImplementation(Deps.Libs.Android.playServicesLocation)
     androidMainImplementation(Deps.Libs.Android.playServicesMaps)
     androidMainImplementation(Deps.Libs.Android.googleMapsServices)
+    androidMainImplementation(Deps.Libs.Android.ktorClientOkHttp)
+
+    iosMainImplementation(Deps.Libs.Ios.ktorClientIos)
 }
 
 publishing {

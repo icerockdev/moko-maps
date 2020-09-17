@@ -17,12 +17,11 @@ class GoogleMapViewController: UIViewController {
         view = mapView
         
         viewModel = GoogleMapViewModel(
-            locationTracker: LocationTracker(
-                permissionsController: PermissionsController(),
-                accuracy: kCLLocationAccuracyBest
-            ),
-            googleMapController: GoogleMapController(mapView: mapView,
-                                                     geoApiKey: "")
+            permissionsController: PermissionsController(),
+            googleMapController: GoogleMapController(
+                mapView: mapView,
+                geoApiKey: "AIzaSyBCEIXZSuTHvlQXRlCKBJ5JwnIIdzLV0uE"
+            )
         )
         
         viewModel.start()

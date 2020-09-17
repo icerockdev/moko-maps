@@ -24,7 +24,7 @@ dependencies {
     commonMainApi(Deps.Libs.MultiPlatform.mokoGraphics)
     commonMainApi(Deps.Libs.MultiPlatform.mokoParcelize)
 
-    commonMainImplementation(Deps.Libs.MultiPlatform.mokoPermissions)
+    commonMainImplementation(Deps.Libs.MultiPlatform.mokoPermissions.common)
 }
 
 publishing {
