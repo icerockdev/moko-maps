@@ -16,13 +16,19 @@ internal inline fun <T1, T2> mainContinuation(
     singleShot: Boolean = true,
     noinline block: (T1, T2) -> Unit
 ) = Continuation2(
-    block, staticCFunction { invokerArg ->
+    block = block,
+    invoker = staticCFunction { invokerArg ->
         if (NSThread.isMainThread()) {
             invokerArg!!.callContinuation2<T1, T2>()
         } else {
-            dispatch_sync_f(dispatch_get_main_queue(), invokerArg, staticCFunction { args ->
-                args!!.callContinuation2<T1, T2>()
-            })
+            dispatch_sync_f(
+                queue = dispatch_get_main_queue(),
+                context = invokerArg,
+                work = staticCFunction { args ->
+                    args!!.callContinuation2<T1, T2>()
+                }
+            )
         }
-    }, singleShot
+    },
+    singleShot = singleShot
 )

@@ -1,23 +1,21 @@
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
+    plugin(Deps.Plugins.androidApplication)
+    plugin(Deps.Plugins.kotlinAndroid)
+    plugin(Deps.Plugins.kotlinKapt)
 }
 
 android {
-    compileSdkVersion(Versions.Android.compileSdk)
+    compileSdkVersion(Deps.Android.compileSdk)
 
-    dataBinding {
-        isEnabled = true
-    }
+    buildFeatures.dataBinding = true
 
     dexOptions {
         javaMaxHeapSize = "2g"
     }
 
     defaultConfig {
-        minSdkVersion(Versions.Android.minSdk)
-        targetSdkVersion(Versions.Android.targetSdk)
+        minSdkVersion(Deps.Android.minSdk)
+        targetSdkVersion(Deps.Android.targetSdk)
 
         applicationId = "dev.icerock.moko.samples.maps"
 
@@ -46,16 +44,14 @@ android {
 }
 
 dependencies {
-    implementation(Deps.Libs.Android.kotlinStdLib.name)
+    implementation(Deps.Libs.Android.appCompat)
+    implementation(Deps.Libs.Android.playServicesLocation)
+    implementation(Deps.Libs.Android.playServicesMaps)
+    implementation(Deps.Libs.Android.googleMapsServices)
+    implementation(Deps.Libs.Android.mapbox)
+    implementation(Deps.Libs.Android.mapboxAnnotation)
 
-    implementation(Deps.Libs.Android.appCompat.name)
-    implementation(Deps.Libs.Android.playServicesLocation.name)
-    implementation(Deps.Libs.Android.playServicesMaps.name)
-    implementation(Deps.Libs.Android.googleMapsServices.name)
-    implementation(Deps.Libs.Android.mapbox.name)
-    implementation(Deps.Libs.Android.mapboxAnnotation.name)
-
-    implementation("androidx.multidex:multidex:2.0.1")
+    implementation(Deps.Libs.Android.multidex)
 
     implementation(project(":sample:mpp-library"))
 }

@@ -6,4 +6,4 @@ package dev.icerock.moko.maps.mapbox
 
 import dev.icerock.moko.maps.MapElement
 
-expect class MapboxRoute: MapElement
+expect class MapboxRoute : MapElement

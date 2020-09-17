@@ -32,10 +32,8 @@ import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.cinterop.createValues
 import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.useContents
 import platform.CoreLocation.CLLocation
 import platform.CoreLocation.CLLocationCoordinate2D
-import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.CoreLocation.CLLocationManager
 import platform.Foundation.NSExpression
 import platform.Foundation.NSURL
@@ -44,15 +42,13 @@ import platform.UIKit.hidden
 import platform.darwin.NSObject
 import kotlin.native.ref.WeakReference
 
+@Suppress("TooManyFunctions", "ForbiddenComment")
 actual class MapboxController(
     mapView: MGLMapView
 ) : MapController {
 
     private val locationManager = CLLocationManager()
     private val delegate = MapDelegate(this)
-
-    private val defaultMinimumZoom: Double = 0.0
-    private val defaultMaximumZoom: Double = 22.0
 
     private val weakMapView = WeakReference(mapView)
 
@@ -75,7 +71,8 @@ actual class MapboxController(
     actual suspend fun readUiSettings(): UiSettings {
         val mapView = weakMapView.get()
         return UiSettings(
-            compassEnabled = mapView?.compassView?.compassVisibility != MGLOrnamentVisibility.MGLOrnamentVisibilityHidden,
+            compassEnabled = mapView?.compassView?.compassVisibility !=
+                    MGLOrnamentVisibility.MGLOrnamentVisibilityHidden,
             myLocationEnabled = mapView?.showsUserLocation ?: false,
             scrollGesturesEnabled = mapView?.scrollEnabled ?: false,
             zoomGesturesEnabled = mapView?.zoomEnabled ?: false,
@@ -119,8 +116,8 @@ actual class MapboxController(
     }
 
     override suspend fun setZoomConfig(config: ZoomConfig) {
-        weakMapView.get()?.minimumZoomLevel = config.min?.toDouble() ?: defaultMinimumZoom
-        weakMapView.get()?.maximumZoomLevel = config.max?.toDouble() ?: defaultMaximumZoom
+        weakMapView.get()?.minimumZoomLevel = config.min?.toDouble() ?: DEFAULT_MINIMUM_ZOOM
+        weakMapView.get()?.maximumZoomLevel = config.max?.toDouble() ?: DEFAULT_MAXIMUM_ZOOM
     }
 
     override suspend fun getMapCenterLatLng(): LatLng {
@@ -164,7 +161,8 @@ actual class MapboxController(
             annotation = annotation,
             onDeleteCallback = {
                 weakMapView.get()?.removeAnnotation(annotation = annotation)
-            })
+            }
+        )
     }
 
     actual fun setStyleUrl(styleUrl: String) {
@@ -198,16 +196,25 @@ actual class MapboxController(
         )
         delegate.polygonSettings[polygon.hashCode()] = settings
 
-        val source = MGLShapeSource(identifier = "line:${(0..Int.MAX_VALUE).random()}", shape = polygon, options = null)
+        val source = MGLShapeSource(
+            identifier = "line:${(0..Int.MAX_VALUE).random()}",
+            shape = polygon,
+            options = null
+        )
         delegate.style?.addSource(source)
 
-        val layer = MGLLineStyleLayer(identifier = "line-layer:${(0..Int.MAX_VALUE).random()}", source = source)
+        val layer = MGLLineStyleLayer(
+            identifier = "line-layer:${(0..Int.MAX_VALUE).random()}",
+            source = source
+        )
         if (lineType == LineType.DASHED) {
             layer.lineDashPattern =
                 NSExpression.expressionForConstantValue(List<Double>(2) { 2.0 })
         }
         layer.lineWidth = NSExpression.expressionForConstantValue(lineWidth)
-        layer.lineColor = NSExpression.expressionForConstantValue(lineColor.toUIColor().colorWithAlphaComponent(lineOpacity.toDouble()))
+        layer.lineColor = NSExpression.expressionForConstantValue(
+            lineColor.toUIColor().colorWithAlphaComponent(lineOpacity.toDouble())
+        )
         delegate.style?.addLayer(layer)
 
         weakMapView.get()?.addOverlay(polygon)
@@ -274,6 +281,7 @@ actual class MapboxController(
             }
         }
 
+        @Suppress("RETURN_TYPE_MISMATCH_ON_OVERRIDE")
         override fun mapView(
             mapView: MGLMapView,
             imageForAnnotation: MGLAnnotationProtocol
@@ -290,7 +298,8 @@ actual class MapboxController(
             }
         }
 
-        //it also called for polygons (may be useful in feature)
+        // it also called for polygons (may be useful in feature)
+        @Suppress("RETURN_TYPE_MISMATCH_ON_OVERRIDE")
         override fun mapView(mapView: MGLMapView, didSelectAnnotation: MGLAnnotationProtocol) {
             (didSelectAnnotation as? MapboxAnnotation)?.onClick?.invoke()
         }
@@ -299,7 +308,6 @@ actual class MapboxController(
             mapView: MGLMapView,
             fillColorForPolygonAnnotation: MGLPolygon
         ): UIColor {
-
             return try {
                 val settings = polygonSettings.getValue(fillColorForPolygonAnnotation.hashCode())
                 settings.fillColor
@@ -308,6 +316,7 @@ actual class MapboxController(
             }
         }
 
+        @Suppress("RETURN_TYPE_MISMATCH_ON_OVERRIDE")
         override fun mapView(
             mapView: MGLMapView,
             strokeColorForShapeAnnotation: MGLShape
@@ -319,7 +328,10 @@ actual class MapboxController(
                 UIColor.blueColor()
             }
         }
+    }
 
+    private companion object {
+        const val DEFAULT_MINIMUM_ZOOM: Double = 0.0
+        const val DEFAULT_MAXIMUM_ZOOM: Double = 22.0
     }
 }
-

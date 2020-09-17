@@ -4,6 +4,7 @@
 
 package dev.icerock.moko.maps.mapbox
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
 import androidx.lifecycle.Lifecycle
@@ -25,26 +26,34 @@ import com.mapbox.mapboxsdk.style.layers.FillLayer
 import com.mapbox.mapboxsdk.style.layers.LineLayer
 import com.mapbox.mapboxsdk.style.layers.Property.LINE_CAP_ROUND
 import com.mapbox.mapboxsdk.style.layers.Property.LINE_JOIN_ROUND
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillColor
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillOpacity
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineDasharray
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineOpacity
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.mapbox.mapboxsdk.utils.BitmapUtils
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.graphics.colorInt
-import dev.icerock.moko.maps.MapController
-import dev.icerock.moko.maps.MapElement
-import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.maps.LineType
 import dev.icerock.moko.maps.MapAddress
+import dev.icerock.moko.maps.MapController
+import dev.icerock.moko.maps.MapElement
 import dev.icerock.moko.maps.Marker
+import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-
+@SuppressLint("MissingPermission")
+@Suppress("TooManyFunctions")
 actual class MapboxController : MapController {
     private val contextHolder = LifecycleHolder<Context>()
     private val mapHolder = LifecycleHolder<MapboxMap>()
@@ -78,17 +87,19 @@ actual class MapboxController : MapController {
             style
         )
 
-        lifecycle.addObserver(object : LifecycleObserver {
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            fun onDestroy() {
-                contextHolder.clear()
-                mapHolder.clear()
-                mapViewHolder.clear()
-                styleHolder.clear()
-                locationHolder.clear()
-                geoCoderHolder.clear()
+        lifecycle.addObserver(
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    contextHolder.clear()
+                    mapHolder.clear()
+                    mapViewHolder.clear()
+                    styleHolder.clear()
+                    locationHolder.clear()
+                    geoCoderHolder.clear()
+                }
             }
-        })
+        )
 
         symbolManager.addClickListener {
             symbolActionMap[it.id]?.invoke()
@@ -158,15 +169,17 @@ actual class MapboxController : MapController {
             val imageDrawable = BitmapUtils.getDrawableFromRes(
                 contextHolder.get(),
                 image.drawableResId
-            ) ?: throw Exception("Drawable for marker is null")
+            ) ?: throw IllegalArgumentException("Drawable for marker is null - $image")
             style.addImage(imageId, imageDrawable)
         }
 
-        val symbol = symbolManager.create(SymbolOptions().apply {
-            withLatLng(latLng.toMapboxLatLng())
-            withIconImage(imageId)
-            withIconRotate(rotation)
-        })
+        val symbol = symbolManager.create(
+            SymbolOptions().apply {
+                withLatLng(latLng.toMapboxLatLng())
+                withIconImage(imageId)
+                withIconRotate(rotation)
+            }
+        )
 
         symbolActionMap[symbol.id] = onClick
 
@@ -181,7 +194,6 @@ actual class MapboxController : MapController {
             }
         )
     }
-
 
     override suspend fun drawPolygon(
         pointList: List<LatLng>,

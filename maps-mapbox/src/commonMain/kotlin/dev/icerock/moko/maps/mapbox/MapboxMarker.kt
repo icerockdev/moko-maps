@@ -6,4 +6,4 @@ package dev.icerock.moko.maps.mapbox
 
 import dev.icerock.moko.maps.Marker
 
-expect class MapboxMarker: Marker
+expect class MapboxMarker : Marker
