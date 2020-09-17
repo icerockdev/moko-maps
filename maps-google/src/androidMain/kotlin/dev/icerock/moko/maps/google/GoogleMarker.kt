@@ -30,7 +30,7 @@ actual class GoogleMarker(
         gmsMarker.remove()
     }
 
-    @UseExperimental(ExperimentalTime::class)
+    @OptIn(ExperimentalTime::class)
     override fun move(position: LatLng, rotation: Float, duration: Duration) {
         val currentPosition = gmsMarker.position
         val newPosition = position.toAndroidLatLng()

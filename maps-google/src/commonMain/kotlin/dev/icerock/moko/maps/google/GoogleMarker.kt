@@ -6,4 +6,4 @@ package dev.icerock.moko.maps.google
 
 import dev.icerock.moko.maps.Marker
 
-expect class GoogleMarker: Marker
+expect class GoogleMarker : Marker

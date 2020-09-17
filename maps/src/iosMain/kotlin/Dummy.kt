@@ -4,6 +4,5 @@
 
 package dev.icerock.moko.maps
 
-enum class LineType {
-    SOLID, DASHED
-}
+// required for produce `metadata/iosMain`
+internal val sDummyVar: Int? = null

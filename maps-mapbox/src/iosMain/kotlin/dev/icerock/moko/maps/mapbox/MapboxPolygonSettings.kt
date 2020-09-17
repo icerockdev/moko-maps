@@ -6,6 +6,7 @@ package dev.icerock.moko.maps.mapbox
 
 import platform.UIKit.UIColor
 
-class MapboxPolygonSettings(val fillColor: UIColor,
-                            val lineColor: UIColor
+class MapboxPolygonSettings(
+    val fillColor: UIColor,
+    val lineColor: UIColor
 )

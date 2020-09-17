@@ -1,5 +1,5 @@
 ![moko-maps](https://user-images.githubusercontent.com/5010169/71351401-27c14d80-25a6-11ea-9183-17821f6d4212.png)  
-[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://api.bintray.com/packages/icerockdev/moko/moko-maps/images/download.svg) ](https://bintray.com/icerockdev/moko/moko-maps/_latestVersion) ![kotlin-version](https://img.shields.io/badge/kotlin-1.3.70-orange)
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://api.bintray.com/packages/icerockdev/moko/moko-maps/images/download.svg) ](https://bintray.com/icerockdev/moko/moko-maps/_latestVersion) ![kotlin-version](https://img.shields.io/badge/kotlin-1.4.10-orange)
 
 # Mobile Kotlin maps module
 This is a Kotlin Multiplatform library that provides controls of maps to common code.
@@ -11,7 +11,7 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
 - [Installation](#installation)
 - [Usage](#usage)
 - [Samples](#samples)
-- [Set Up Locally](#setup-locally)
+- [Set Up Locally](#set-up-locally)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -21,7 +21,7 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
 - **Camera** - control camera (zoom, location) from common code.
 
 ## Requirements
-- Gradle version 5.6.4+
+- Gradle version 6.0+
 - Android API 16+
 - iOS version 9.0+
 
@@ -37,6 +37,8 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
   - 0.4.0-dev-2
   - 0.4.0-dev-3
   - 0.4.0-dev-4
+- kotlin 1.4.10
+  - 0.5.0
 
 ## Installation
 root build.gradle  
@@ -44,7 +46,6 @@ root build.gradle
 allprojects {
     repositories {
         maven { url = "https://dl.bintray.com/icerockdev/moko" }
-        maven { url = "https://kotlin.bintray.com/native-xcode" }
     }
 }
 ```
@@ -52,26 +53,29 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.4.0-dev-4")
-    commonMainApi("dev.icerock.moko:maps-google:0.4.0-dev-4")
-    commonMainApi("dev.icerock.moko:maps-mapbox:0.4.0-dev-4")
+    commonMainApi("dev.icerock.moko:maps:0.5.0")
+    commonMainApi("dev.icerock.moko:maps-google:0.5.0")
+    commonMainApi("dev.icerock.moko:maps-mapbox:0.5.0")
 }
 
-kotlin {
-    targets
-        .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>()
-        .flatMap { it.binaries }
-        .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.Framework>()
-        .forEach { framework ->
-            val frameworks = listOf("Base", "Maps").map { frameworkPath ->
-                project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path.let { "-F$it" }
-            }.plus(
-                project.file("../ios-app/Pods/Mapbox-iOS-SDK/dynamic").path.let { "-F$it" }
-            )
+kotlin.targets
+    .matching { it is org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget }
+    .configureEach {
+        val target = this as org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
-            framework.linkerOpts(frameworks)
-        }
-}
+        target.binaries
+            .matching { it is org.jetbrains.kotlin.gradle.plugin.mpp.Framework }
+            .configureEach {
+                val framework = this as org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+                val frameworks = listOf("Base", "Maps").map { frameworkPath ->
+                    project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path.let { "-F$it" }
+                }.plus(
+                    project.file("../ios-app/Pods/Mapbox-iOS-SDK/dynamic").path.let { "-F$it" }
+                )
+
+                framework.linkerOpts(frameworks)
+            }
+    }
 ```
 
 project Podfile
@@ -161,13 +165,9 @@ Please see more examples in the [sample directory](sample).
 - The [maps directory](maps) contains the base classes for all maps providers;
 - The [maps-google directory](maps-google) contains the Google Maps implementation;
 - The [maps-mapbox directory](maps-mapbox) contains the mapbox implementation;
-- In [sample directory](sample) contains sample apps for Android and iOS; plus the mpp-library connected to the apps;
-- For local testing use the `./publishToMavenLocal.sh` script - so that sample apps use the locally published version.
-```bash
-./gradlew -PlibraryPublish :maps:publishToMavenLocal # build core classes
-(cd sample/ios-app && pod install) && ./gradlew -PprovidersPublish :maps-google:publishToMavenLocal # install pods with GoogleMaps (required for cinterop of maps-google) and build GoogleMaps integration lib 
-./gradlew :sample:mpp-library:syncMultiPlatformLibraryDebugFrameworkIosX64 # try build sample
-```
+- In [sample directory](sample) contains sample apps for Android and iOS; plus the mpp-library connected to the apps.
+
+*before compilation of iOS target required `pod install` in `sample/ios-app` directory*
 
 ## Contributing
 All development (both new features and bug fixes) is performed in the `develop` branch. This way `master` always contains the sources of the most recently released version. Please send PRs with bug fixes to the `develop` branch. Documentation fixes in the markdown files are an exception to this rule. They are updated directly in `master`.

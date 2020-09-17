@@ -12,6 +12,6 @@ interface Marker : MapElement {
     var position: LatLng
     var rotation: Float
 
-    @UseExperimental(ExperimentalTime::class)
+    @OptIn(ExperimentalTime::class)
     fun move(position: LatLng, rotation: Float = 0.0f, duration: Duration)
 }

@@ -3,41 +3,29 @@
  */
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.multiplatform")
-    id("kotlin-android-extensions")
-    id("dev.icerock.mobile.multiplatform")
-    id("maven-publish")
+    plugin(Deps.Plugins.androidLibrary)
+    plugin(Deps.Plugins.kotlinMultiplatform)
+    plugin(Deps.Plugins.kotlinAndroidExtensions)
+    plugin(Deps.Plugins.mobileMultiplatform)
+    plugin(Deps.Plugins.mavenPublish)
 }
 
 group = "dev.icerock.moko"
-version = Versions.Libs.MultiPlatform.mokoMaps
-
-android {
-    compileSdkVersion(Versions.Android.compileSdk)
-
-    defaultConfig {
-        minSdkVersion(Versions.Android.minSdk)
-        targetSdkVersion(Versions.Android.targetSdk)
-    }
-}
+version = Deps.mokoMapsVersion
 
 dependencies {
-    mppLibrary(Deps.Libs.MultiPlatform.kotlinStdLib)
-    mppLibrary(Deps.Libs.MultiPlatform.coroutines)
+    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
+    commonMainImplementation(Deps.Libs.MultiPlatform.ktorClient)
+    commonMainImplementation(Deps.Libs.MultiPlatform.kotlinSerialization)
 
-    mppLibrary(Deps.Libs.MultiPlatform.mokoMaps)
-    mppLibrary(Deps.Libs.MultiPlatform.ktorClient)
-    mppLibrary(Deps.Libs.MultiPlatform.serialization)
+    commonMainApi(project(":maps"))
+    commonMainImplementation(Deps.Libs.MultiPlatform.mokoGeo)
 
-    androidLibrary(Deps.Libs.Android.appCompat)
-    androidLibrary(Deps.Libs.Android.lifecycle)
-    androidLibrary(Deps.Libs.Android.playServicesLocation)
-    androidLibrary(Deps.Libs.Android.mapbox)
-    androidLibrary(Deps.Libs.Android.mapboxAnnotation)
-
-    iosArm64Implementation("org.jetbrains.kotlin.native.xcode:kotlin-native-xcode-11-4-workaround:1.3.72.0")
-    iosX64Implementation("org.jetbrains.kotlin.native.xcode:kotlin-native-xcode-11-4-workaround:1.3.72.0")
+    androidMainImplementation(Deps.Libs.Android.appCompat)
+    androidMainImplementation(Deps.Libs.Android.lifecycle)
+    androidMainImplementation(Deps.Libs.Android.playServicesLocation)
+    androidMainImplementation(Deps.Libs.Android.mapbox)
+    androidMainImplementation(Deps.Libs.Android.mapboxAnnotation)
 }
 
 publishing {
@@ -51,8 +39,11 @@ publishing {
     }
 }
 
-kotlin {
-    targets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().forEach { target ->
+kotlin.targets
+    .matching { it is org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget }
+    .configureEach {
+        val target = this as org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
         target.compilations.getByName("main") {
             val mapBox by cinterops.creating {
                 defFile(project.file("src/iosMain/def/MapBox.def"))
@@ -66,4 +57,3 @@ kotlin {
             }
         }
     }
-}

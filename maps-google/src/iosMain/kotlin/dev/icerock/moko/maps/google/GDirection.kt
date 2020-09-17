@@ -4,6 +4,7 @@
 
 package dev.icerock.moko.maps.google
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import platform.CoreLocation.CLLocationCoordinate2DMake
 
@@ -15,26 +16,32 @@ internal data class GDirection(
 @Serializable
 internal data class GRoute(
     val legs: List<GLeg>,
-    val overview_polyline: GPolyline
+    @SerialName("overview_polyline")
+    val overviewPolyline: GPolyline
 )
 
 @Serializable
 internal data class GLeg(
-    val start_location: GLocation,
-    val end_location: GLocation,
+    @SerialName("start_location")
+    val startLocation: GLocation,
+    @SerialName("end_location")
+    val endLocation: GLocation,
     val steps: List<GStep>,
-    val via_waypoint: List<GWayPoint>?
+    @SerialName("via_waypoint")
+    val viaWaypoint: List<GWayPoint>?
 )
 
 @Serializable
 internal data class GStep(
-    val end_location: GLocation
+    @SerialName("end_location")
+    val endLocation: GLocation
 )
 
 @Serializable
 internal data class GWayPoint(
     val location: GLocation,
-    val step_index: Int
+    @SerialName("step_index")
+    val stepIndex: Int
 )
 
 @Serializable

@@ -4,13 +4,13 @@
 
 package dev.icerock.moko.maps.mapbox
 
-import cocoapods.Mapbox.MGLMapView
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.maps.Marker
 import platform.QuartzCore.CATransaction
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
+@Suppress("ForbiddenComment")
 actual class MapboxMarker(
     private val annotation: MapboxAnnotation,
     private val onDeleteCallback: (() -> Unit)?
@@ -28,7 +28,7 @@ actual class MapboxMarker(
 
     // TODO: Need implementation
     override var rotation: Float
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("not implemented")
         set(value) {}
 
     @ExperimentalTime

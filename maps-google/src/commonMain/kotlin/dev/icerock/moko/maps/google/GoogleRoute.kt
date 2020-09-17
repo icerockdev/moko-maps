@@ -6,4 +6,4 @@ package dev.icerock.moko.maps.google
 
 import dev.icerock.moko.maps.MapElement
 
-expect class GoogleRoute: MapElement
+expect class GoogleRoute : MapElement

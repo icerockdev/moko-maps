@@ -30,7 +30,7 @@ actual class GoogleMarker(
         gmsMarker.map = null
     }
 
-    @UseExperimental(ExperimentalTime::class)
+    @OptIn(ExperimentalTime::class)
     override fun move(position: LatLng, rotation: Float, duration: Duration) {
         CATransaction.begin()
         CATransaction.setAnimationDuration(duration.inSeconds)

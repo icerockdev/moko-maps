@@ -16,12 +16,12 @@ import kotlinx.coroutines.launch
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
+@Suppress("MagicNumber")
 class MapboxViewModel(
     val locationTracker: LocationTracker,
     val mapsController: MapboxController
 ) : ViewModel() {
 
-    @UseExperimental(ExperimentalTime::class)
     fun start() {
         viewModelScope.launch {
             locationTracker.startTracking()
@@ -55,6 +55,12 @@ class MapboxViewModel(
             println("scroll by user gesture: $isUserGesture ")
         }
 
+        createMarkers()
+        createArea()
+    }
+
+    @OptIn(ExperimentalTime::class)
+    private fun createMarkers() {
         viewModelScope.launch {
             val marker1 = mapsController.addMarker(
                 image = MR.images.marker,
@@ -93,7 +99,7 @@ class MapboxViewModel(
                 )
             }
 
-            val marker3 = mapsController.addMarker(
+            mapsController.addMarker(
                 image = MR.images.marker,
                 latLng = LatLng(
                     latitude = 55.0,
@@ -104,7 +110,11 @@ class MapboxViewModel(
                 println("marker 3 pressed!")
                 marker2.delete()
             }
+        }
+    }
 
+    private fun createArea() {
+        viewModelScope.launch {
             val polygon = mapsController.drawPolygon(
                 pointList = listOf(
                     LatLng(54.97584034615845, 82.87296295166017),
@@ -119,7 +129,7 @@ class MapboxViewModel(
                 lineType = LineType.DASHED
             )
 
-            val marker4 = mapsController.addMarker(
+            mapsController.addMarker(
                 image = MR.images.marker,
                 latLng = LatLng(
                     latitude = 54.97623442504603,

@@ -1,118 +1,170 @@
+/*
+ * Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
+ */
+
+
 object Deps {
+    private const val kotlinVersion = "1.4.10"
+
+    private const val lifecycleVersion = "2.2.0"
+    private const val glideVersion = "4.9.0"
+    private const val materialVersion = "1.2.0"
+    private const val androidAppCompatVersion = "1.1.0"
+    private const val espressoCoreVersion = "3.2.0"
+    private const val testRunnerVersion = "1.2.0"
+    private const val testExtJunitVersion = "1.1.1"
+    private const val playServicesLocationVersion = "16.0.0"
+    private const val playServicesMapsVersion = "16.1.0"
+    private const val googleMapsServicesVersion = "0.2.11"
+    private const val mapboxVersion = "8.6.2"
+    private const val mapboxAnnotationVersion = "0.7.0"
+    private const val multidexVersion = "2.0.1"
+
+    private const val kotlinxSerializationVersion = "1.0.0-RC"
+    const val coroutinesVersion = "1.3.9-native-mt"
+    private const val ktorClientVersion = "1.4.0"
+
+    private const val detektVersion = "1.12.0"
+
+    private const val mokoGraphicsVersion = "0.4.0"
+    private const val mokoParcelizeVersion = "0.4.0"
+    private const val mokoResourcesVersion = "0.13.1"
+    private const val mokoMvvmVersion = "0.8.0"
+    private const val mokoGeoVersion = "0.3.0"
+    private const val mokoPermissionsVersion = "0.6.0"
+    const val mokoMapsVersion = "0.5.0"
+
+    object Android {
+        const val compileSdk = 28
+        const val targetSdk = 28
+        const val minSdk = 21
+    }
+
     object Plugins {
-        val kotlinSerialization = GradlePlugin(
-            id = "kotlinx-serialization",
-            artifact = "org.jetbrains.kotlin:kotlin-serialization:${Versions.kotlin}"
+        val androidApplication = GradlePlugin(id = "com.android.application")
+        val androidLibrary = GradlePlugin(id = "com.android.library")
+        val kotlinJvm = GradlePlugin(id = "org.jetbrains.kotlin.jvm")
+        val kotlinMultiplatform = GradlePlugin(
+            id = "org.jetbrains.kotlin.multiplatform",
+            module = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         )
+        val kotlinKapt = GradlePlugin(id = "kotlin-kapt")
+        val kotlinAndroid = GradlePlugin(id = "kotlin-android")
+        val kotlinAndroidExtensions = GradlePlugin(id = "kotlin-android-extensions")
+        val kotlinSerialization = GradlePlugin(
+            id = "org.jetbrains.kotlin.plugin.serialization",
+            module = "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
+        )
+        val mavenPublish = GradlePlugin(id = "org.gradle.maven-publish")
+
+        val mobileMultiplatform = GradlePlugin(id = "dev.icerock.mobile.multiplatform")
+        val iosFramework = GradlePlugin(id = "dev.icerock.mobile.multiplatform.ios-framework")
+
         val mokoResources = GradlePlugin(
             id = "dev.icerock.mobile.multiplatform-resources",
-            artifact = "dev.icerock.moko:resources-generator:${Versions.Plugins.mokoResources}"
+            module = "dev.icerock.moko:resources-generator:$mokoResourcesVersion"
         )
 
-        val list: List<GradlePlugin> = listOf(kotlinSerialization, mokoResources)
+        val detekt = GradlePlugin(
+            id = "io.gitlab.arturbosch.detekt",
+            version = detektVersion
+        )
     }
 
     object Libs {
         object Android {
-            val kotlinStdLib = AndroidLibrary(
-                name = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
-            )
-            val appCompat = AndroidLibrary(
-                name = "androidx.appcompat:appcompat:${Versions.Libs.Android.appCompat}"
-            )
-            val material = AndroidLibrary(
-                name = "com.google.android.material:material:${Versions.Libs.Android.material}"
-            )
-            val lifecycle = AndroidLibrary(
-                name = "androidx.lifecycle:lifecycle-extensions:${Versions.Libs.Android.lifecycle}"
-            )
-            val playServicesLocation = AndroidLibrary(
-                name = "com.google.android.gms:play-services-location:${Versions.Libs.Android.playServicesLocation}"
-            )
-            val playServicesMaps = AndroidLibrary(
-                name = "com.google.android.gms:play-services-maps:${Versions.Libs.Android.playServicesMaps}"
-            )
-            val googleMapsServices = AndroidLibrary(
-                name = "com.google.maps:google-maps-services:${Versions.Libs.Android.googleMapsServices}"
-            )
-            val mapbox = AndroidLibrary(
-                name = "com.mapbox.mapboxsdk:mapbox-android-sdk:${Versions.Libs.Android.mapbox}"
-            )
-            val mapboxAnnotation = AndroidLibrary(
-                name = "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:${Versions.Libs.Android.mapboxAnnotation}"
-            )
+            const val appCompat =
+                "androidx.appcompat:appcompat:$androidAppCompatVersion"
+            const val glide =
+                "com.github.bumptech.glide:glide:$glideVersion"
+            const val lifecycle =
+                "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
+            const val ktorClientOkHttp =
+                "io.ktor:ktor-client-okhttp:$ktorClientVersion"
+            const val material =
+                "com.google.android.material:material:$materialVersion"
+            const val playServicesLocation =
+                "com.google.android.gms:play-services-location:$playServicesLocationVersion"
+            const val playServicesMaps =
+                "com.google.android.gms:play-services-maps:$playServicesMapsVersion"
+            const val googleMapsServices =
+                "com.google.maps:google-maps-services:$googleMapsServicesVersion"
+            const val mapbox =
+                "com.mapbox.mapboxsdk:mapbox-android-sdk:$mapboxVersion"
+            const val mapboxAnnotation =
+                "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:$mapboxAnnotationVersion"
+            const val multidex =
+                "androidx.multidex:multidex:$multidexVersion"
+
+            object Tests {
+                const val espressoCore =
+                    "androidx.test.espresso:espresso-core:$espressoCoreVersion"
+                const val kotlinTestJUnit =
+                    "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+                const val testCore =
+                    "androidx.test:core:1.3.0"
+                const val robolectric =
+                    "org.robolectric:robolectric:4.3"
+                const val testRunner =
+                    "androidx.test:runner:$testRunnerVersion"
+                const val testRules =
+                    "androidx.test:rules:$testRunnerVersion"
+                const val testExtJunit =
+                    "androidx.test.ext:junit:$testExtJunitVersion"
+            }
         }
 
         object MultiPlatform {
-            val kotlinStdLib = MultiPlatformLibrary(
-                android = Android.kotlinStdLib.name,
-                common = "org.jetbrains.kotlin:kotlin-stdlib-common:${Versions.kotlin}"
-            )
-            val coroutines = MultiPlatformLibrary(
-                android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.Libs.MultiPlatform.coroutines}",
-                common = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.Libs.MultiPlatform.coroutines}",
-                ios = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${Versions.Libs.MultiPlatform.coroutines}"
-            )
-            val ktorClient = MultiPlatformLibrary(
-                android = "io.ktor:ktor-client-android:${Versions.Libs.MultiPlatform.ktorClient}",
-                common = "io.ktor:ktor-client-core:${Versions.Libs.MultiPlatform.ktorClient}",
-                ios = "io.ktor:ktor-client-ios:${Versions.Libs.MultiPlatform.ktorClient}"
-            )
-            val serialization = MultiPlatformLibrary(
-                android = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.Libs.MultiPlatform.serialization}",
-                common = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${Versions.Libs.MultiPlatform.serialization}",
-                ios = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:${Versions.Libs.MultiPlatform.serialization}"
-            )
-            val mokoGeo = MultiPlatformLibrary(
-                common = "dev.icerock.moko:geo:${Versions.Libs.MultiPlatform.mokoGeo}",
-                iosX64 = "dev.icerock.moko:geo-iosx64:${Versions.Libs.MultiPlatform.mokoGeo}",
-                iosArm64 = "dev.icerock.moko:geo-iosarm64:${Versions.Libs.MultiPlatform.mokoGeo}"
-            )
+            const val kotlinSerialization =
+                "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
+            const val coroutines =
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+            const val ktorClient =
+                "io.ktor:ktor-client-core:$ktorClientVersion"
+            const val mokoResources =
+                "dev.icerock.moko:resources:$mokoResourcesVersion"
+            const val mokoParcelize =
+                "dev.icerock.moko:parcelize:$mokoParcelizeVersion"
+            const val mokoGraphics =
+                "dev.icerock.moko:graphics:$mokoGraphicsVersion"
+            const val mokoMvvm =
+                "dev.icerock.moko:mvvm:$mokoMvvmVersion"
+            const val mokoGeo =
+                "dev.icerock.moko:geo:$mokoGeoVersion"
+            const val mokoPermissions =
+                "dev.icerock.moko:permissions:$mokoPermissionsVersion"
             val mokoMaps = MultiPlatformLibrary(
-                common = "dev.icerock.moko:maps:${Versions.Libs.MultiPlatform.mokoMaps}",
-                iosX64 = "dev.icerock.moko:maps-iosx64:${Versions.Libs.MultiPlatform.mokoMaps}",
-                iosArm64 = "dev.icerock.moko:maps-iosarm64:${Versions.Libs.MultiPlatform.mokoMaps}"
+                common = "dev.icerock.moko:maps:$mokoMapsVersion",
+                iosX64 = "dev.icerock.moko:maps-iosx64:$mokoMapsVersion",
+                iosArm64 = "dev.icerock.moko:maps-iosarm64:$mokoMapsVersion"
             )
             val mokoMapsGoogle = MultiPlatformLibrary(
-                common = "dev.icerock.moko:maps-google:${Versions.Libs.MultiPlatform.mokoMaps}",
-                iosX64 = "dev.icerock.moko:maps-google-iosx64:${Versions.Libs.MultiPlatform.mokoMaps}",
-                iosArm64 = "dev.icerock.moko:maps-google-iosarm64:${Versions.Libs.MultiPlatform.mokoMaps}"
+                common = "dev.icerock.moko:maps-google:$mokoMapsVersion",
+                iosX64 = "dev.icerock.moko:maps-google-iosx64:$mokoMapsVersion",
+                iosArm64 = "dev.icerock.moko:maps-google-iosarm64:$mokoMapsVersion"
             )
             val mokoMapsMapbox = MultiPlatformLibrary(
-                common = "dev.icerock.moko:maps-mapbox:${Versions.Libs.MultiPlatform.mokoMaps}",
-                iosX64 = "dev.icerock.moko:maps-mapbox-iosx64:${Versions.Libs.MultiPlatform.mokoMaps}",
-                iosArm64 = "dev.icerock.moko:maps-mapbox-iosarm64:${Versions.Libs.MultiPlatform.mokoMaps}"
+                common = "dev.icerock.moko:maps-mapbox:$mokoMapsVersion",
+                iosX64 = "dev.icerock.moko:maps-mapbox-iosx64:$mokoMapsVersion",
+                iosArm64 = "dev.icerock.moko:maps-mapbox-iosarm64:$mokoMapsVersion"
             )
-            val mokoParcelize = MultiPlatformLibrary(
-                common = "dev.icerock.moko:parcelize:${Versions.Libs.MultiPlatform.mokoParcelize}",
-                iosX64 = "dev.icerock.moko:parcelize-iosx64:${Versions.Libs.MultiPlatform.mokoParcelize}",
-                iosArm64 = "dev.icerock.moko:parcelize-iosarm64:${Versions.Libs.MultiPlatform.mokoParcelize}"
-            )
-            val mokoPermissions = MultiPlatformLibrary(
-                common = "dev.icerock.moko:permissions:${Versions.Libs.MultiPlatform.mokoPermissions}",
-                iosX64 = "dev.icerock.moko:permissions-iosx64:${Versions.Libs.MultiPlatform.mokoPermissions}",
-                iosArm64 = "dev.icerock.moko:permissions-iosarm64:${Versions.Libs.MultiPlatform.mokoPermissions}"
-            )
-            val mokoMvvm = MultiPlatformLibrary(
-                common = "dev.icerock.moko:mvvm:${Versions.Libs.MultiPlatform.mokoMvvm}",
-                iosX64 = "dev.icerock.moko:mvvm-iosx64:${Versions.Libs.MultiPlatform.mokoMvvm}",
-                iosArm64 = "dev.icerock.moko:mvvm-iosarm64:${Versions.Libs.MultiPlatform.mokoMvvm}"
-            )
-            val mokoResources = MultiPlatformLibrary(
-                common = "dev.icerock.moko:resources:${Versions.Libs.MultiPlatform.mokoResources}",
-                iosX64 = "dev.icerock.moko:resources-iosx64:${Versions.Libs.MultiPlatform.mokoResources}",
-                iosArm64 = "dev.icerock.moko:resources-iosarm64:${Versions.Libs.MultiPlatform.mokoResources}"
-            )
-            val mokoGraphics = MultiPlatformLibrary(
-                common = "dev.icerock.moko:graphics:${Versions.Libs.MultiPlatform.mokoGraphics}",
-                iosX64 = "dev.icerock.moko:graphics-iosx64:${Versions.Libs.MultiPlatform.mokoGraphics}",
-                iosArm64 = "dev.icerock.moko:graphics-iosarm64:${Versions.Libs.MultiPlatform.mokoGraphics}"
-            )
+
+            object Tests {
+                const val kotlinTest =
+                    "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
+                const val kotlinTestAnnotations =
+                    "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+            }
+        }
+
+        object Ios {
+            const val ktorClientIos =
+                "io.ktor:ktor-client-ios:$ktorClientVersion"
+        }
+
+        object Detekt {
+            const val detektFormatting =
+                "io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion"
         }
     }
 }
-
-data class GradlePlugin(
-    val id: String,
-    val artifact: String
-)

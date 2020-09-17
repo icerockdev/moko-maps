@@ -21,12 +21,12 @@ import cocoapods.GoogleMaps.kGMSMinZoomLevel
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.graphics.toUIColor
+import dev.icerock.moko.maps.LineType
 import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.maps.MapController
 import dev.icerock.moko.maps.MapElement
 import dev.icerock.moko.maps.Marker
 import dev.icerock.moko.maps.ZoomConfig
-import dev.icerock.moko.maps.LineType
 import dev.icerock.moko.resources.ImageResource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.ReceivePipelineException
@@ -53,19 +53,23 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.native.ref.WeakReference
 
+@Suppress("TooManyFunctions")
 actual class GoogleMapController(
     mapView: GMSMapView,
     private val geoApiKey: String
 ) : MapController {
     private val httpClient = HttpClient {}
-    private val json = Json.nonstrict
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
     private val geoCoder = GMSGeocoder()
     private val locationManager = CLLocationManager()
     private val delegate = MapDelegate(this)
     private val weakMapView = WeakReference(mapView)
 
-    actual var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)? = null
+    actual var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)? =
+        null
 
     init {
         weakMapView.get()?.delegate = delegate
@@ -119,47 +123,49 @@ actual class GoogleMapController(
                 longitudinalMeters = maxRadius.toDouble()
             )
 
-
             val search = MKLocalSearch(request = request)
 
-            search.startWithCompletionHandler(mainContinuation { response, error ->
-                if (error != null) {
-                    continuation.resumeWithException(Throwable(error.localizedDescription))
-                    return@mainContinuation
+            search.startWithCompletionHandler(
+                mainContinuation { response, error ->
+                    if (error != null) {
+                        continuation.resumeWithException(Throwable(error.localizedDescription))
+                        return@mainContinuation
+                    }
+
+                    var addresses = listOf<MapAddress>()
+                    val items = response?.mapItems ?: listOf<MKMapItem>()
+
+                    for (item in items) {
+                        val mkItem = item as? MKMapItem
+                        var fullAddress = mkItem?.placemark?.name ?: ""
+
+                        val thoroughfare = mkItem?.placemark?.thoroughfare
+                        if (thoroughfare != null && !fullAddress.contains(thoroughfare)) {
+                            fullAddress = fullAddress.plus(", $thoroughfare")
+                        }
+
+                        val subThoroughfare = mkItem?.placemark?.subThoroughfare
+                        if (subThoroughfare != null && !fullAddress.contains(subThoroughfare)) {
+                            fullAddress = fullAddress.plus(", $subThoroughfare")
+                        }
+
+                        mkItem?.placemark?.coordinate?.useContents {
+
+                            val address = MapAddress(
+                                address = fullAddress,
+                                city = mkItem.placemark.locality,
+                                latLng = LatLng(
+                                    latitude = this.latitude,
+                                    longitude = this.longitude
+                                ),
+                                distance = maxRadius.toDouble()
+                            )
+                            addresses = addresses.plus(address)
+                        }
+                    }
+                    continuation.resume(addresses.take(maxResults))
                 }
-
-                var addresses = listOf<MapAddress>()
-                val items = response?.mapItems ?: listOf<MKMapItem>()
-
-
-                for (item in items) {
-                    val mkItem = item as? MKMapItem
-                    var fullAddress = mkItem?.placemark?.name ?: ""
-
-                    val thoroughfare = mkItem?.placemark?.thoroughfare
-                    if (thoroughfare != null && !fullAddress.contains(thoroughfare)) {
-                        fullAddress = fullAddress.plus(", $thoroughfare")
-                    }
-
-                    val subThoroughfare = mkItem?.placemark?.subThoroughfare
-                    if (subThoroughfare != null && !fullAddress.contains(subThoroughfare)) {
-                        fullAddress = fullAddress.plus(", $subThoroughfare")
-                    }
-
-                    mkItem?.placemark?.coordinate?.useContents {
-
-                        val address = MapAddress(
-                            address = fullAddress,
-                            city = mkItem.placemark.locality,
-                            latLng = LatLng(latitude = this.latitude, longitude = this.longitude),
-                            distance = maxRadius.toDouble()
-                        )
-                        addresses = addresses.plus(address)
-                    }
-
-                }
-                continuation.resume(addresses.take(3))
-            })
+            )
         }
     }
 
@@ -187,7 +193,11 @@ actual class GoogleMapController(
         return GoogleMarker(marker)
     }
 
-    override suspend fun buildRoute(points: List<LatLng>, lineColor: Color, markersImage: ImageResource?): MapElement {
+    override suspend fun buildRoute(
+        points: List<LatLng>,
+        lineColor: Color,
+        markersImage: ImageResource?
+    ): MapElement {
         val builder = HttpRequestBuilder()
         builder.method = HttpMethod.Get
 
@@ -221,7 +231,7 @@ actual class GoogleMapController(
     }
 
     override suspend fun drawPolygon(
-        pointList: List<dev.icerock.moko.geo.LatLng>,
+        pointList: List<LatLng>,
         backgroundColor: Color,
         lineColor: Color,
         backgroundOpacity: Float,
@@ -232,19 +242,24 @@ actual class GoogleMapController(
         TODO("Not yet implemented")
     }
 
-    private fun buildRoute(from: String, lineColor: Color, markersImage: ImageResource?): MapElement {
-        val direction = json.parse(GDirection.serializer(), from)
+    private fun buildRoute(
+        from: String,
+        lineColor: Color,
+        markersImage: ImageResource?
+    ): MapElement {
+        val direction = json.decodeFromString(GDirection.serializer(), from)
 
-        val route = direction.routes.firstOrNull() ?: throw IllegalArgumentException("routes not found")
+        val route =
+            direction.routes.firstOrNull() ?: throw IllegalArgumentException("routes not found")
 
-        val path = GMSPath.pathFromEncodedPath(route.overview_polyline.points)
+        val path = GMSPath.pathFromEncodedPath(route.overviewPolyline.points)
         val routeLine = GMSPolyline.polylineWithPath(path)
 
         routeLine.strokeColor = lineColor.toUIColor()
-        routeLine.strokeWidth = 3.0
+        routeLine.strokeWidth = ROUTE_STROKE_WIDTH
         routeLine.map = weakMapView.get()
 
-        val startMarker = route.legs.firstOrNull()?.start_location
+        val startMarker = route.legs.firstOrNull()?.startLocation
             ?.takeIf { markersImage != null }
             ?.let {
                 GMSMarker.markerWithPosition(it.coord2D()).apply {
@@ -253,7 +268,7 @@ actual class GoogleMapController(
                 }
             }
 
-        val endMarker = route.legs.lastOrNull()?.end_location
+        val endMarker = route.legs.lastOrNull()?.endLocation
             ?.takeIf { markersImage != null }
             ?.let {
                 GMSMarker.markerWithPosition(it.coord2D()).apply {
@@ -263,12 +278,12 @@ actual class GoogleMapController(
             }
 
         val firstLeg = route.legs.firstOrNull()
-        val waypoints = firstLeg?.via_waypoint
+        val waypoints = firstLeg?.viaWaypoint
             ?.takeIf { markersImage != null }
             ?.let { points ->
                 points.map {
-                    val step = firstLeg.steps[it.step_index]
-                    GMSMarker.markerWithPosition(step.end_location.coord2D()).apply {
+                    val step = firstLeg.steps[it.stepIndex]
+                    GMSMarker.markerWithPosition(step.endLocation.coord2D()).apply {
                         icon = markersImage!!.toUIImage()
                         map = weakMapView.get()
                     }
@@ -295,7 +310,10 @@ actual class GoogleMapController(
     }
 
     override suspend fun getMapCenterLatLng(): LatLng {
-        return weakMapView.get()?.camera?.target?.toLatLng() ?: LatLng(latitude = 0.0, longitude = 0.0)
+        return weakMapView.get()?.camera?.target?.toLatLng() ?: LatLng(
+            latitude = 0.0,
+            longitude = 0.0
+        )
     }
 
     override fun showLocation(latLng: LatLng, zoom: Float, animation: Boolean) {
@@ -353,7 +371,8 @@ actual class GoogleMapController(
             zoomGesturesEnabled = settings?.zoomGestures ?: false,
             tiltGesturesEnabled = settings?.tiltGestures ?: false,
             rotateGesturesEnabled = settings?.rotateGestures ?: false,
-            scrollGesturesDuringRotateOrZoomEnabled = settings?.allowScrollGesturesDuringRotateOrZoom ?: false
+            scrollGesturesDuringRotateOrZoomEnabled = settings?.allowScrollGesturesDuringRotateOrZoom
+                ?: false
         )
     }
 
@@ -366,9 +385,11 @@ actual class GoogleMapController(
             it.zoomGestures = settings.zoomGesturesEnabled
             it.tiltGestures = settings.tiltGesturesEnabled
             it.rotateGestures = settings.rotateGesturesEnabled
-            it.allowScrollGesturesDuringRotateOrZoom = settings.scrollGesturesDuringRotateOrZoomEnabled
+            it.allowScrollGesturesDuringRotateOrZoom =
+                settings.scrollGesturesDuringRotateOrZoomEnabled
         }
-        weakMapView.get()?.myLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
+        weakMapView.get()?.myLocationEnabled =
+            settings.myLocationButtonEnabled || settings.myLocationEnabled
     }
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -377,6 +398,7 @@ actual class GoogleMapController(
     ) : NSObject(), GMSMapViewDelegateProtocol {
         private val mapController = WeakReference(mapController)
 
+        @Suppress("RETURN_TYPE_MISMATCH_ON_OVERRIDE")
         override fun mapView(mapView: GMSMapView, didTapMarker: GMSMarker): Boolean {
             val marker: GMSMarker = didTapMarker
 
@@ -395,5 +417,7 @@ actual class GoogleMapController(
         }
     }
 
+    private companion object {
+        const val ROUTE_STROKE_WIDTH = 3.0
+    }
 }
-

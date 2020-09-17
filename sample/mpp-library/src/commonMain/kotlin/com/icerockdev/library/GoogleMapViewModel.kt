@@ -13,6 +13,7 @@ import dev.icerock.moko.maps.google.UiSettings
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.launch
 
+@Suppress("MagicNumber")
 class GoogleMapViewModel(
     val locationTracker: LocationTracker,
     val googleMapController: GoogleMapController
@@ -44,8 +45,12 @@ class GoogleMapViewModel(
             println("scroll by user gesture: $isUserGesture ")
         }
 
+        createRoute()
+    }
+
+    private fun createRoute() {
         viewModelScope.launch {
-            val route = googleMapController.buildRoute(
+            googleMapController.buildRoute(
                 points = listOf(
                     LatLng(
                         latitude = 55.032200,
@@ -64,7 +69,7 @@ class GoogleMapViewModel(
                 markersImage = MR.images.marker
             )
 
-            val marker1 = googleMapController.addMarker(
+            googleMapController.addMarker(
                 image = MR.images.marker,
                 latLng = LatLng(
                     latitude = 55.045853,
@@ -75,7 +80,7 @@ class GoogleMapViewModel(
                 println("marker 1 pressed!")
             }
 
-            val marker2 = googleMapController.addMarker(
+            googleMapController.addMarker(
                 image = MR.images.marker,
                 latLng = LatLng(
                     latitude = 55.040853,
