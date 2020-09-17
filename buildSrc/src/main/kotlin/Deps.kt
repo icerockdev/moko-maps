@@ -21,7 +21,7 @@ object Deps {
     private const val multidexVersion = "2.0.1"
 
     private const val kotlinxSerializationVersion = "1.0.0-RC"
-    const val coroutinesVersion = "1.3.9-native-mt"
+    private const val coroutinesVersion = "1.3.9-native-mt"
     private const val ktorClientVersion = "1.4.0"
 
     private const val detektVersion = "1.12.0"
