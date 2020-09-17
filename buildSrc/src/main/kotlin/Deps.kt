@@ -7,8 +7,6 @@ object Deps {
     private const val kotlinVersion = "1.4.10"
 
     private const val lifecycleVersion = "2.2.0"
-    private const val glideVersion = "4.9.0"
-    private const val materialVersion = "1.2.0"
     private const val androidAppCompatVersion = "1.1.0"
     private const val espressoCoreVersion = "3.2.0"
     private const val testRunnerVersion = "1.2.0"
@@ -43,7 +41,6 @@ object Deps {
     object Plugins {
         val androidApplication = GradlePlugin(id = "com.android.application")
         val androidLibrary = GradlePlugin(id = "com.android.library")
-        val kotlinJvm = GradlePlugin(id = "org.jetbrains.kotlin.jvm")
         val kotlinMultiplatform = GradlePlugin(
             id = "org.jetbrains.kotlin.multiplatform",
             module = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -75,14 +72,8 @@ object Deps {
         object Android {
             const val appCompat =
                 "androidx.appcompat:appcompat:$androidAppCompatVersion"
-            const val glide =
-                "com.github.bumptech.glide:glide:$glideVersion"
             const val lifecycle =
                 "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
-            const val ktorClientOkHttp =
-                "io.ktor:ktor-client-okhttp:$ktorClientVersion"
-            const val material =
-                "com.google.android.material:material:$materialVersion"
             const val playServicesLocation =
                 "com.google.android.gms:play-services-location:$playServicesLocationVersion"
             const val playServicesMaps =
@@ -155,11 +146,6 @@ object Deps {
                 const val kotlinTestAnnotations =
                     "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
             }
-        }
-
-        object Ios {
-            const val ktorClientIos =
-                "io.ktor:ktor-client-ios:$ktorClientVersion"
         }
 
         object Detekt {
