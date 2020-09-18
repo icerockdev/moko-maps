@@ -17,9 +17,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Dash
+import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PatternItem
+import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.tasks.Task
 import com.google.maps.DirectionsApiRequest
@@ -260,7 +264,21 @@ actual class GoogleMapController(
         lineOpacity: Float,
         lineType: LineType
     ): MapElement {
-        TODO("Not yet implemented")
+        val map = mapHolder.get()
+        val polygonOptions = PolygonOptions().apply {
+            addAll(pointList.map { it.toAndroidLatLng() })
+            fillColor(colorWithOpacity(backgroundColor, backgroundOpacity).argb.toInt())
+            strokeColor(colorWithOpacity(lineColor, lineOpacity).argb.toInt())
+            strokeWidth(lineWidth)
+            val pattern: List<PatternItem> = when (lineType) {
+                LineType.SOLID -> emptyList()
+                LineType.DASHED -> listOf(Dash(8.0f * lineWidth), Gap(4.0f * lineWidth))
+            }
+            strokePattern(pattern)
+            clickable(false)
+        }
+        val polygon = map.addPolygon(polygonOptions)
+        return GooglePolygon(polygon)
     }
 
     @Suppress("LongMethod")

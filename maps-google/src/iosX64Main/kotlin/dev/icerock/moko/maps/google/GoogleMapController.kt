@@ -11,7 +11,9 @@ import cocoapods.GoogleMaps.GMSGeocoder
 import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.GoogleMaps.GMSMapViewDelegateProtocol
 import cocoapods.GoogleMaps.GMSMarker
+import cocoapods.GoogleMaps.GMSMutablePath
 import cocoapods.GoogleMaps.GMSPath
+import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
 import cocoapods.GoogleMaps.animateToCameraPosition
 import cocoapods.GoogleMaps.animateToZoom
@@ -239,7 +241,21 @@ actual class GoogleMapController(
         lineOpacity: Float,
         lineType: LineType
     ): MapElement {
-        TODO("Not yet implemented")
+        val polygonPath = GMSMutablePath().apply {
+            pointList.forEach { addCoordinate(it.toCoord2D()) }
+        }
+        val polygon = GMSPolygon().apply {
+            path = polygonPath
+            fillColor = colorWithOpacity(backgroundColor, backgroundOpacity).toUIColor()
+            strokeColor = colorWithOpacity(lineColor, lineOpacity).toUIColor()
+            strokeWidth = lineWidth.toDouble()
+            tappable = false
+            map = weakMapView.get()
+        }
+        if (lineType != LineType.SOLID) {
+            println("WARNING: GMSPolygon not support line type $lineType")
+        }
+        return GooglePolygon(polygon)
     }
 
     private fun buildRoute(
