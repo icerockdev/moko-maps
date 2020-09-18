@@ -194,7 +194,7 @@ actual class GoogleMapController(
 
         val lastLocation = locationHolder.get().getLastLocationSuspended()
 
-        return with(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             val nearbyRequest = PlacesApi.nearbySearchQuery(
                 geoApiContext,
                 LatLng(
