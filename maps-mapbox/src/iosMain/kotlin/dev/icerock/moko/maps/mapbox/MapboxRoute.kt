@@ -8,6 +8,6 @@ import dev.icerock.moko.maps.MapElement
 
 actual class MapboxRoute : MapElement {
     override fun delete() {
-        TODO("not implemented")
+        TODO("not yet implemented")
     }
 }
