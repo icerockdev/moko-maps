@@ -14,8 +14,9 @@ object Deps {
     private const val playServicesLocationVersion = "16.0.0"
     private const val playServicesMapsVersion = "16.1.0"
     private const val googleMapsServicesVersion = "0.2.11"
-    private const val mapboxVersion = "8.6.2"
-    private const val mapboxAnnotationVersion = "0.7.0"
+    private const val mapboxVersion = "9.2.1"
+    private const val mapboxNavigationVersion = "0.42.6"
+    private const val mapboxAnnotationVersion = "0.9.0"
     private const val multidexVersion = "2.0.1"
 
     private const val kotlinxSerializationVersion = "1.0.0-RC"
@@ -82,8 +83,10 @@ object Deps {
                 "com.google.maps:google-maps-services:$googleMapsServicesVersion"
             const val mapbox =
                 "com.mapbox.mapboxsdk:mapbox-android-sdk:$mapboxVersion"
+            const val mapboxNavigation =
+                "com.mapbox.mapboxsdk:mapbox-android-navigation:$mapboxNavigationVersion"
             const val mapboxAnnotation =
-                "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:$mapboxAnnotationVersion"
+                "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:$mapboxAnnotationVersion"
             const val multidex =
                 "androidx.multidex:multidex:$multidexVersion"
             const val ktorClientOkHttp =

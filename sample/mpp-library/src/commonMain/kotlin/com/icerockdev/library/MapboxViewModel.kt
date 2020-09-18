@@ -60,9 +60,31 @@ class MapboxViewModel(
                 println(throwable.toString())
             }
 
+            createRoute()
             createMarkers()
             createArea()
         }
+    }
+
+    private suspend fun createRoute() {
+        mapsController.buildRoute(
+            points = listOf(
+                LatLng(
+                    latitude = 55.032200,
+                    longitude = 82.889360
+                ),
+                LatLng(
+                    latitude = 55.030853,
+                    longitude = 82.920154
+                ),
+                LatLng(
+                    latitude = 55.013109,
+                    longitude = 82.926480
+                )
+            ),
+            lineColor = Color(0xCCCC00FF),
+            markersImage = MR.images.marker
+        )
     }
 
     @OptIn(ExperimentalTime::class)

@@ -6,8 +6,12 @@ package dev.icerock.moko.maps.mapbox
 
 import dev.icerock.moko.maps.MapElement
 
-actual class MapboxRoute : MapElement {
+actual class MapboxRoute(
+    val line: MapboxLine,
+    val markers: List<MapboxMarker>
+) : MapElement {
     override fun delete() {
-        TODO("not yet implemented")
+        line.delete()
+        markers.forEach { it.delete() }
     }
 }

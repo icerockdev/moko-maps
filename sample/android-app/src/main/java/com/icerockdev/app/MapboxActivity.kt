@@ -21,19 +21,21 @@ class MapboxActivity : MvvmActivity<ActivityMapboxBinding, MapboxViewModel>() {
     override val viewModelVariableId: Int = BR.viewModel
     override val viewModelClass: Class<MapboxViewModel> = MapboxViewModel::class.java
 
+    private val mapboxToken = "YOUR-ACCESS-TOKEN"
+
     override fun viewModelFactory(): ViewModelProvider.Factory {
         return createViewModelFactory {
             MapboxViewModel(
                 permissionsController = PermissionsController(
                     applicationContext = applicationContext
                 ),
-                mapsController = MapboxController()
+                mapsController = MapboxController(accessToken = mapboxToken)
             ).apply { start() }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Mapbox.getInstance(applicationContext, "YOUR-ACCESS-TOKEN") // or in the application class
+        Mapbox.getInstance(applicationContext, mapboxToken) // or in the application class
         super.onCreate(savedInstanceState)
         viewModel.permissionsController.bind(lifecycle, supportFragmentManager)
 

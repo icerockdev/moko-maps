@@ -24,6 +24,7 @@ dependencies {
     androidMainImplementation(Deps.Libs.Android.playServicesLocation)
     androidMainImplementation(Deps.Libs.Android.mapbox)
     androidMainImplementation(Deps.Libs.Android.mapboxAnnotation)
+    androidMainImplementation(Deps.Libs.Android.mapboxNavigation)
 }
 
 publishing {

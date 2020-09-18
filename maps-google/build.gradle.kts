@@ -22,6 +22,7 @@ dependencies {
 
     commonMainApi(project(":maps"))
     commonMainImplementation(Deps.Libs.MultiPlatform.mokoGeo)
+    commonMainImplementation(Deps.Libs.MultiPlatform.mokoGraphics)
 
     androidMainImplementation(Deps.Libs.Android.appCompat)
     androidMainImplementation(Deps.Libs.Android.lifecycle)
