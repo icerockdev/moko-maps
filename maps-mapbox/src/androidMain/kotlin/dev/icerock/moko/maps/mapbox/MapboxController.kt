@@ -7,6 +7,7 @@ package dev.icerock.moko.maps.mapbox
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
+import android.location.Location
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -55,6 +56,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 @SuppressLint("MissingPermission")
@@ -365,7 +367,49 @@ actual class MapboxController(
         maxResults: Int,
         maxRadius: Int
     ): List<MapAddress> {
-        TODO("not yet implemented")
+        if (text.isNullOrEmpty()) return emptyList()
+
+        val geoCoder = geoCoderHolder.get()
+        val locationProviderClient = locationHolder.get()
+
+        val lastLocation: Location = suspendCoroutine { continuation ->
+            locationProviderClient.lastLocation.addOnCompleteListener {
+                if(it.isSuccessful) {
+                    continuation.resume(it.result!!)
+                } else {
+                    continuation.resumeWithException(it.exception!!)
+                }
+            }
+        }
+
+        val radiusLatitude = maxRadius * 0.01
+        val radiusLongitude = maxRadius * 0.001
+        return withContext(Dispatchers.IO) {
+            val addresses = geoCoder.getFromLocationName(
+                text,
+                maxResults,
+                lastLocation.latitude - radiusLatitude,
+                lastLocation.longitude - radiusLongitude,
+                lastLocation.latitude + radiusLatitude,
+                lastLocation.longitude + radiusLongitude
+            )
+            addresses.map { address ->
+                val distanceResult = FloatArray(3)
+                Location.distanceBetween(
+                    lastLocation.latitude,
+                    lastLocation.longitude,
+                    address.latitude,
+                    address.longitude,
+                    distanceResult
+                )
+                MapAddress(
+                    address = address.thoroughfare,
+                    city = null,
+                    latLng = LatLng(latitude = address.latitude, longitude = address.longitude),
+                    distance = distanceResult[0].toDouble()
+                )
+            }
+        }
     }
 
     override suspend fun getZoomConfig(): ZoomConfig {

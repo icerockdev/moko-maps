@@ -60,6 +60,18 @@ class MapboxViewModel(
                 println(throwable.toString())
             }
 
+            @Suppress("TooGenericExceptionCaught")
+            try {
+                val addresses = mapsController.getSimilarNearAddresses(
+                    text = "прибрежная",
+                    maxResults = 3,
+                    maxRadius = 500
+                )
+                println(addresses.toString())
+            } catch (throwable: Throwable) {
+                println(throwable.toString())
+            }
+
             createRoute()
             createMarkers()
             createArea()
