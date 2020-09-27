@@ -38,21 +38,10 @@ publishing {
     }
 }
 
-kotlin.targets
-    .matching { it is org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget }
-    .configureEach {
-        val target = this as org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-
-        target.compilations.getByName("main") {
-            val mapBox by cinterops.creating {
-                defFile(project.file("src/iosMain/def/MapBox.def"))
-
-                val frameworks = listOf(
-                    project.file("../sample/ios-app/Pods/Mapbox-iOS-SDK/dynamic")
-                )
-
-                val frameworksOpts = frameworks.map { "-F${it.path}" }
-                compilerOpts(*frameworksOpts.toTypedArray())
-            }
-        }
+cocoaPods {
+    precompiledPod(
+        scheme = "Mapbox"
+    ) { podsDir ->
+        listOf(File(podsDir, "Mapbox-iOS-SDK/dynamic"))
     }
+}

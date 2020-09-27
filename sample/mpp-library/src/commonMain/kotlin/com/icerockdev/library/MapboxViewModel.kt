@@ -53,29 +53,26 @@ class MapboxViewModel(
                 )
             )
 
-            @Suppress("TooGenericExceptionCaught")
-            try {
-                mapsController.showMyLocation(8f)
-            } catch (throwable: Throwable) {
-                println(throwable.toString())
-            }
-
-            @Suppress("TooGenericExceptionCaught")
-            try {
-                val addresses = mapsController.getSimilarNearAddresses(
-                    text = "прибрежная",
-                    maxResults = 3,
-                    maxRadius = 500
-                )
-                println(addresses.toString())
-            } catch (throwable: Throwable) {
-                println(throwable.toString())
-            }
-
-            createRoute()
-            createMarkers()
-            createArea()
+            runCatching { goToCurrentLocation() }.onFailure(::println)
+            runCatching { getNearAddresses() }.onFailure(::println)
+            // for now MapboxDirections pod can't be cinteroped, so on iOS this not implemented
+            runCatching { createRoute() }.onFailure(::println)
+            runCatching { createMarkers() }.onFailure(::println)
+            runCatching { createArea() }.onFailure(::println)
         }
+    }
+
+    private fun goToCurrentLocation() {
+        mapsController.showMyLocation(8f)
+    }
+
+    private suspend fun getNearAddresses() {
+        val addresses = mapsController.getSimilarNearAddresses(
+            text = "прибрежная",
+            maxResults = 3,
+            maxRadius = 500
+        )
+        println(addresses.toString())
     }
 
     private suspend fun createRoute() {

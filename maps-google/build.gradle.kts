@@ -45,24 +45,19 @@ publishing {
     }
 }
 
-kotlin.targets
-    .matching { it is org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget }
-    .configureEach {
-        val target = this as org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-
-        target.compilations.getByName("main") {
-            val googleMaps by cinterops.creating {
-                defFile(project.file("src/iosMain/def/GoogleMaps.def"))
-
-                val frameworks = listOf(
-                    "Base",
-                    "Maps"
-                ).map { frameworkPath ->
-                    project.file("../sample/ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks")
-                }
-
-                val frameworksOpts = frameworks.map { "-F${it.path}" }
-                compilerOpts(*frameworksOpts.toTypedArray())
-            }
-        }
+cocoaPods {
+    precompiledPod(
+        scheme = "GoogleMaps",
+        extraModules = listOf("GoogleMapsBase"),
+        extraLinkerOpts = listOf(
+            "GoogleMapsBase", "GoogleMapsCore", "CoreGraphics", "QuartzCore", "UIKit",
+            "ImageIO", "OpenGLES", "CoreData", "CoreText", "SystemConfiguration", "Security",
+            "CoreTelephony", "CoreImage"
+        ).map { "-framework $it" }
+    ) { podsDir ->
+        listOf(
+            File(podsDir, "GoogleMaps/Base/Frameworks"),
+            File(podsDir, "GoogleMaps/Maps/Frameworks")
+        )
     }
+}
