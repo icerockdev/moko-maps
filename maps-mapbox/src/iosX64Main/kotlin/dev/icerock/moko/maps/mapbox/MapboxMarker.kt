@@ -27,8 +27,8 @@ actual class MapboxMarker(
         }
 
     override var rotation: Float
-        get() = TODO("not yet implemented")
-        set(value) { TODO("not yet implemented") }
+        get() = TODO("rotation not work for markers of Mapbox")
+        set(value) { TODO("rotation not work for markers of Mapbox") }
 
     @ExperimentalTime
     override fun move(position: LatLng, rotation: Float, duration: Duration) {

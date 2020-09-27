@@ -144,7 +144,6 @@ actual class MapboxController(
         showLocation(latLng = location, zoom = zoom, animation = true)
     }
 
-    // TODO: Need implementation for rotation
     override suspend fun addMarker(
         image: ImageResource,
         latLng: LatLng,
@@ -156,6 +155,9 @@ actual class MapboxController(
         annotation.onClick = onClick
         annotation.image = image.toUIImage()
         weakMapView.get()?.addAnnotation(annotation)
+
+        // TODO: Need implementation for rotation
+        if (rotation != 0.0f) println("WARNING: rotation not work for markers of Mapbox")
 
         return MapboxMarker(
             annotation = annotation,
@@ -229,11 +231,11 @@ actual class MapboxController(
         lineColor: Color,
         markersImage: ImageResource?
     ): MapElement {
-        TODO("not yet implemented")
+        TODO("for now MapboxDirections pod can't be cinteroped, so on iOS this not implemented")
     }
 
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
-        TODO("not yet implemented")
+        TODO("for now MapboxDirections pod can't be cinteroped, so on iOS this not implemented")
     }
 
     override suspend fun getSimilarNearAddresses(
@@ -241,7 +243,7 @@ actual class MapboxController(
         maxResults: Int,
         maxRadius: Int
     ): List<MapAddress> {
-        TODO("not yet implemented")
+        TODO("for now MapboxDirections pod can't be cinteroped, so on iOS this not implemented")
     }
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE", "CONFLICTING_OVERLOADS")
