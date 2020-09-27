@@ -78,6 +78,30 @@ kotlin.targets
     }
 ```
 
+With [mobile-multiplatform-gradle-plugin](https://github.com/icerockdev/mobile-multiplatform-gradle-plugin) cocoapods configuration simplest:
+`build.gradle.kts`:
+```kotlin
+cocoaPods {
+    podsProject = file("ios-app/Pods/Pods.xcodeproj")
+
+    precompiledPod(
+        scheme = "GoogleMaps",
+        onlyLink = true
+    ) { podsDir ->
+        listOf(
+            File(podsDir, "GoogleMaps/Base/Frameworks"),
+            File(podsDir, "GoogleMaps/Maps/Frameworks")
+        )
+    }
+    precompiledPod(
+        scheme = "Mapbox",
+        onlyLink = true
+    ) { podsDir ->
+        listOf(File(podsDir, "Mapbox-iOS-SDK/dynamic"))
+    }
+}
+```
+
 project Podfile
 ```ruby
 pod 'GoogleMaps', '3.7.0'
