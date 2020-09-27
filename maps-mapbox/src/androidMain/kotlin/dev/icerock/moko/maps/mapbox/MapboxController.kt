@@ -374,7 +374,7 @@ actual class MapboxController(
 
         val lastLocation: Location = suspendCoroutine { continuation ->
             locationProviderClient.lastLocation.addOnCompleteListener {
-                if(it.isSuccessful) {
+                if (it.isSuccessful) {
                     continuation.resume(it.result!!)
                 } else {
                     continuation.resumeWithException(it.exception!!)
@@ -382,7 +382,11 @@ actual class MapboxController(
             }
         }
 
-        val radiusLatitude = maxRadius * 0.01
+        // TODO calculate bounds from radius
+        @Suppress("MagicNumber")
+        val radiusLatitude = maxRadius * 0.001
+
+        @Suppress("MagicNumber")
         val radiusLongitude = maxRadius * 0.001
         return withContext(Dispatchers.IO) {
             val addresses = geoCoder.getFromLocationName(
@@ -394,6 +398,7 @@ actual class MapboxController(
                 lastLocation.longitude + radiusLongitude
             )
             addresses.map { address ->
+                @Suppress("MagicNumber")
                 val distanceResult = FloatArray(3)
                 Location.distanceBetween(
                     lastLocation.latitude,

@@ -7,6 +7,7 @@ package dev.icerock.moko.maps.google
 import dev.icerock.moko.graphics.Color
 
 internal fun colorWithOpacity(color: Color, opacity: Float): Color {
+    @Suppress("MagicNumber")
     val newAlpha = (color.alpha * opacity).toInt().let {
         if (it > 0xFF) 0xFF
         else it

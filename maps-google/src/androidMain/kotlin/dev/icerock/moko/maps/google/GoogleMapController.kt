@@ -272,7 +272,7 @@ actual class GoogleMapController(
             strokeWidth(lineWidth)
             val pattern: List<PatternItem> = when (lineType) {
                 LineType.SOLID -> emptyList()
-                LineType.DASHED -> listOf(Dash(8.0f * lineWidth), Gap(4.0f * lineWidth))
+                LineType.DASHED -> listOf(Dash(DASHED_SOLID_SIZE * lineWidth), Gap(DASHED_EMPTY_SIZE * lineWidth))
             }
             strokePattern(pattern)
             clickable(false)
@@ -456,5 +456,7 @@ actual class GoogleMapController(
         const val BOUNDS_PADDING = 250
         const val DIVIDER_BOUND_LATITUDE_PADDING = 2
         const val WIDTH_POLYLINE = 12.0f
+        const val DASHED_SOLID_SIZE = 8.0f
+        const val DASHED_EMPTY_SIZE = 4.0f
     }
 }
