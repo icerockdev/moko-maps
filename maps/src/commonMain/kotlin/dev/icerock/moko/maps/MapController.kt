@@ -8,6 +8,7 @@ import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
 import dev.icerock.moko.resources.ImageResource
 
+@Suppress("TooManyFunctions")
 interface MapController {
     fun showMyLocation(zoom: Float)
 
@@ -32,6 +33,7 @@ interface MapController {
         markersImage: ImageResource? = null
     ): MapElement
 
+    @Suppress("LongParameterList")
     suspend fun drawPolygon(
         pointList: List<LatLng>,
         backgroundColor: Color,

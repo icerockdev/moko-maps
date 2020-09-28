@@ -4,13 +4,13 @@
 
 package dev.icerock.moko.maps.mapbox
 
-import cocoapods.Mapbox.MGLMapView
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.maps.Marker
 import platform.QuartzCore.CATransaction
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
+@Suppress("ForbiddenComment")
 actual class MapboxMarker(
     private val annotation: MapboxAnnotation,
     private val onDeleteCallback: (() -> Unit)?
@@ -26,10 +26,9 @@ actual class MapboxMarker(
             annotation.setCoordinate(coordinate = value.toCoord2D())
         }
 
-    // TODO: Need implementation
     override var rotation: Float
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        set(value) {}
+        get() = TODO("rotation not work for markers of Mapbox")
+        set(value) { TODO("rotation not work for markers of Mapbox") }
 
     @ExperimentalTime
     override fun move(position: LatLng, rotation: Float, duration: Duration) {

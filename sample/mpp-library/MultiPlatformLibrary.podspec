@@ -11,8 +11,6 @@ Pod::Spec.new do |spec|
     spec.libraries                = "c++"
     spec.module_name              = "#{spec.name}_umbrella"
 
-    spec.static_framework = true
-
     spec.pod_target_xcconfig = {
         'MPP_LIBRARY_NAME' => 'MultiPlatformLibrary',
         'GRADLE_TASK[sdk=iphonesimulator*][config=*ebug]' => 'syncMultiPlatformLibraryDebugFrameworkIosX64',
@@ -33,7 +31,7 @@ MPP_PROJECT_ROOT="$SRCROOT/../../mpp-library"
 MPP_OUTPUT_DIR="$MPP_PROJECT_ROOT/build/cocoapods/framework"
 MPP_OUTPUT_NAME="$MPP_OUTPUT_DIR/#{spec.name}.framework"
 
-"$MPP_PROJECT_ROOT/../gradlew" --configure-on-demand -p "$MPP_PROJECT_ROOT" "$GRADLE_TASK"
+"$MPP_PROJECT_ROOT/../gradlew" -p "$MPP_PROJECT_ROOT" "$GRADLE_TASK"
             SCRIPT
         }
     ]

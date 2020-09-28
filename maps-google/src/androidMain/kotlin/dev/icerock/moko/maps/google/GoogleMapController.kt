@@ -17,9 +17,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Dash
+import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PatternItem
+import com.google.android.gms.maps.model.PolygonOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.tasks.Task
 import com.google.maps.DirectionsApiRequest
@@ -30,21 +34,23 @@ import com.google.maps.errors.NotFoundException
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.LatLng
 import dev.icerock.moko.graphics.Color
+import dev.icerock.moko.maps.LineType
+import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.maps.MapController
 import dev.icerock.moko.maps.MapElement
 import dev.icerock.moko.maps.ZoomConfig
-import dev.icerock.moko.maps.LineType
-import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import com.google.android.gms.maps.model.LatLng as AndroidLatLng
 import dev.icerock.moko.geo.LatLng as GeoLatLng
 
+@SuppressLint("MissingPermission")
+@Suppress("TooManyFunctions")
 actual class GoogleMapController(
     geoApiKey: String
 ) : MapController {
@@ -87,21 +93,24 @@ actual class GoogleMapController(
         .apiKey(geoApiKey)
         .build()
 
-    actual var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)? = null
+    actual var onCameraScrollStateChanged: ((scrolling: Boolean, isUserGesture: Boolean) -> Unit)? =
+        null
 
     fun bind(lifecycle: Lifecycle, context: Context, googleMap: GoogleMap) {
         mapHolder.set(googleMap)
         locationHolder.set(LocationServices.getFusedLocationProviderClient(context))
         geoCoderHolder.set(Geocoder(context, Locale.getDefault()))
 
-        lifecycle.addObserver(object : LifecycleObserver {
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            fun onDestroy() {
-                mapHolder.clear()
-                locationHolder.clear()
-                geoCoderHolder.clear()
+        lifecycle.addObserver(
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    mapHolder.clear()
+                    locationHolder.clear()
+                    geoCoderHolder.clear()
+                }
             }
-        })
+        )
 
         googleMap.uiSettings.apply {
             // unsupported on iOS side at all
@@ -138,7 +147,6 @@ actual class GoogleMapController(
         }
     }
 
-    @SuppressLint("MissingPermission")
     override fun showMyLocation(zoom: Float) {
         locationHolder.doWith { client ->
             client.lastLocation.addOnSuccessListener { location ->
@@ -181,7 +189,6 @@ actual class GoogleMapController(
             ?.getAddressLine(0)
     }
 
-    @SuppressLint("MissingPermission")
     override suspend fun getSimilarNearAddresses(
         text: String?,
         maxResults: Int,
@@ -191,7 +198,7 @@ actual class GoogleMapController(
 
         val lastLocation = locationHolder.get().getLastLocationSuspended()
 
-        return with(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             val nearbyRequest = PlacesApi.nearbySearchQuery(
                 geoApiContext,
                 LatLng(
@@ -257,9 +264,24 @@ actual class GoogleMapController(
         lineOpacity: Float,
         lineType: LineType
     ): MapElement {
-        TODO("Not yet implemented")
+        val map = mapHolder.get()
+        val polygonOptions = PolygonOptions().apply {
+            addAll(pointList.map { it.toAndroidLatLng() })
+            fillColor(colorWithOpacity(backgroundColor, backgroundOpacity).argb.toInt())
+            strokeColor(colorWithOpacity(lineColor, lineOpacity).argb.toInt())
+            strokeWidth(lineWidth)
+            val pattern: List<PatternItem> = when (lineType) {
+                LineType.SOLID -> emptyList()
+                LineType.DASHED -> listOf(Dash(DASHED_SOLID_SIZE * lineWidth), Gap(DASHED_EMPTY_SIZE * lineWidth))
+            }
+            strokePattern(pattern)
+            clickable(false)
+        }
+        val polygon = map.addPolygon(polygonOptions)
+        return GooglePolygon(polygon)
     }
 
+    @Suppress("LongMethod")
     override suspend fun buildRoute(
         points: List<GeoLatLng>,
         lineColor: Color,
@@ -353,27 +375,29 @@ actual class GoogleMapController(
         )
     }
 
-    @Suppress("RedundantWith")
     private suspend fun getDirection(
         origin: LatLng,
         destination: LatLng,
         wayPoints: MutableList<LatLng>
-    ): DirectionsResult = with(Dispatchers.IO) {
+    ): DirectionsResult = withContext(Dispatchers.IO) {
         suspendCoroutine { continuation ->
+            @Suppress("SpreadOperator")
             DirectionsApiRequest(geoApiContext)
                 .alternatives(false) // не стоить альтернативные пути
                 .origin(origin)
                 .destination(destination)
                 .waypoints(*wayPoints.toTypedArray())
-                .setCallback(object : PendingResult.Callback<DirectionsResult> {
-                    override fun onResult(result: DirectionsResult) {
-                        continuation.resume(result)
-                    }
+                .setCallback(
+                    object : PendingResult.Callback<DirectionsResult> {
+                        override fun onResult(result: DirectionsResult) {
+                            continuation.resume(result)
+                        }
 
-                    override fun onFailure(e: Throwable) {
-                        continuation.resumeWithException(e)
+                        override fun onFailure(e: Throwable) {
+                            continuation.resumeWithException(e)
+                        }
                     }
-                })
+                )
         }
     }
 
@@ -383,6 +407,7 @@ actual class GoogleMapController(
         rotation: Float,
         onClick: (() -> Unit)?
     ): dev.icerock.moko.maps.Marker {
+        @Suppress("MagicNumber")
         val markerOptions = MarkerOptions()
             .position(latLng.toAndroidLatLng())
             .icon(BitmapDescriptorFactory.fromResource(image.drawableResId))
@@ -418,7 +443,8 @@ actual class GoogleMapController(
                 isZoomControlsEnabled = settings.zoomGesturesEnabled
                 isTiltGesturesEnabled = settings.tiltGesturesEnabled
                 isRotateGesturesEnabled = settings.rotateGesturesEnabled
-                isScrollGesturesEnabledDuringRotateOrZoom = settings.scrollGesturesDuringRotateOrZoomEnabled
+                isScrollGesturesEnabledDuringRotateOrZoom =
+                    settings.scrollGesturesDuringRotateOrZoomEnabled
             }
 
             it.isMyLocationEnabled = settings.myLocationButtonEnabled || settings.myLocationEnabled
@@ -430,5 +456,7 @@ actual class GoogleMapController(
         const val BOUNDS_PADDING = 250
         const val DIVIDER_BOUND_LATITUDE_PADDING = 2
         const val WIDTH_POLYLINE = 12.0f
+        const val DASHED_SOLID_SIZE = 8.0f
+        const val DASHED_EMPTY_SIZE = 4.0f
     }
 }

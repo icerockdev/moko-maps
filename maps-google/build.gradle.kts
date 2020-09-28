@@ -3,40 +3,35 @@
  */
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.multiplatform")
-    id("kotlin-kapt")
-    id("kotlin-android-extensions")
-    id("dev.icerock.mobile.multiplatform")
-    id("maven-publish")
-    id(Deps.Plugins.kotlinSerialization.id)
+    plugin(Deps.Plugins.androidLibrary)
+    plugin(Deps.Plugins.kotlinMultiplatform)
+    plugin(Deps.Plugins.kotlinKapt)
+    plugin(Deps.Plugins.kotlinAndroidExtensions)
+    plugin(Deps.Plugins.kotlinSerialization)
+    plugin(Deps.Plugins.mobileMultiplatform)
+    plugin(Deps.Plugins.mavenPublish)
 }
 
 group = "dev.icerock.moko"
-version = Versions.Libs.MultiPlatform.mokoMaps
-
-android {
-    compileSdkVersion(Versions.Android.compileSdk)
-
-    defaultConfig {
-        minSdkVersion(Versions.Android.minSdk)
-        targetSdkVersion(Versions.Android.targetSdk)
-    }
-}
+version = Deps.mokoMapsVersion
 
 dependencies {
-    mppLibrary(Deps.Libs.MultiPlatform.kotlinStdLib)
-    mppLibrary(Deps.Libs.MultiPlatform.coroutines)
+    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
+    commonMainImplementation(Deps.Libs.MultiPlatform.ktorClient)
+    commonMainImplementation(Deps.Libs.MultiPlatform.kotlinSerialization)
 
-    mppLibrary(Deps.Libs.MultiPlatform.mokoMaps)
-    mppLibrary(Deps.Libs.MultiPlatform.ktorClient)
-    mppLibrary(Deps.Libs.MultiPlatform.serialization)
+    commonMainApi(project(":maps"))
+    commonMainImplementation(Deps.Libs.MultiPlatform.mokoGeo)
+    commonMainImplementation(Deps.Libs.MultiPlatform.mokoGraphics)
 
-    androidLibrary(Deps.Libs.Android.appCompat)
-    androidLibrary(Deps.Libs.Android.lifecycle)
-    androidLibrary(Deps.Libs.Android.playServicesLocation)
-    androidLibrary(Deps.Libs.Android.playServicesMaps)
-    androidLibrary(Deps.Libs.Android.googleMapsServices)
+    androidMainImplementation(Deps.Libs.Android.appCompat)
+    androidMainImplementation(Deps.Libs.Android.lifecycle)
+    androidMainImplementation(Deps.Libs.Android.playServicesLocation)
+    androidMainImplementation(Deps.Libs.Android.playServicesMaps)
+    androidMainImplementation(Deps.Libs.Android.googleMapsServices)
+    androidMainImplementation(Deps.Libs.Android.ktorClientOkHttp)
+
+    iosMainImplementation(Deps.Libs.Ios.ktorClientIos)
 }
 
 publishing {
@@ -50,22 +45,19 @@ publishing {
     }
 }
 
-kotlin {
-    targets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().forEach { target ->
-        target.compilations.getByName("main") {
-            val googleMaps by cinterops.creating {
-                defFile(project.file("src/iosMain/def/GoogleMaps.def"))
-
-                val frameworks = listOf(
-                    "Base",
-                    "Maps"
-                ).map { frameworkPath ->
-                    project.file("../sample/ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks")
-                }
-
-                val frameworksOpts = frameworks.map { "-F${it.path}" }
-                compilerOpts(*frameworksOpts.toTypedArray())
-            }
-        }
+cocoaPods {
+    precompiledPod(
+        scheme = "GoogleMaps",
+        extraModules = listOf("GoogleMapsBase"),
+        extraLinkerOpts = listOf(
+            "GoogleMapsBase", "GoogleMapsCore", "CoreGraphics", "QuartzCore", "UIKit",
+            "ImageIO", "OpenGLES", "CoreData", "CoreText", "SystemConfiguration", "Security",
+            "CoreTelephony", "CoreImage"
+        ).map { "-framework $it" }
+    ) { podsDir ->
+        listOf(
+            File(podsDir, "GoogleMaps/Base/Frameworks"),
+            File(podsDir, "GoogleMaps/Maps/Frameworks")
+        )
     }
 }

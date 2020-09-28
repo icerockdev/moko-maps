@@ -12,7 +12,25 @@ platform :ios, '11.0'
 target 'TestProj' do
   # MultiPlatformLibrary
   pod 'MultiPlatformLibrary', :path => '../mpp-library'
-  pod 'Mapbox-iOS-SDK', '5.5.0'
+  pod 'Mapbox-iOS-SDK', '5.6.0'
+  pod 'MapboxNavigation', '0.40.0'
   pod 'GoogleMaps', '3.7.0'
+end
 
+# GoogleMaps is static library that already linked in moko-maps-google. Remove duplicated linking.
+post_install do |installer|
+  host_targets = installer.aggregate_targets.select { |aggregate_target|
+    aggregate_target.name.include? "Pods-"
+  }
+
+  host_targets.each do |host_target|
+    host_target.xcconfigs.each do |config_name, config_file|
+      config_file.frameworks.delete("GoogleMaps")
+      config_file.frameworks.delete("GoogleMapsBase")
+      config_file.frameworks.delete("GoogleMapsCore")
+
+      xcconfig_path = host_target.xcconfig_path(config_name)
+      config_file.save_as(xcconfig_path)
+    end
+  end
 end

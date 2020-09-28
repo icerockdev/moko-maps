@@ -23,13 +23,11 @@ class GoogleMapsActivity : MvvmActivity<ActivityGoogleMapsBinding, GoogleMapView
     override fun viewModelFactory(): ViewModelProvider.Factory {
         return createViewModelFactory {
             GoogleMapViewModel(
-                locationTracker = LocationTracker(
-                    permissionsController = PermissionsController(
-                        applicationContext = applicationContext
-                    )
+                permissionsController = PermissionsController(
+                    applicationContext = applicationContext
                 ),
                 googleMapController = GoogleMapController(
-                    // TODO: Replace with your API Key from https://developers.google.com/maps/documentation/ios-sdk/
+                    // TODO: Replace with your API Key from https://developers.google.com/maps/documentation/android-sdk/
                     geoApiKey = "YOUR-API-KEY"
                 )
             ).apply { start() }
@@ -39,7 +37,7 @@ class GoogleMapsActivity : MvvmActivity<ActivityGoogleMapsBinding, GoogleMapView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.locationTracker.bind(lifecycle, this, supportFragmentManager)
+        viewModel.permissionsController.bind(lifecycle, supportFragmentManager)
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync {

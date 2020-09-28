@@ -16,10 +16,7 @@ class MapboxViewController: UIViewController {
         view = mapView
         
         viewModel = MapboxViewModel(
-            locationTracker: LocationTracker(
-                permissionsController: PermissionsController(),
-                accuracy: kCLLocationAccuracyBest
-            ),
+            permissionsController: PermissionsController(),
             mapsController: MapboxController(
                 mapView: mapView
             )

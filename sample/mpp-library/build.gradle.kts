@@ -1,64 +1,55 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.multiplatform")
-    id("dev.icerock.mobile.multiplatform")
-    id(Deps.Plugins.mokoResources.id)
+    plugin(Deps.Plugins.androidLibrary)
+    plugin(Deps.Plugins.kotlinMultiplatform)
+    plugin(Deps.Plugins.mobileMultiplatform)
+    plugin(Deps.Plugins.mokoResources)
+    plugin(Deps.Plugins.iosFramework)
 }
-
-android {
-    compileSdkVersion(Versions.Android.compileSdk)
-
-    defaultConfig {
-        minSdkVersion(Versions.Android.minSdk)
-        targetSdkVersion(Versions.Android.targetSdk)
-    }
-}
-
-val libs = listOf(
-    Deps.Libs.MultiPlatform.mokoGeo,
-    Deps.Libs.MultiPlatform.mokoMvvm,
-    Deps.Libs.MultiPlatform.mokoPermissions,
-    Deps.Libs.MultiPlatform.mokoMaps,
-    Deps.Libs.MultiPlatform.mokoMapsMapbox,
-    Deps.Libs.MultiPlatform.mokoMapsGoogle
-)
-
-setupFramework(
-    exports = libs
-)
 
 dependencies {
-    mppLibrary(Deps.Libs.MultiPlatform.kotlinStdLib)
-    mppLibrary(Deps.Libs.MultiPlatform.coroutines)
+    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
 
-    androidLibrary(Deps.Libs.Android.lifecycle)
-    androidLibrary(Deps.Libs.Android.playServicesLocation)
-    androidLibrary(Deps.Libs.Android.mapbox)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoGeo)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoMvvm)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoPermissions.common)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoMaps.common)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoMapsGoogle.common)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoMapsMapbox.common)
 
-    libs.forEach { mppLibrary(it) }
+    androidMainImplementation(Deps.Libs.Android.lifecycle)
+    androidMainImplementation(Deps.Libs.Android.playServicesLocation)
+    androidMainImplementation(Deps.Libs.Android.mapbox)
+
+    // workaround https://youtrack.jetbrains.com/issue/KT-41821
+    commonMainImplementation("io.ktor:ktor-utils:1.4.0")
+    commonMainImplementation("org.jetbrains.kotlinx:atomicfu:0.14.4")
 }
 
 multiplatformResources {
     multiplatformResourcesPackage = "com.icerockdev.library"
 }
 
+framework {
+    export(Deps.Libs.MultiPlatform.mokoPermissions)
+    export(Deps.Libs.MultiPlatform.mokoMaps)
+    export(Deps.Libs.MultiPlatform.mokoMapsGoogle)
+    export(Deps.Libs.MultiPlatform.mokoMapsMapbox)
+}
 
-kotlin {
-    targets
-        .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>()
-        .flatMap { it.binaries }
-        .filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.Framework>()
-        .forEach { framework ->
-            framework.isStatic = true
-
-            var frameworks = listOf("Base", "Maps").map { frameworkPath ->
-                project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path.let { "-F$it" }
-            }
-
-            frameworks.plus(
-                project.file("../sample/ios-app/Pods/Mapbox-iOS-SDK/dynamic").path.let { "-F$it" }
-            )
-
-            framework.linkerOpts(frameworks)
-        }
+cocoaPods {
+    precompiledPod(
+        scheme = "GoogleMaps",
+        onlyLink = true
+    ) { podsDir ->
+        listOf(
+            File(podsDir, "GoogleMaps/Base/Frameworks"),
+            File(podsDir, "GoogleMaps/Maps/Frameworks")
+        )
+    }
+    precompiledPod(
+        scheme = "Mapbox",
+        onlyLink = true
+    ) { podsDir ->
+        listOf(File(podsDir, "Mapbox-iOS-SDK/dynamic"))
+    }
 }

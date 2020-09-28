@@ -1,4 +1,0 @@
-language = Objective-C
-package = cocoapods.GoogleMaps
-modules = GoogleMapsBase GoogleMaps
-linkerOpts = -framework GoogleMapsBase -framework GoogleMaps -framework GoogleMapsCore -framework CoreGraphics -framework QuartzCore -framework UIKit -framework ImageIO -framework OpenGLES -framework CoreData -framework CoreText -framework SystemConfiguration -framework Security -framework CoreTelephony -framework CoreImage
