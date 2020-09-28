@@ -4,10 +4,9 @@
 
 package dev.icerock.moko.maps.mapbox
 
+import com.mapbox.mapboxsdk.maps.Style
 import dev.icerock.moko.maps.MapElement
 
-actual class MapboxRoute : MapElement {
-    override fun delete() {
-        TODO("not yet implemented")
-    }
+abstract class MapboxStyleElement : MapElement {
+    abstract val style: Style
 }

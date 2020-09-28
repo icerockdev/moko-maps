@@ -26,10 +26,9 @@ actual class MapboxMarker(
             annotation.setCoordinate(coordinate = value.toCoord2D())
         }
 
-    // TODO: Need implementation
     override var rotation: Float
-        get() = TODO("not implemented")
-        set(value) {}
+        get() = TODO("rotation not work for markers of Mapbox")
+        set(value) { TODO("rotation not work for markers of Mapbox") }
 
     @ExperimentalTime
     override fun move(position: LatLng, rotation: Float, duration: Duration) {

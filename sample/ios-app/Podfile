@@ -12,9 +12,9 @@ platform :ios, '11.0'
 target 'TestProj' do
   # MultiPlatformLibrary
   pod 'MultiPlatformLibrary', :path => '../mpp-library'
-  pod 'Mapbox-iOS-SDK', '5.5.0'
+  pod 'Mapbox-iOS-SDK', '5.6.0'
+  pod 'MapboxNavigation', '0.40.0'
   pod 'GoogleMaps', '3.7.0'
-
 end
 
 # GoogleMaps is static library that already linked in moko-maps-google. Remove duplicated linking.

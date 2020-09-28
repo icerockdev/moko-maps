@@ -2,12 +2,13 @@
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package dev.icerock.moko.maps.mapbox
+package dev.icerock.moko.maps.google
 
+import cocoapods.GoogleMaps.GMSPolygon
 import dev.icerock.moko.maps.MapElement
 
-actual class MapboxRoute : MapElement {
+data class GooglePolygon(val polygon: GMSPolygon) : MapElement {
     override fun delete() {
-        TODO("not yet implemented")
+        polygon.map = null
     }
 }

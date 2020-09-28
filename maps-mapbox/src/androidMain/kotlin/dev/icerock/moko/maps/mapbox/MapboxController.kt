@@ -7,11 +7,18 @@ package dev.icerock.moko.maps.mapbox
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
+import android.location.Location
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.mapbox.api.directions.v5.DirectionsCriteria
+import com.mapbox.api.directions.v5.DirectionsCriteria.GEOMETRY_POLYLINE
+import com.mapbox.api.directions.v5.MapboxDirections
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.Geometry
+import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.Polygon
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -43,18 +50,20 @@ import dev.icerock.moko.maps.LineType
 import dev.icerock.moko.maps.MapAddress
 import dev.icerock.moko.maps.MapController
 import dev.icerock.moko.maps.MapElement
-import dev.icerock.moko.maps.Marker
 import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.resources.ImageResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 @SuppressLint("MissingPermission")
 @Suppress("TooManyFunctions")
-actual class MapboxController : MapController {
+actual class MapboxController(
+    private val accessToken: String
+) : MapController {
     private val contextHolder = LifecycleHolder<Context>()
     private val mapHolder = LifecycleHolder<MapboxMap>()
     private val mapViewHolder = LifecycleHolder<MapView>()
@@ -103,6 +112,7 @@ actual class MapboxController : MapController {
 
         symbolManager.addClickListener {
             symbolActionMap[it.id]?.invoke()
+            false
         }
 
         mapboxMap.addOnCameraMoveStartedListener { reason ->
@@ -161,7 +171,7 @@ actual class MapboxController : MapController {
         latLng: LatLng,
         rotation: Float,
         onClick: (() -> Unit)?
-    ): Marker {
+    ): MapboxMarker {
         val style = styleHolder.get()
 
         val imageId = image.drawableResId.toString()
@@ -260,8 +270,74 @@ actual class MapboxController : MapController {
         points: List<LatLng>,
         lineColor: Color,
         markersImage: ImageResource?
-    ): MapElement {
-        TODO("not implemented")
+    ): MapboxRoute {
+        val directionsClient = MapboxDirections.builder()
+            .origin(points.first().let { Point.fromLngLat(it.longitude, it.latitude) })
+            .destination(points.last().let { Point.fromLngLat(it.longitude, it.latitude) })
+            .apply {
+                points.subList(1, points.size - 1).forEach {
+                    addWaypoint(Point.fromLngLat(it.longitude, it.latitude))
+                }
+            }
+            .overview(DirectionsCriteria.OVERVIEW_FULL)
+            .profile(DirectionsCriteria.PROFILE_DRIVING)
+            .geometries(GEOMETRY_POLYLINE)
+            .alternatives(false)
+            .steps(true)
+            .accessToken(accessToken)
+            .build()
+
+        @Suppress("BlockingMethodInNonBlockingContext")
+        val directionsRoute = withContext(Dispatchers.Default) {
+            val result = directionsClient.executeCall()
+            if (!result.isSuccessful) {
+                throw IllegalStateException(result.errorBody()!!.string())
+            }
+            result.body()!!.routes().first()
+        }
+        val routePoints = directionsRoute.legs()?.flatMap { routeLeg ->
+            routeLeg.steps()?.flatMap { legStep ->
+                legStep.intersections()?.map { stepIntersection ->
+                    stepIntersection.location()
+                }.orEmpty()
+            }.orEmpty()
+        }.orEmpty()
+
+        return MapboxRoute(
+            line = drawRouteLine(LineString.fromLngLats(routePoints), lineColor),
+            markers = markersImage?.let { markerResource ->
+                points.map { addMarker(image = markerResource, latLng = it) }
+            }.orEmpty()
+        )
+    }
+
+    private suspend fun drawRouteLine(
+        geometry: Geometry,
+        lineColor: Color,
+    ): MapboxLine {
+        val style = styleHolder.get()
+
+        val id: String = geometry.hashCode().toString()
+        val sourceId = "source-line-$id"
+        val lineLayerId = "line-line-$id"
+
+        val feature: Feature = Feature.fromGeometry(geometry)
+        val geoJsonSource = GeoJsonSource(sourceId, feature)
+        style.addSource(geoJsonSource)
+
+        val lineLayer: LineLayer = LineLayer(lineLayerId, sourceId)
+            .withProperties(
+                lineWidth(WIDTH_POLYLINE),
+                lineColor(lineColor.colorInt())
+            )
+
+        style.addLayerBelow(lineLayer, SETTLEMENT_LABEL)
+
+        return MapboxLine(
+            style = style,
+            source = geoJsonSource,
+            layer = lineLayer
+        )
     }
 
     override suspend fun getAddressByLatLng(latitude: Double, longitude: Double): String? {
@@ -291,7 +367,54 @@ actual class MapboxController : MapController {
         maxResults: Int,
         maxRadius: Int
     ): List<MapAddress> {
-        TODO("need get nearest addresses")
+        if (text.isNullOrEmpty()) return emptyList()
+
+        val geoCoder = geoCoderHolder.get()
+        val locationProviderClient = locationHolder.get()
+
+        val lastLocation: Location = suspendCoroutine { continuation ->
+            locationProviderClient.lastLocation.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    continuation.resume(it.result!!)
+                } else {
+                    continuation.resumeWithException(it.exception!!)
+                }
+            }
+        }
+
+        // TODO calculate bounds from radius
+        @Suppress("MagicNumber")
+        val radiusLatitude = maxRadius * 0.001
+
+        @Suppress("MagicNumber")
+        val radiusLongitude = maxRadius * 0.001
+        return withContext(Dispatchers.IO) {
+            val addresses = geoCoder.getFromLocationName(
+                text,
+                maxResults,
+                lastLocation.latitude - radiusLatitude,
+                lastLocation.longitude - radiusLongitude,
+                lastLocation.latitude + radiusLatitude,
+                lastLocation.longitude + radiusLongitude
+            )
+            addresses.map { address ->
+                @Suppress("MagicNumber")
+                val distanceResult = FloatArray(3)
+                Location.distanceBetween(
+                    lastLocation.latitude,
+                    lastLocation.longitude,
+                    address.latitude,
+                    address.longitude,
+                    distanceResult
+                )
+                MapAddress(
+                    address = address.thoroughfare,
+                    city = null,
+                    latLng = LatLng(latitude = address.latitude, longitude = address.longitude),
+                    distance = distanceResult[0].toDouble()
+                )
+            }
+        }
     }
 
     override suspend fun getZoomConfig(): ZoomConfig {
@@ -384,9 +507,7 @@ actual class MapboxController : MapController {
 
     private companion object {
         const val SINGLE_RESULT_ADDRESS = 1
-        const val BOUNDS_PADDING = 250
-        const val DIVIDER_BOUND_LATITUDE_PADDING = 2
-        const val WIDTH_POLYLINE = 12.0f
+        const val WIDTH_POLYLINE = 3.0f
         const val SETTLEMENT_LABEL = "settlement-label"
     }
 }

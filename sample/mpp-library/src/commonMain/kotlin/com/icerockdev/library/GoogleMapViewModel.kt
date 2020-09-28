@@ -6,6 +6,7 @@ package com.icerockdev.library
 
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.graphics.Color
+import dev.icerock.moko.maps.LineType
 import dev.icerock.moko.maps.ZoomConfig
 import dev.icerock.moko.maps.google.GoogleMapController
 import dev.icerock.moko.maps.google.UiSettings
@@ -48,6 +49,7 @@ class GoogleMapViewModel(
             googleMapController.setCurrentZoom(12f)
 
             createRoute()
+            createArea()
         }
     }
 
@@ -92,5 +94,21 @@ class GoogleMapViewModel(
         ) {
             println("marker 2 pressed!")
         }
+    }
+
+    private suspend fun createArea() {
+        googleMapController.drawPolygon(
+            pointList = listOf(
+                LatLng(54.97584034615845, 82.87296295166017),
+                LatLng(54.99169896662348, 82.87038803100587),
+                LatLng(54.993077681033846, 82.91330337524415),
+                LatLng(54.98273616833678, 82.89613723754884),
+                LatLng(54.97584034615845, 82.87296295166017)
+            ),
+            backgroundOpacity = 0.5f,
+            lineColor = Color(0xFF0000FF),
+            backgroundColor = Color(0x227799FF),
+            lineType = LineType.DASHED
+        )
     }
 }

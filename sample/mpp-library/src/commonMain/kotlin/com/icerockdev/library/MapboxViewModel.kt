@@ -53,16 +53,46 @@ class MapboxViewModel(
                 )
             )
 
-            @Suppress("TooGenericExceptionCaught")
-            try {
-                mapsController.showMyLocation(8f)
-            } catch (throwable: Throwable) {
-                println(throwable.toString())
-            }
-
-            createMarkers()
-            createArea()
+            runCatching { goToCurrentLocation() }.onFailure(::println)
+            runCatching { getNearAddresses() }.onFailure(::println)
+            runCatching { createRoute() }.onFailure(::println)
+            runCatching { createMarkers() }.onFailure(::println)
+            runCatching { createArea() }.onFailure(::println)
         }
+    }
+
+    private fun goToCurrentLocation() {
+        mapsController.showMyLocation(8f)
+    }
+
+    private suspend fun getNearAddresses() {
+        val addresses = mapsController.getSimilarNearAddresses(
+            text = "прибрежная",
+            maxResults = 3,
+            maxRadius = 500
+        )
+        println(addresses.toString())
+    }
+
+    private suspend fun createRoute() {
+        mapsController.buildRoute(
+            points = listOf(
+                LatLng(
+                    latitude = 55.032200,
+                    longitude = 82.889360
+                ),
+                LatLng(
+                    latitude = 55.030853,
+                    longitude = 82.920154
+                ),
+                LatLng(
+                    latitude = 55.013109,
+                    longitude = 82.926480
+                )
+            ),
+            lineColor = Color(0xCCCC00FF),
+            markersImage = MR.images.marker
+        )
     }
 
     @OptIn(ExperimentalTime::class)

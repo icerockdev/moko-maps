@@ -30,6 +30,7 @@ allprojects {
         maven { url = uri("https://kotlin.bintray.com/kotlin") }
         maven { url = uri("https://kotlin.bintray.com/kotlinx") }
         maven { url = uri("https://dl.bintray.com/icerockdev/moko") }
+        maven { url = uri("https://mapbox.bintray.com/mapbox") }
     }
 
     apply(plugin = Deps.Plugins.detekt.id)

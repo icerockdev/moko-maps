@@ -36,21 +36,20 @@ framework {
     export(Deps.Libs.MultiPlatform.mokoMapsMapbox)
 }
 
-kotlin.targets
-    .matching { it is org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget }
-    .configureEach {
-        val target = this as org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-
-        target.binaries
-            .matching { it is org.jetbrains.kotlin.gradle.plugin.mpp.Framework }
-            .configureEach {
-                val framework = this as org.jetbrains.kotlin.gradle.plugin.mpp.Framework
-                val frameworks = listOf("Base", "Maps").map { frameworkPath ->
-                    project.file("../ios-app/Pods/GoogleMaps/$frameworkPath/Frameworks").path.let { "-F$it" }
-                }.plus(
-                    project.file("../ios-app/Pods/Mapbox-iOS-SDK/dynamic").path.let { "-F$it" }
-                )
-
-                framework.linkerOpts(frameworks)
-            }
+cocoaPods {
+    precompiledPod(
+        scheme = "GoogleMaps",
+        onlyLink = true
+    ) { podsDir ->
+        listOf(
+            File(podsDir, "GoogleMaps/Base/Frameworks"),
+            File(podsDir, "GoogleMaps/Maps/Frameworks")
+        )
     }
+    precompiledPod(
+        scheme = "Mapbox",
+        onlyLink = true
+    ) { podsDir ->
+        listOf(File(podsDir, "Mapbox-iOS-SDK/dynamic"))
+    }
+}
