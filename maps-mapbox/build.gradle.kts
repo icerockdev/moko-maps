@@ -44,4 +44,5 @@ cocoaPods {
     ) { podsDir ->
         listOf(File(podsDir, "Mapbox-iOS-SDK/dynamic"))
     }
+    pod(name = "MapboxNavigation")
 }
