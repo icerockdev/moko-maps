@@ -31,7 +31,7 @@ object Deps {
     private const val mokoMvvmVersion = "0.8.0"
     private const val mokoGeoVersion = "0.3.0"
     private const val mokoPermissionsVersion = "0.6.0"
-    const val mokoMapsVersion = "0.5.0"
+    const val mokoMapsVersion = "0.5.1"
 
     object Android {
         const val compileSdk = 28
