@@ -4,17 +4,22 @@
 
 package dev.icerock.moko.maps.mapbox
 
+import cocoapods.Mapbox.MGLPointAnnotation
 import dev.icerock.moko.geo.LatLng
 import dev.icerock.moko.maps.Marker
 import platform.QuartzCore.CATransaction
+import platform.UIKit.UIImage
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @Suppress("ForbiddenComment")
 actual class MapboxMarker(
-    private val annotation: MapboxAnnotation,
+    private val annotation: MGLPointAnnotation,
     private val onDeleteCallback: (() -> Unit)?
 ) : Marker {
+
+    var onClick: (() -> Unit)? = null
+    var image: UIImage? = null
 
     override fun delete() {
         onDeleteCallback?.invoke()
@@ -38,5 +43,9 @@ actual class MapboxMarker(
         annotation.setCoordinate(coordinate = position.toCoord2D())
 
         CATransaction.commit()
+    }
+
+    fun getAnnotation(): MGLPointAnnotation {
+        return annotation
     }
 }

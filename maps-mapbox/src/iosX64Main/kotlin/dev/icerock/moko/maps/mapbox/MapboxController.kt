@@ -15,6 +15,7 @@ import cocoapods.Mapbox.MGLLineStyleLayer
 import cocoapods.Mapbox.MGLMapView
 import cocoapods.Mapbox.MGLMapViewDelegateProtocol
 import cocoapods.Mapbox.MGLOrnamentVisibility
+import cocoapods.Mapbox.MGLPointAnnotation
 import cocoapods.Mapbox.MGLPolygon
 import cocoapods.Mapbox.MGLPolygonFeature
 import cocoapods.Mapbox.MGLShape
@@ -53,6 +54,8 @@ actual class MapboxController(
     private val weakMapView = WeakReference(mapView)
 
     private var isMapLoaded: Boolean = false
+
+    private val markers: MutableMap<MGLPointAnnotation, MapboxMarker> = mutableMapOf()
 
     actual var onStartScrollCallback: ((isUserGesture: Boolean) -> Unit)? = null
 
@@ -150,21 +153,27 @@ actual class MapboxController(
         rotation: Float,
         onClick: (() -> Unit)?
     ): Marker {
-        val annotation = MapboxAnnotation()
+        val annotation = MGLPointAnnotation()
         annotation.setCoordinate(coordinate = latLng.toCoord2D())
-        annotation.onClick = onClick
-        annotation.image = image.toUIImage()
-        weakMapView.get()?.addAnnotation(annotation)
 
         // TODO: Need implementation for rotation
         if (rotation != 0.0f) println("WARNING: rotation not work for markers of Mapbox")
 
-        return MapboxMarker(
+        val marker = MapboxMarker(
             annotation = annotation,
             onDeleteCallback = {
                 weakMapView.get()?.removeAnnotation(annotation = annotation)
+                markers.remove(annotation)
             }
         )
+
+        marker.onClick = onClick
+        marker.image = image.toUIImage()
+        markers.put(annotation, marker)
+
+        weakMapView.get()?.addAnnotation(annotation)
+
+        return marker
     }
 
     actual fun setStyleUrl(styleUrl: String) {
@@ -285,8 +294,8 @@ actual class MapboxController(
             mapView: MGLMapView,
             imageForAnnotation: MGLAnnotationProtocol
         ): MGLAnnotationImage? {
-            val annotation = imageForAnnotation as MapboxAnnotation
-            val image = annotation.image
+            val annotation = imageForAnnotation as MGLPointAnnotation
+            val image = mapController.value?.markers?.get(annotation)?.image
             return if (image != null) {
                 MGLAnnotationImage.annotationImageWithImage(
                     image = image,
@@ -300,7 +309,8 @@ actual class MapboxController(
         // it also called for polygons (may be useful in feature)
         @Suppress("RETURN_TYPE_MISMATCH_ON_OVERRIDE")
         override fun mapView(mapView: MGLMapView, didSelectAnnotation: MGLAnnotationProtocol) {
-            (didSelectAnnotation as? MapboxAnnotation)?.onClick?.invoke()
+            val annotation = (didSelectAnnotation as? MGLPointAnnotation)
+            annotation?.let { mapController.value?.markers?.get(it)?.onClick?.invoke() }
         }
 
         override fun mapView(
