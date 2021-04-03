@@ -19,10 +19,6 @@ dependencies {
     androidMainImplementation(Deps.Libs.Android.lifecycle)
     androidMainImplementation(Deps.Libs.Android.playServicesLocation)
     androidMainImplementation(Deps.Libs.Android.mapbox)
-
-    // workaround https://youtrack.jetbrains.com/issue/KT-41821
-    commonMainImplementation("io.ktor:ktor-utils:1.4.0")
-    commonMainImplementation("org.jetbrains.kotlinx:atomicfu:0.14.4")
 }
 
 multiplatformResources {

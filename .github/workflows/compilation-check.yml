@@ -18,5 +18,11 @@ jobs:
         java-version: 1.8
     - name: Cocoapods install
       run: (cd sample/ios-app && pod install)
-    - name: Check libs
-      run: ./gradlew detekt build publishToMavenLocal
+    - name: Build K/N cache
+      run: ./gradlew :maps:runCommonizer
+    - name: Check library
+      run: ./gradlew build publishToMavenLocal syncMultiPlatformLibraryDebugFrameworkIosX64
+    - name: Install pods with kotlin
+      run: cd sample/ios-app && pod install
+    - name: build ios sample
+      run: cd sample/ios-app && xcodebuild -scheme TestProj -workspace TestProj.xcworkspace -configuration Debug build CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO

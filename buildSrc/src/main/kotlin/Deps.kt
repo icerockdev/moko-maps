@@ -4,34 +4,34 @@
 
 
 object Deps {
-    private const val kotlinVersion = "1.4.10"
+    private const val kotlinVersion = "1.4.31"
 
     private const val lifecycleVersion = "2.2.0"
     private const val androidAppCompatVersion = "1.1.0"
     private const val espressoCoreVersion = "3.2.0"
     private const val testRunnerVersion = "1.2.0"
     private const val testExtJunitVersion = "1.1.1"
-    private const val playServicesLocationVersion = "16.0.0"
-    private const val playServicesMapsVersion = "16.1.0"
+    private const val playServicesLocationVersion = "18.0.0"
+    private const val playServicesMapsVersion = "17.0.0"
     private const val googleMapsServicesVersion = "0.2.11"
     private const val mapboxVersion = "9.2.1"
     private const val mapboxNavigationVersion = "0.42.6"
     private const val mapboxAnnotationVersion = "0.9.0"
     private const val multidexVersion = "2.0.1"
 
-    private const val kotlinxSerializationVersion = "1.0.0-RC"
-    private const val coroutinesVersion = "1.3.9-native-mt"
-    private const val ktorClientVersion = "1.4.0"
+    private const val kotlinxSerializationVersion = "1.1.0"
+    private const val coroutinesVersion = "1.4.2-native-mt"
+    private const val ktorClientVersion = "1.5.2"
 
-    private const val detektVersion = "1.12.0"
+    private const val detektVersion = "1.15.0"
 
-    private const val mokoGraphicsVersion = "0.4.0"
-    private const val mokoParcelizeVersion = "0.4.0"
-    private const val mokoResourcesVersion = "0.13.1"
-    private const val mokoMvvmVersion = "0.8.0"
-    private const val mokoGeoVersion = "0.3.0"
-    private const val mokoPermissionsVersion = "0.6.0"
-    const val mokoMapsVersion = "0.5.1"
+    private const val mokoGraphicsVersion = "0.6.1"
+    private const val mokoParcelizeVersion = "0.6.1"
+    private const val mokoResourcesVersion = "0.15.1"
+    private const val mokoMvvmVersion = "0.9.2"
+    private const val mokoGeoVersion = "0.3.2"
+    private const val mokoPermissionsVersion = "0.8.0"
+    const val mokoMapsVersion = "0.5.2"
 
     object Android {
         const val compileSdk = 28
@@ -48,12 +48,13 @@ object Deps {
         )
         val kotlinKapt = GradlePlugin(id = "kotlin-kapt")
         val kotlinAndroid = GradlePlugin(id = "kotlin-android")
-        val kotlinAndroidExtensions = GradlePlugin(id = "kotlin-android-extensions")
+        val kotlinAndroidExtensions = GradlePlugin(id = "kotlin-parcelize")
         val kotlinSerialization = GradlePlugin(
             id = "org.jetbrains.kotlin.plugin.serialization",
             module = "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
         )
         val mavenPublish = GradlePlugin(id = "org.gradle.maven-publish")
+        val signing = GradlePlugin(id = "signing")
 
         val mobileMultiplatform = GradlePlugin(id = "dev.icerock.mobile.multiplatform")
         val iosFramework = GradlePlugin(id = "dev.icerock.mobile.multiplatform.ios-framework")
@@ -112,7 +113,7 @@ object Deps {
 
         object MultiPlatform {
             const val kotlinSerialization =
-                "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
+                "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
             const val coroutines =
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
             const val ktorClient =

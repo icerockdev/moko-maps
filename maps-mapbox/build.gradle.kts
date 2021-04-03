@@ -10,14 +10,10 @@ plugins {
     plugin(Deps.Plugins.mavenPublish)
 }
 
-group = "dev.icerock.moko"
-version = Deps.mokoMapsVersion
-
 dependencies {
     commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
 
     commonMainApi(project(":maps"))
-    commonMainImplementation(Deps.Libs.MultiPlatform.mokoGeo)
 
     androidMainImplementation(Deps.Libs.Android.appCompat)
     androidMainImplementation(Deps.Libs.Android.lifecycle)
@@ -25,17 +21,6 @@ dependencies {
     androidMainImplementation(Deps.Libs.Android.mapbox)
     androidMainImplementation(Deps.Libs.Android.mapboxAnnotation)
     androidMainImplementation(Deps.Libs.Android.mapboxNavigation)
-}
-
-publishing {
-    repositories.maven("https://api.bintray.com/maven/icerockdev/moko/moko-maps/;publish=1") {
-        name = "bintray"
-
-        credentials {
-            username = System.getProperty("BINTRAY_USER")
-            password = System.getProperty("BINTRAY_KEY")
-        }
-    }
 }
 
 cocoaPods {

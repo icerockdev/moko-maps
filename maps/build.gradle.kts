@@ -11,9 +11,6 @@ plugins {
     plugin(Deps.Plugins.mavenPublish)
 }
 
-group = "dev.icerock.moko"
-version = Deps.mokoMapsVersion
-
 dependencies {
     commonMainImplementation(Deps.Libs.MultiPlatform.coroutines) {
         isForce = true
@@ -25,15 +22,4 @@ dependencies {
     commonMainApi(Deps.Libs.MultiPlatform.mokoParcelize)
 
     commonMainImplementation(Deps.Libs.MultiPlatform.mokoPermissions.common)
-}
-
-publishing {
-    repositories.maven("https://api.bintray.com/maven/icerockdev/moko/moko-maps/;publish=1") {
-        name = "bintray"
-
-        credentials {
-            username = System.getProperty("BINTRAY_USER")
-            password = System.getProperty("BINTRAY_KEY")
-        }
-    }
 }
