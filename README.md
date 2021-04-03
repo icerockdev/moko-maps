@@ -51,6 +51,7 @@ root build.gradle
 allprojects {
     repositories {
         mavenCentral()
+        maven { url = "https://mapbox.bintray.com/mapbox" } // if mapbox required
     }
 }
 ```
