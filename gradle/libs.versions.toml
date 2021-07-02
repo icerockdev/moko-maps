@@ -1,0 +1,51 @@
+[versions]
+kotlinVersion = "1.5.20"
+lifecycleVersion = "2.2.0"
+androidAppCompatVersion = "1.2.0"
+espressoCoreVersion = "3.2.0"
+testRunnerVersion = "1.2.0"
+testExtJunitVersion = "1.1.1"
+playServicesLocationVersion = "18.0.0"
+playServicesMapsVersion = "17.0.0"
+googleMapsServicesVersion = "0.2.11"
+mapboxVersion = "9.2.1"
+mapboxNavigationVersion = "0.42.6"
+mapboxAnnotationVersion = "0.9.0"
+multidexVersion = "2.0.1"
+kotlinxSerializationVersion = "1.2.1"
+coroutinesVersion = "1.5.0-native-mt"
+ktorClientVersion = "1.6.0"
+mokoGraphicsVersion = "0.7.0"
+mokoParcelizeVersion = "0.7.1"
+mokoResourcesVersion = "0.16.1"
+mokoMvvmVersion = "0.11.0"
+mokoGeoVersion = "0.4.0"
+mokoPermissionsVersion = "0.10.1"
+mokoMapsVersion = "0.6.0"
+
+[libraries]
+appCompat = { module = "androidx.appcompat:appcompat", version.ref = "androidAppCompatVersion" }
+lifecycle = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleVersion" }
+playServicesLocation = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocationVersion" }
+playServicesMaps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMapsVersion" }
+googleMapsServices = { module = "com.google.maps:google-maps-services", version.ref = "googleMapsServicesVersion" }
+mapbox = { module = "com.mapbox.mapboxsdk:mapbox-android-sdk", version.ref = "mapboxVersion" }
+mapboxNavigation = { module = "com.mapbox.mapboxsdk:mapbox-android-navigation", version.ref = "mapboxNavigationVersion" }
+mapboxAnnotation = { module = "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9", version.ref = "mapboxAnnotationVersion" }
+multidex = { module = "androidx.multidex:multidex", version.ref = "multidexVersion" }
+ktorClientOkHttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientVersion" }
+kotlinSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationVersion" }
+coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutinesVersion" }
+ktorClient = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientVersion" }
+mokoResources = { module = "dev.icerock.moko:resources", version.ref = "mokoResourcesVersion" }
+mokoParcelize = { module = "dev.icerock.moko:parcelize", version.ref = "mokoParcelizeVersion" }
+mokoGraphics = { module = "dev.icerock.moko:graphics", version.ref = "mokoGraphicsVersion" }
+mokoMvvm = { module = "dev.icerock.moko:mvvm", version.ref = "mokoMvvmVersion" }
+mokoGeo = { module = "dev.icerock.moko:geo", version.ref = "mokoGeoVersion" }
+mokoPermissions = { module = "dev.icerock.moko:permissions", version.ref = "mokoPermissionsVersion" }
+mokoMaps = { module = "dev.icerock.moko:maps", version.ref = "mokoMapsVersion" }
+mokoMapsGoogle = { module = "dev.icerock.moko:maps-google", version.ref = "mokoMapsVersion" }
+mokoMapsMapbox = { module = "dev.icerock.moko:maps-mapbox", version.ref = "mokoMapsVersion" }
+kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlinVersion" }
+ktorClientIos = { module = "io.ktor:ktor-client-ios", version.ref = "ktorClientVersion" }
+

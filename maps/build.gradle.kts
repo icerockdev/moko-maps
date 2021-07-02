@@ -3,23 +3,20 @@
  */
 
 plugins {
-    plugin(Deps.Plugins.androidLibrary)
-    plugin(Deps.Plugins.kotlinMultiplatform)
-    plugin(Deps.Plugins.kotlinKapt)
-    plugin(Deps.Plugins.kotlinAndroidExtensions)
-    plugin(Deps.Plugins.mobileMultiplatform)
-    plugin(Deps.Plugins.mavenPublish)
+    id("multiplatform-library-convention")
+    id("dev.icerock.mobile.multiplatform.android-manifest")
+    id("publication-convention")
+    id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 dependencies {
-    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines) {
-        isForce = true
-    }
+    commonMainImplementation(libs.coroutines)
 
-    commonMainApi(Deps.Libs.MultiPlatform.mokoResources)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoGeo)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoGraphics)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoParcelize)
+    commonMainApi(libs.mokoResources)
+    commonMainApi(libs.mokoGeo)
+    commonMainApi(libs.mokoGraphics)
+    commonMainApi(libs.mokoParcelize)
 
-    commonMainImplementation(Deps.Libs.MultiPlatform.mokoPermissions.common)
+    commonMainImplementation(libs.mokoPermissions)
 }

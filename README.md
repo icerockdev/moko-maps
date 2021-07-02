@@ -1,5 +1,5 @@
 ![moko-maps](https://user-images.githubusercontent.com/5010169/71351401-27c14d80-25a6-11ea-9183-17821f6d4212.png)  
-[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://img.shields.io/maven-central/v/dev.icerock.moko/maps) ](https://repo1.maven.org/maven2/dev/icerock/moko/maps) ![kotlin-version](https://img.shields.io/badge/kotlin-1.4.31-orange)
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://img.shields.io/maven-central/v/dev.icerock.moko/maps) ](https://repo1.maven.org/maven2/dev/icerock/moko/maps) ![kotlin-version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=dev.icerock.moko&name=maps)
 
 # Mobile Kotlin maps module
 This is a Kotlin Multiplatform library that provides controls of maps to common code.
@@ -7,7 +7,6 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
 ## Table of Contents
 - [Features](#features)
 - [Requirements](#requirements)
-- [Versions](#versions)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Samples](#samples)
@@ -25,26 +24,6 @@ This is a Kotlin Multiplatform library that provides controls of maps to common 
 - Android API 16+
 - iOS version 9.0+
 
-## Versions
-### Bintray
-- kotlin 1.3.61
-  - 0.1.0
-  - 0.1.1
-  - 0.2.0
-  - 0.2.1
-  - 0.3.0
-  - 0.4.0-dev-1
-- kotlin 1.3.70
-  - 0.4.0-dev-2
-  - 0.4.0-dev-3
-  - 0.4.0-dev-4
-- kotlin 1.4.10
-  - 0.5.0
-  - 0.5.1
-### mavenCentral
-- kotlin 1.4.31
-  - 0.5.2
-
 ## Installation
 root build.gradle  
 ```groovy
@@ -59,9 +38,9 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.5.2")
-    commonMainApi("dev.icerock.moko:maps-google:0.5.2")
-    commonMainApi("dev.icerock.moko:maps-mapbox:0.5.2")
+    commonMainApi("dev.icerock.moko:maps:0.6.0")
+    commonMainApi("dev.icerock.moko:maps-google:0.6.0")
+    commonMainApi("dev.icerock.moko:maps-mapbox:0.6.0")
 }
 
 kotlin.targets

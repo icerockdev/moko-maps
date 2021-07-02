@@ -3,32 +3,32 @@
  */
 
 plugins {
-    plugin(Deps.Plugins.androidLibrary)
-    plugin(Deps.Plugins.kotlinMultiplatform)
-    plugin(Deps.Plugins.kotlinKapt)
-    plugin(Deps.Plugins.kotlinAndroidExtensions)
-    plugin(Deps.Plugins.kotlinSerialization)
-    plugin(Deps.Plugins.mobileMultiplatform)
-    plugin(Deps.Plugins.mavenPublish)
+    id("multiplatform-library-convention")
+    id("dev.icerock.mobile.multiplatform.android-manifest")
+    id("publication-convention")
+    id("kotlin-parcelize")
+    id("kotlin-kapt")
+    id("kotlinx-serialization")
+    id("dev.icerock.mobile.multiplatform.cocoapods")
 }
 
 dependencies {
-    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
-    commonMainImplementation(Deps.Libs.MultiPlatform.ktorClient)
-    commonMainImplementation(Deps.Libs.MultiPlatform.kotlinSerialization)
+    commonMainImplementation(libs.coroutines)
+    commonMainImplementation(libs.ktorClient)
+    commonMainImplementation(libs.kotlinSerialization)
 
-    commonMainApi(project(":maps"))
-    commonMainApi(Deps.Libs.MultiPlatform.mokoGeo)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoGraphics)
+    commonMainApi(projects.maps)
+    commonMainApi(libs.mokoGeo)
+    commonMainApi(libs.mokoGraphics)
 
-    androidMainImplementation(Deps.Libs.Android.appCompat)
-    androidMainImplementation(Deps.Libs.Android.lifecycle)
-    androidMainImplementation(Deps.Libs.Android.playServicesLocation)
-    androidMainImplementation(Deps.Libs.Android.playServicesMaps)
-    androidMainImplementation(Deps.Libs.Android.googleMapsServices)
-    androidMainImplementation(Deps.Libs.Android.ktorClientOkHttp)
+    "androidMainImplementation"(libs.appCompat)
+    "androidMainImplementation"(libs.lifecycle)
+    "androidMainImplementation"(libs.playServicesLocation)
+    "androidMainImplementation"(libs.playServicesMaps)
+    "androidMainImplementation"(libs.googleMapsServices)
+    "androidMainImplementation"(libs.ktorClientOkHttp)
 
-    iosMainImplementation(Deps.Libs.Ios.ktorClientIos)
+    iosMainImplementation(libs.ktorClientIos)
 }
 
 cocoaPods {
