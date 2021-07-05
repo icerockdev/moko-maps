@@ -28,7 +28,7 @@ dependencies {
     "androidMainImplementation"(libs.googleMapsServices)
     "androidMainImplementation"(libs.ktorClientOkHttp)
 
-    iosMainImplementation(libs.ktorClientIos)
+    "iosMainImplementation"(libs.ktorClientIos)
 }
 
 cocoaPods {

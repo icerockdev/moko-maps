@@ -9,8 +9,14 @@ plugins {
     id("dev.icerock.mobile.multiplatform.cocoapods")
 }
 
+kotlin{
+    android()
+    ios()
+}
+
 dependencies {
     commonMainImplementation(libs.coroutines)
+    commonMainImplementation(libs.mokoResources)
     commonMainApi(libs.mokoGeo)
     commonMainApi(libs.mokoMvvm)
     commonMainApi(libs.mokoPermissions)
@@ -22,15 +28,15 @@ dependencies {
     "androidMainImplementation"(libs.mapbox)
 }
 
-libs {
+multiplatformResources {
     multiplatformResourcesPackage = "com.icerockdev.library"
 }
 
 framework {
     export(libs.mokoPermissions)
-    export(libs.mokoMaps)
-    export(libs.mokoMapsGoogle)
-    export(libs.mokoMapsMapbox)
+    export(projects.maps)
+    export(projects.mapsGoogle)
+    export(projects.mapsMapbox)
 }
 
 cocoaPods {
