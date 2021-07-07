@@ -24,8 +24,6 @@ dependencies {
     commonMainApi(projects.mapsGoogle)
     commonMainApi(projects.mapsMapbox)
     "androidMainImplementation"(libs.lifecycle)
-    "androidMainImplementation"(libs.playServicesLocation)
-    "androidMainImplementation"(libs.mapbox)
 }
 
 multiplatformResources {

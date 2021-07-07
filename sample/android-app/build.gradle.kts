@@ -23,7 +23,6 @@ dependencies {
     implementation(libs.playServicesMaps)
     implementation(libs.googleMapsServices)
     implementation(libs.mapbox)
-    implementation(libs.mapboxAnnotation)
 
     implementation(libs.multidex)
 

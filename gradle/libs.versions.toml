@@ -8,9 +8,8 @@ testExtJunitVersion = "1.1.1"
 playServicesLocationVersion = "18.0.0"
 playServicesMapsVersion = "17.0.0"
 googleMapsServicesVersion = "0.2.11"
-mapboxVersion = "9.2.1"
-mapboxNavigationVersion = "0.42.6"
-mapboxAnnotationVersion = "0.9.0"
+mapboxVersion = "9.6.1"
+mapboxNavigationVersion = "1.5.1"
 multidexVersion = "2.0.1"
 kotlinxSerializationVersion = "1.2.1"
 coroutinesVersion = "1.5.0-native-mt"
@@ -30,8 +29,7 @@ playServicesLocation = { module = "com.google.android.gms:play-services-location
 playServicesMaps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMapsVersion" }
 googleMapsServices = { module = "com.google.maps:google-maps-services", version.ref = "googleMapsServicesVersion" }
 mapbox = { module = "com.mapbox.mapboxsdk:mapbox-android-sdk", version.ref = "mapboxVersion" }
-mapboxNavigation = { module = "com.mapbox.mapboxsdk:mapbox-android-navigation", version.ref = "mapboxNavigationVersion" }
-mapboxAnnotation = { module = "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9", version.ref = "mapboxAnnotationVersion" }
+mapboxNavigation = { module = "com.mapbox.navigation:core", version.ref = "mapboxNavigationVersion" }
 multidex = { module = "androidx.multidex:multidex", version.ref = "multidexVersion" }
 ktorClientOkHttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientVersion" }
 kotlinSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationVersion" }

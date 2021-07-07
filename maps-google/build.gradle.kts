@@ -23,8 +23,8 @@ dependencies {
 
     "androidMainImplementation"(libs.appCompat)
     "androidMainImplementation"(libs.lifecycle)
-    "androidMainImplementation"(libs.playServicesLocation)
-    "androidMainImplementation"(libs.playServicesMaps)
+    "androidMainApi"(libs.playServicesLocation)
+    "androidMainApi"(libs.playServicesMaps)
     "androidMainImplementation"(libs.googleMapsServices)
     "androidMainImplementation"(libs.ktorClientOkHttp)
 
