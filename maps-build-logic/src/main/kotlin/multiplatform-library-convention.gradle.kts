@@ -14,18 +14,5 @@ kotlin {
     android {
         publishLibraryVariants("release", "debug")
     }
-    sourceSets {
-        val mobileDeviceTest by creating
-
-        val commonTest by getting
-        val iosTest by getting
-        val androidAndroidTest by getting
-
-
-        mobileDeviceTest.dependsOn(commonTest)
-        iosTest.dependsOn(mobileDeviceTest)
-        androidAndroidTest.dependsOn(mobileDeviceTest)
-
-    }
 }
 
