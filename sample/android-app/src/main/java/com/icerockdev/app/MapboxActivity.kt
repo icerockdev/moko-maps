@@ -21,7 +21,7 @@ class MapboxActivity : MvvmActivity<ActivityMapboxBinding, MapboxViewModel>() {
     override val viewModelVariableId: Int = BR.viewModel
     override val viewModelClass: Class<MapboxViewModel> = MapboxViewModel::class.java
 
-    private val mapboxToken = "YOUR-ACCESS-TOKEN"
+    private val mapboxToken = BuildConfig.MAPBOX_PUBLIC_TOKEN
 
     override fun viewModelFactory(): ViewModelProvider.Factory {
         return createViewModelFactory {

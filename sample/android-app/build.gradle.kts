@@ -14,6 +14,13 @@ android {
         versionName = "0.1.0"
 
         multiDexEnabled = true
+
+        val googleMapsApiKey: String = (extra["googleMaps.apiKey"] as? String).orEmpty()
+        val mapboxPublicToken: String = (extra["mapbox.publicToken"] as? String).orEmpty()
+
+        manifestPlaceholders["googleMapsApiKey"] = googleMapsApiKey
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"$googleMapsApiKey\"")
+        buildConfigField("String", "MAPBOX_PUBLIC_TOKEN", "\"$mapboxPublicToken\"")
     }
 }
 
