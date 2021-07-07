@@ -170,7 +170,17 @@ class MarkerViewModel(
 ## Samples
 Please see more examples in the [sample directory](sample).
 
-## Set Up Locally 
+## Set Up Locally
+Before open project need to setup `gradle.properties` with tokens:
+```
+# mapbox tokens by guide https://docs.mapbox.com/android/maps/guides/install/
+mapbox.secretToken=sk.eyJ1IjoiYWxleDAwOSIsImEiOiJja3F0MWdhMGowM2xqMnBvMmpjcmtpbXNmIn0.6rIx2ngQDSdu9j3GD85VBQ
+mapbox.publicToken=pk.eyJ1IjoiYWxleDAwOSIsImEiOiJja2Y2aWp3Zjkwc3pxMnpxZG5wazlhcDU1In0.9PgTtFcznGfPnfbE3aD6_Q
+
+# google maps api key by guide https://developers.google.com/maps/documentation/android-sdk/get-api-key
+googleMaps.apiKey=AIzaSyBCEIXZSuTHvlQXRlCKBJ5JwnIIdzLV0uE
+```
+
 - The [maps directory](maps) contains the base classes for all maps providers;
 - The [maps-google directory](maps-google) contains the Google Maps implementation;
 - The [maps-mapbox directory](maps-mapbox) contains the mapbox implementation;
