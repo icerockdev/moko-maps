@@ -18,6 +18,8 @@ dependencies {
     "androidMainImplementation"(libs.appCompat)
     "androidMainImplementation"(libs.lifecycle)
     "androidMainImplementation"(libs.playServicesLocation)
+    "androidMainImplementation"(libs.mapboxAnnotation)
+    "androidMainImplementation"(libs.mapboxServices)
     "androidMainApi"(libs.mapbox)
     "androidMainApi"(libs.mapboxNavigation)
 }

@@ -174,11 +174,23 @@ Please see more examples in the [sample directory](sample).
 Before open project need to setup `gradle.properties` with tokens:
 ```
 # mapbox tokens by guide https://docs.mapbox.com/android/maps/guides/install/
-mapbox.secretToken=sk.eyJ1IjoiYWxleDAwOSIsImEiOiJja3F0MWdhMGowM2xqMnBvMmpjcmtpbXNmIn0.6rIx2ngQDSdu9j3GD85VBQ
-mapbox.publicToken=pk.eyJ1IjoiYWxleDAwOSIsImEiOiJja2Y2aWp3Zjkwc3pxMnpxZG5wazlhcDU1In0.9PgTtFcznGfPnfbE3aD6_Q
+mapbox.secretToken=YOUR_SECRET_MAPBOX_KEY
+mapbox.publicToken=YOUR_PUBLIC_MAPBOX_KEY
 
 # google maps api key by guide https://developers.google.com/maps/documentation/android-sdk/get-api-key
-googleMaps.apiKey=AIzaSyBCEIXZSuTHvlQXRlCKBJ5JwnIIdzLV0uE
+googleMaps.apiKey=YOUR_API_KEY
+```
+
+# ios info.plist setup with tokens:
+```
+MGLMapboxAccessToken=YOUR_PUBLIC_MAPBOX_KEY
+GoogleAPIkey=YOUR_API_KEY
+```
+add the following entry to your `.netrc` file:
+```
+machine api.mapbox.com
+login mapbox
+password YOUR_SECRET_MAPBOX_KEY
 ```
 
 - The [maps directory](maps) contains the base classes for all maps providers;

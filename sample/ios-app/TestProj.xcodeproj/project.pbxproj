@@ -289,6 +289,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4VU932NX78;
 				INFOPLIST_FILE = src/Info.plist;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.icerock.moko.sample.maps;
 				PRODUCT_NAME = "moko-maps";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -307,6 +308,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4VU932NX78;
 				INFOPLIST_FILE = src/Info.plist;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.icerock.moko.sample.maps;
 				PRODUCT_NAME = "moko-maps";
 				PROVISIONING_PROFILE_SPECIFIER = "";

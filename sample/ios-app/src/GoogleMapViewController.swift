@@ -20,7 +20,7 @@ class GoogleMapViewController: UIViewController {
             permissionsController: PermissionsController(),
             googleMapController: GoogleMapController(
                 mapView: mapView,
-                geoApiKey: "YOUR-API-KEY"
+                geoApiKey: Bundle.main.object(forInfoDictionaryKey: "GoogleAPIkey") as! String
             )
         )
         
