@@ -63,7 +63,7 @@
 	<key>MGLMapboxAccessToken</key>
 	<string>YOUR_PUBLIC_MAPBOX_KEY</string>
 	<key>GoogleAPIkey</key>
-	<string>YOUR-API-KEY</string>
+	<string>YOUR_API_KEY</string>
 	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
 	<true/>
 </dict>

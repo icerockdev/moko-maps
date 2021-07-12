@@ -13,7 +13,6 @@ buildscript {
         classpath(":maps-build-logic")
         classpath("dev.icerock.moko:resources-generator:0.16.1")
         classpath("org.jetbrains.kotlin:kotlin-serialization:1.5.20")
-        classpath("com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0")
     }
 }
 
