@@ -27,10 +27,10 @@ jobs:
           java-version: 11
       - name: Cocoapods install
         run: export ORIGINAL_HOME=$HOME && \
-        export HOME=$(pwd) && \
-        echo "machine api.mapbox.com\nlogin mapbox\npassword sk.eyJ1IjoiYWxleDAwOSIsImEiOiJja3F1ZmJiNmkwNDBjMnFvNmUxZWZqanVsIn0.MUWcRtm5qbEn5NGsnpdlug" > ~/.netrc && \
-        (cd sample/ios-app && pod install) && \
-        export HOME=$ORIGINAL_HOME
+          export HOME=$(pwd) && \
+          echo "machine api.mapbox.com\nlogin mapbox\npassword $MAPBOX_SECRET_TOKEN" > ~/.netrc && \
+          (cd sample/ios-app && pod install) && \
+          export HOME=$ORIGINAL_HOME
       - name: Publish library
         run: ./gradlew publish
   release:
