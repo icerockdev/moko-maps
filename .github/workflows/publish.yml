@@ -26,7 +26,7 @@ jobs:
         with:
           java-version: 11
       - name: Set up .netrc
-        uses: extractions/netrc@v1
+      - uses: extractions/netrc@v1
         with:
           machine: api.mapbox.com
           username: mapbox
