@@ -25,8 +25,14 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Set up .netrc
+        uses: extractions/netrc@v1
+        with:
+          machine: api.mapbox.com
+          username: mapbox
+          password: ${{ secrets.MAPBOX_SECRET_TOKEN }}
       - name: Cocoapods install
-        run: export ORIGINAL_HOME=$HOME && export HOME=$(pwd) && echo "machine api.mapbox.com\nlogin mapbox\npassword $MAPBOX_SECRET_TOKEN" > ~/.netrc && (cd sample/ios-app && pod install) && export HOME=$ORIGINAL_HOME
+        run: (cd sample/ios-app && pod install)
       - name: Publish library
         run: ./gradlew publish
   release:
