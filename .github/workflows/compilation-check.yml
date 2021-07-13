@@ -22,7 +22,7 @@ jobs:
       with:
         machine: api.mapbox.com
         username: mapbox
-        password: ${{ MAPBOX_SECRET_TOKEN }}
+        password: ${{ secrets.MAPBOX_SECRET_TOKEN }}
     - name: Cocoapods install
       run: (cd sample/ios-app && pod install)
     - name: Check library
