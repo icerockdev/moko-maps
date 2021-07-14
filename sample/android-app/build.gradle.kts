@@ -1,57 +1,37 @@
 plugins {
-    plugin(Deps.Plugins.androidApplication)
-    plugin(Deps.Plugins.kotlinAndroid)
-    plugin(Deps.Plugins.kotlinKapt)
+    id("android-app-convention")
+    id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 android {
-    compileSdkVersion(Deps.Android.compileSdk)
-
     buildFeatures.dataBinding = true
 
-    dexOptions {
-        javaMaxHeapSize = "2g"
-    }
-
     defaultConfig {
-        minSdkVersion(Deps.Android.minSdk)
-        targetSdkVersion(Deps.Android.targetSdk)
-
         applicationId = "dev.icerock.moko.samples.maps"
 
         versionCode = 1
         versionName = "0.1.0"
 
-        vectorDrawables.useSupportLibrary = true
-
         multiDexEnabled = true
-    }
 
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-        }
-        getByName("debug") {
-            isDebuggable = true
-            applicationIdSuffix = ".debug"
-        }
-    }
+        val googleMapsApiKey: String = (System.getenv("GOOGLE_MAPS_API_KEY") ?: extra["googleMaps.apiKey"] as? String).orEmpty()
+        val mapboxPublicToken: String = (System.getenv("MAPBOX_PUBLIC_TOKEN") ?: extra["mapbox.publicToken"] as? String).orEmpty()
 
-    packagingOptions {
-        exclude("META-INF/*.kotlin_module")
+        manifestPlaceholders["googleMapsApiKey"] = googleMapsApiKey
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"$googleMapsApiKey\"")
+        buildConfigField("String", "MAPBOX_PUBLIC_TOKEN", "\"$mapboxPublicToken\"")
     }
 }
 
 dependencies {
-    implementation(Deps.Libs.Android.appCompat)
-    implementation(Deps.Libs.Android.playServicesLocation)
-    implementation(Deps.Libs.Android.playServicesMaps)
-    implementation(Deps.Libs.Android.googleMapsServices)
-    implementation(Deps.Libs.Android.mapbox)
-    implementation(Deps.Libs.Android.mapboxAnnotation)
+    implementation(libs.appCompat)
+    implementation(libs.playServicesLocation)
+    implementation(libs.playServicesMaps)
+    implementation(libs.googleMapsServices)
+    implementation(libs.mapbox)
 
-    implementation(Deps.Libs.Android.multidex)
+    implementation(libs.multidex)
 
-    implementation(project(":sample:mpp-library"))
+    implementation(projects.sample.mppLibrary)
 }

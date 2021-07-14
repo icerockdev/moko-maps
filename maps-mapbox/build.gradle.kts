@@ -3,24 +3,25 @@
  */
 
 plugins {
-    plugin(Deps.Plugins.androidLibrary)
-    plugin(Deps.Plugins.kotlinMultiplatform)
-    plugin(Deps.Plugins.kotlinAndroidExtensions)
-    plugin(Deps.Plugins.mobileMultiplatform)
-    plugin(Deps.Plugins.mavenPublish)
+    id("multiplatform-library-convention")
+    id("dev.icerock.mobile.multiplatform.android-manifest")
+    id("publication-convention")
+    id("kotlin-parcelize")
+    id("dev.icerock.mobile.multiplatform.cocoapods")
 }
 
 dependencies {
-    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
+    commonMainImplementation(libs.coroutines)
 
-    commonMainApi(project(":maps"))
+    commonMainApi(projects.maps)
 
-    androidMainImplementation(Deps.Libs.Android.appCompat)
-    androidMainImplementation(Deps.Libs.Android.lifecycle)
-    androidMainImplementation(Deps.Libs.Android.playServicesLocation)
-    androidMainImplementation(Deps.Libs.Android.mapbox)
-    androidMainImplementation(Deps.Libs.Android.mapboxAnnotation)
-    androidMainImplementation(Deps.Libs.Android.mapboxNavigation)
+    "androidMainImplementation"(libs.appCompat)
+    "androidMainImplementation"(libs.lifecycle)
+    "androidMainImplementation"(libs.playServicesLocation)
+    "androidMainImplementation"(libs.mapboxAnnotation)
+    "androidMainImplementation"(libs.mapboxServices)
+    "androidMainApi"(libs.mapbox)
+    "androidMainApi"(libs.mapboxNavigation)
 }
 
 cocoaPods {

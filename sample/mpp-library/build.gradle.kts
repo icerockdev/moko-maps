@@ -1,24 +1,29 @@
 plugins {
-    plugin(Deps.Plugins.androidLibrary)
-    plugin(Deps.Plugins.kotlinMultiplatform)
-    plugin(Deps.Plugins.mobileMultiplatform)
-    plugin(Deps.Plugins.mokoResources)
-    plugin(Deps.Plugins.iosFramework)
+    id("com.android.library")
+    id("android-base-convention")
+    id("detekt-convention")
+    id("org.jetbrains.kotlin.multiplatform")
+    id("dev.icerock.mobile.multiplatform.android-manifest")
+    id("dev.icerock.mobile.multiplatform.ios-framework")
+    id("dev.icerock.mobile.multiplatform-resources")
+    id("dev.icerock.mobile.multiplatform.cocoapods")
+}
+
+kotlin{
+    android()
+    ios()
 }
 
 dependencies {
-    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
-
-    commonMainApi(Deps.Libs.MultiPlatform.mokoGeo)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoMvvm)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoPermissions.common)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoMaps.common)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoMapsGoogle.common)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoMapsMapbox.common)
-
-    androidMainImplementation(Deps.Libs.Android.lifecycle)
-    androidMainImplementation(Deps.Libs.Android.playServicesLocation)
-    androidMainImplementation(Deps.Libs.Android.mapbox)
+    commonMainImplementation(libs.coroutines)
+    commonMainImplementation(libs.mokoResources)
+    commonMainApi(libs.mokoGeo)
+    commonMainApi(libs.mokoMvvm)
+    commonMainApi(libs.mokoPermissions)
+    commonMainApi(projects.maps)
+    commonMainApi(projects.mapsGoogle)
+    commonMainApi(projects.mapsMapbox)
+    "androidMainImplementation"(libs.lifecycle)
 }
 
 multiplatformResources {
@@ -26,10 +31,10 @@ multiplatformResources {
 }
 
 framework {
-    export(Deps.Libs.MultiPlatform.mokoPermissions)
-    export(Deps.Libs.MultiPlatform.mokoMaps)
-    export(Deps.Libs.MultiPlatform.mokoMapsGoogle)
-    export(Deps.Libs.MultiPlatform.mokoMapsMapbox)
+    export(libs.mokoPermissions)
+    export(projects.maps)
+    export(projects.mapsGoogle)
+    export(projects.mapsMapbox)
 }
 
 cocoaPods {

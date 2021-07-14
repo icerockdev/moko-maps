@@ -61,7 +61,9 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>MGLMapboxAccessToken</key>
-	<string>YOUR-ACCESS-TOKEN</string>
+	<string>YOUR_PUBLIC_MAPBOX_KEY</string>
+	<key>GoogleAPIkey</key>
+	<string>YOUR_API_KEY</string>
 	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
 	<true/>
 </dict>

@@ -22,7 +22,6 @@
         <activity android:name=".GoogleMapsActivity" />
         <activity android:name=".MapboxActivity" />
 
-        <!-- TODO: Replace with your API Key from https://developers.google.com/maps/documentation/ios-sdk/ -->
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="YOUR-API-KEY"/>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="${googleMapsApiKey}"/>
     </application>
 </manifest>
