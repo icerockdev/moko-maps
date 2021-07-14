@@ -18,9 +18,10 @@ dependencies {
     "androidMainImplementation"(libs.appCompat)
     "androidMainImplementation"(libs.lifecycle)
     "androidMainImplementation"(libs.playServicesLocation)
-    "androidMainImplementation"(libs.mapbox)
     "androidMainImplementation"(libs.mapboxAnnotation)
-    "androidMainImplementation"(libs.mapboxNavigation)
+    "androidMainImplementation"(libs.mapboxServices)
+    "androidMainApi"(libs.mapbox)
+    "androidMainApi"(libs.mapboxNavigation)
 }
 
 cocoaPods {
