@@ -8,6 +8,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        mavenLocal()
         google()
 
         maven {
@@ -32,8 +33,6 @@ dependencyResolutionManagement {
         }
     }
 }
-
-includeBuild("maps-build-logic")
 
 include(":maps")
 include(":maps-google")
