@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.SupportMapFragment
 import com.icerockdev.app.databinding.ActivityGoogleMapsBinding
 import com.icerockdev.library.GoogleMapViewModel
-import dev.icerock.moko.geo.LocationTracker
 import dev.icerock.moko.maps.google.GoogleMapController
 import dev.icerock.moko.mvvm.MvvmActivity
 import dev.icerock.moko.mvvm.createViewModelFactory

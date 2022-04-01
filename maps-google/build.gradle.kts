@@ -3,9 +3,10 @@
  */
 
 plugins {
-    id("multiplatform-library-convention")
-    id("dev.icerock.mobile.multiplatform.android-manifest")
-    id("publication-convention")
+    id("dev.icerock.moko.gradle.multiplatform.mobile")
+    id("dev.icerock.moko.gradle.publication")
+    id("dev.icerock.moko.gradle.stub.javadoc")
+    id("dev.icerock.moko.gradle.detekt")
     id("kotlin-parcelize")
     id("kotlin-kapt")
     id("kotlinx-serialization")
@@ -21,14 +22,14 @@ dependencies {
     commonMainApi(libs.mokoGeo)
     commonMainApi(libs.mokoGraphics)
 
-    "androidMainImplementation"(libs.appCompat)
-    "androidMainImplementation"(libs.lifecycle)
-    "androidMainApi"(libs.playServicesLocation)
-    "androidMainApi"(libs.playServicesMaps)
-    "androidMainImplementation"(libs.googleMapsServices)
-    "androidMainImplementation"(libs.ktorClientOkHttp)
+    androidMainImplementation(libs.appCompat)
+    androidMainImplementation(libs.lifecycle)
+    androidMainApi(libs.playServicesLocation)
+    androidMainApi(libs.playServicesMaps)
+    androidMainImplementation(libs.googleMapsServices)
 
-    "iosMainImplementation"(libs.ktorClientIos)
+    androidMainImplementation(libs.ktorClientOkHttp)
+    iosMainImplementation(libs.ktorClientIos)
 }
 
 cocoaPods {
@@ -38,12 +39,19 @@ cocoaPods {
         extraLinkerOpts = listOf(
             "GoogleMapsBase", "GoogleMapsCore", "CoreGraphics", "QuartzCore", "UIKit",
             "ImageIO", "OpenGLES", "CoreData", "CoreText", "SystemConfiguration", "Security",
-            "CoreTelephony", "CoreImage"
+            "CoreTelephony", "CoreImage", "Metal"
         ).map { "-framework $it" }
-    ) { podsDir ->
+    ) { podsDir, target ->
+        val sdkPath = when (target.konanTarget) {
+            is org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64,
+            is org.jetbrains.kotlin.konan.target.KonanTarget.IOS_X64 -> "ios-x86_64_arm64-simulator"
+            is org.jetbrains.kotlin.konan.target.KonanTarget.IOS_ARM64 -> "ios-arm64"
+            else -> throw IllegalArgumentException("invalid target $target")
+        }
         listOf(
-            File(podsDir, "GoogleMaps/Base/Frameworks"),
-            File(podsDir, "GoogleMaps/Maps/Frameworks")
-        )
+            "GoogleMapsBase",
+            "GoogleMapsCore",
+            "GoogleMaps"
+        ).map { File(podsDir, "GoogleMapsXC/$it.xcframework/$sdkPath") }
     }
 }

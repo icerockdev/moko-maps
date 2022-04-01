@@ -1,6 +1,6 @@
 plugins {
-    id("android-app-convention")
-    id("kotlin-android")
+    id("dev.icerock.moko.gradle.android.application")
+    id("dev.icerock.moko.gradle.detekt")
     id("kotlin-kapt")
 }
 
@@ -8,6 +8,8 @@ android {
     buildFeatures.dataBinding = true
 
     defaultConfig {
+        minSdk = 21
+
         applicationId = "dev.icerock.moko.samples.maps"
 
         versionCode = 1
@@ -34,4 +36,5 @@ dependencies {
     implementation(libs.multidex)
 
     implementation(projects.sample.mppLibrary)
+    implementation(libs.mokoMvvmDataBinding)
 }

@@ -7,30 +7,29 @@ install! 'cocoapods', :disable_input_output_paths => true
 inhibit_all_warnings!
 
 use_frameworks!
-platform :ios, '11.0'
+platform :ios, '12.0'
 
 target 'TestProj' do
   # MultiPlatformLibrary
   pod 'MultiPlatformLibrary', :path => '../mpp-library'
-  pod 'Mapbox-iOS-SDK', '6.3.0'
-  pod 'MapboxNavigation', '1.4.1'
-  pod 'GoogleMaps', '5.1.0'
+  pod 'GoogleMapsXC', :podspec => '../../GoogleMapsXC.podspec'
+  pod 'MapBoxWrapper', :path => '../..'
 end
 
 # GoogleMaps is static library that already linked in moko-maps-google. Remove duplicated linking.
-post_install do |installer|
-  host_targets = installer.aggregate_targets.select { |aggregate_target|
-    aggregate_target.name.include? "Pods-"
-  }
-
-  host_targets.each do |host_target|
-    host_target.xcconfigs.each do |config_name, config_file|
-      config_file.frameworks.delete("GoogleMaps")
-      config_file.frameworks.delete("GoogleMapsBase")
-      config_file.frameworks.delete("GoogleMapsCore")
-
-      xcconfig_path = host_target.xcconfig_path(config_name)
-      config_file.save_as(xcconfig_path)
-    end
-  end
-end
+# post_install do |installer|
+#   host_targets = installer.aggregate_targets.select { |aggregate_target|
+#     aggregate_target.name.include? "Pods-"
+#   }
+#
+#   host_targets.each do |host_target|
+#     host_target.xcconfigs.each do |config_name, config_file|
+#       config_file.frameworks.delete("GoogleMaps")
+#       config_file.frameworks.delete("GoogleMapsBase")
+#       config_file.frameworks.delete("GoogleMapsCore")
+#
+#       xcconfig_path = host_target.xcconfig_path(config_name)
+#       config_file.save_as(xcconfig_path)
+#     end
+#   end
+# end

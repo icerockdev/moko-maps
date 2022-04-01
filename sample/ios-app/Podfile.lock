@@ -1,75 +1,50 @@
 PODS:
-  - GoogleMaps (3.7.0):
-    - GoogleMaps/Maps (= 3.7.0)
-  - GoogleMaps/Base (3.7.0)
-  - GoogleMaps/Maps (3.7.0):
-    - GoogleMaps/Base
-  - Mapbox-iOS-SDK (5.6.0):
-    - MapboxMobileEvents (= 0.10.2)
-  - MapboxAccounts (2.2.0)
-  - MapboxCoreNavigation (0.40.0):
-    - MapboxAccounts (~> 2.2.0)
-    - MapboxDirections (~> 0.31.0)
-    - MapboxMobileEvents (~> 0.10.2)
-    - MapboxNavigationNative (~> 6.2.1)
-    - Turf (~> 0.3.0)
-  - MapboxDirections (0.31.1):
-    - Polyline (~> 4.2)
-    - Turf (~> 0.3.0)
-  - MapboxMobileEvents (0.10.2)
-  - MapboxNavigation (0.40.0):
-    - Mapbox-iOS-SDK (~> 5.6)
-    - MapboxCoreNavigation (= 0.40.0)
-    - MapboxMobileEvents (~> 0.10.2)
-    - MapboxSpeech (~> 0.3.0)
-    - Solar (~> 2.1)
-  - MapboxNavigationNative (6.2.1)
-  - MapboxSpeech (0.3.1)
+  - GoogleMapsXC (6.1.1-beta)
+  - MapboxCommon (21.2.0)
+  - MapboxCoreMaps (10.4.1):
+    - MapboxCommon (~> 21.2)
+  - MapboxMaps (10.4.1):
+    - MapboxCommon (= 21.2.0)
+    - MapboxCoreMaps (= 10.4.1)
+    - MapboxMobileEvents (= 1.0.7)
+    - Turf (~> 2.0)
+  - MapboxMobileEvents (1.0.7)
+  - MapBoxWrapper (10.4.1):
+    - MapboxMaps (= 10.4.1)
   - MultiPlatformLibrary (0.1.0)
-  - Polyline (4.2.1)
-  - Solar (2.1.0)
-  - Turf (0.3.0)
+  - Turf (2.3.0)
 
 DEPENDENCIES:
-  - GoogleMaps (= 3.7.0)
-  - Mapbox-iOS-SDK (= 5.6.0)
-  - MapboxNavigation (= 0.40.0)
+  - GoogleMapsXC (from `../../GoogleMapsXC.podspec`)
+  - MapBoxWrapper (from `../..`)
   - MultiPlatformLibrary (from `../mpp-library`)
 
 SPEC REPOS:
   trunk:
-    - GoogleMaps
-    - Mapbox-iOS-SDK
-    - MapboxAccounts
-    - MapboxCoreNavigation
-    - MapboxDirections
+    - MapboxCommon
+    - MapboxCoreMaps
+    - MapboxMaps
     - MapboxMobileEvents
-    - MapboxNavigation
-    - MapboxNavigationNative
-    - MapboxSpeech
-    - Polyline
-    - Solar
     - Turf
 
 EXTERNAL SOURCES:
+  GoogleMapsXC:
+    :podspec: "../../GoogleMapsXC.podspec"
+  MapBoxWrapper:
+    :path: "../.."
   MultiPlatformLibrary:
     :path: "../mpp-library"
 
 SPEC CHECKSUMS:
-  GoogleMaps: 55da829c68aa931f3ae982b9e341cc2f3d89c587
-  Mapbox-iOS-SDK: 913c4655bd72a200f84996caf7a755b377abc77f
-  MapboxAccounts: f9716ba2cc66013e44ef93e0e16cfa1049f3aeec
-  MapboxCoreNavigation: 2856c46bd064bb11c406ba00191d579cda424efa
-  MapboxDirections: 69dca02d780c5e506bdcc65385dd5fb77b9e90b5
-  MapboxMobileEvents: 2bc0ca2eedb627b73cf403258dce2b2fa98074a6
-  MapboxNavigation: 42bae50b0381dce317c85884ba0de38fc68a4814
-  MapboxNavigationNative: 11dc22140f4698d3f26989f2b6379dc81ef0d4c1
-  MapboxSpeech: 67a558a672dc2b6266a993f4624895f69e58d105
+  GoogleMapsXC: 2e3f87f4fbad69bc9cfd2dfecc14a0dfb3f1813b
+  MapboxCommon: eb826fdc45e8b77f87aca2519986d992fd4881b7
+  MapboxCoreMaps: 13892567aa2a0e1cf8713887678f82998e2ff015
+  MapboxMaps: 92e3eb21102beee5eca7cb4d9144162d6d1813c5
+  MapboxMobileEvents: f7f3e8daeb4b83688ae62a4172dce79169a97233
+  MapBoxWrapper: d952f9a084aea5299486eea8d94038d16a3bcf20
   MultiPlatformLibrary: 176fb8ade516666cd47e93de1b71ba0441a541bb
-  Polyline: 0e9890790292741c8186201a536b6bb6a78d02dd
-  Solar: 2dc6e7cc39186cb0c8228fa08df76fb50c7d8f24
-  Turf: c6bdf62d6a70c647874f295dd1cf4eefc0c3e9e6
+  Turf: d8d52444483c968cf2d65b8b54640f8faf4dda03
 
-PODFILE CHECKSUM: d3f063e08a8b62545e8d3ca223d36ca3c67d1c9c
+PODFILE CHECKSUM: 691d6710edfabbb8953cf43a7c96da641f6249a8
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.11.2

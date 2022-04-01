@@ -242,6 +242,7 @@ actual class MapboxController(
                 fillOpacity(backgroundOpacity)
             )
 
+        @Suppress("ArrayPrimitive")
         val lineLayer: LineLayer = LineLayer(lineLayerId, sourceId)
             .withProperties(
                 lineWidth(lineWidth),
@@ -287,7 +288,7 @@ actual class MapboxController(
             .accessToken(accessToken)
             .build()
 
-        @Suppress("BlockingMethodInNonBlockingContext")
+        @Suppress("BlockingMethodInNonBlockingContext", "UnsafeCallOnNullableType")
         val directionsRoute = withContext(Dispatchers.Default) {
             val result = directionsClient.executeCall()
             if (!result.isSuccessful) {
@@ -362,6 +363,7 @@ actual class MapboxController(
         }
     }
 
+    @Suppress("ReturnCount")
     override suspend fun getSimilarNearAddresses(
         text: String?,
         maxResults: Int,
@@ -373,14 +375,15 @@ actual class MapboxController(
         val locationProviderClient = locationHolder.get()
 
         val lastLocation: Location = suspendCoroutine { continuation ->
+            @Suppress("UnsafeCallOnNullableType")
             locationProviderClient.lastLocation.addOnCompleteListener {
                 if (it.isSuccessful) {
-                    continuation.resume(it.result!!)
+                    continuation.resume(it.result)
                 } else {
                     continuation.resumeWithException(it.exception!!)
                 }
             }
-        }
+        } ?: return emptyList()
 
         // TODO calculate bounds from radius
         @Suppress("MagicNumber")

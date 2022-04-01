@@ -24,16 +24,8 @@ dependencyResolutionManagement {
                     ?: extra["mapbox.secretToken"] as? String
             }
         }
-
-        jcenter {
-            content {
-                includeGroup("org.jetbrains.kotlinx")
-            }
-        }
     }
 }
-
-includeBuild("maps-build-logic")
 
 include(":maps")
 include(":maps-google")

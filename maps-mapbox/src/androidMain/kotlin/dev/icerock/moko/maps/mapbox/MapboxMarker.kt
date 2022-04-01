@@ -31,7 +31,7 @@ actual class MapboxMarker(
         removeHandler.invoke(symbol)
     }
 
-    @ExperimentalTime
+    @OptIn(ExperimentalTime::class)
     override fun move(position: LatLng, rotation: Float, duration: Duration) {
         val currentPosition = symbol.latLng
         val newPosition = position.toMapboxLatLng()
