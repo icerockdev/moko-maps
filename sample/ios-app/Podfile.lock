@@ -9,12 +9,14 @@ PODS:
     - MapboxMobileEvents (= 1.0.7)
     - Turf (~> 2.0)
   - MapboxMobileEvents (1.0.7)
+  - MapBoxWrapper (10.4.1):
+    - MapboxMaps (= 10.4.1)
   - MultiPlatformLibrary (0.1.0)
   - Turf (2.3.0)
 
 DEPENDENCIES:
   - GoogleMapsXC (from `../../GoogleMapsXC.podspec`)
-  - MapboxMaps (= 10.4.1)
+  - MapBoxWrapper (from `../..`)
   - MultiPlatformLibrary (from `../mpp-library`)
 
 SPEC REPOS:
@@ -28,6 +30,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   GoogleMapsXC:
     :podspec: "../../GoogleMapsXC.podspec"
+  MapBoxWrapper:
+    :path: "../.."
   MultiPlatformLibrary:
     :path: "../mpp-library"
 
@@ -37,9 +41,10 @@ SPEC CHECKSUMS:
   MapboxCoreMaps: 13892567aa2a0e1cf8713887678f82998e2ff015
   MapboxMaps: 92e3eb21102beee5eca7cb4d9144162d6d1813c5
   MapboxMobileEvents: f7f3e8daeb4b83688ae62a4172dce79169a97233
+  MapBoxWrapper: d952f9a084aea5299486eea8d94038d16a3bcf20
   MultiPlatformLibrary: 176fb8ade516666cd47e93de1b71ba0441a541bb
   Turf: d8d52444483c968cf2d65b8b54640f8faf4dda03
 
-PODFILE CHECKSUM: ebe7183c3b53507c7fc384f5ff7233a1ee3f79d3
+PODFILE CHECKSUM: 691d6710edfabbb8953cf43a7c96da641f6249a8
 
 COCOAPODS: 1.11.2

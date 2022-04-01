@@ -27,8 +27,16 @@ dependencies {
 
 cocoaPods {
     precompiledPod(
-        scheme = "Mapbox"
-    ) { podsDir ->
-        listOf(File(podsDir, "Mapbox-iOS-SDK/dynamic"))
+        scheme = "MapboxCoreMaps"
+    ) { podsDir, target ->
+        val sdkPath = when (target.konanTarget) {
+            is org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64,
+            is org.jetbrains.kotlin.konan.target.KonanTarget.IOS_X64 -> "ios-arm64_x86_64-simulator"
+            is org.jetbrains.kotlin.konan.target.KonanTarget.IOS_ARM64 -> "ios-arm64"
+            else -> throw IllegalArgumentException("invalid target $target")
+        }
+        listOf(
+            "MapboxCoreMaps"
+        ).map { File(podsDir, "$it/$it.xcframework/$sdkPath") }
     }
 }
