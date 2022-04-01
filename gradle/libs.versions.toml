@@ -61,7 +61,7 @@ androidGradlePlugin = { module = "com.android.tools.build:gradle", version = "7.
 googleServicesGradlePlugin = { module = "com.google.gms:google-services", version = "4.3.8" }
 firebaseGradlePlugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version = "2.2.0" }
 mokoGradlePlugin = { module = "dev.icerock.moko:moko-gradle-plugin", version = "0.1.0" }
-mobileMultiplatformGradlePlugin = { module = "dev.icerock:mobile-multiplatform", version = "0.14.1" }
+mobileMultiplatformGradlePlugin = { module = "dev.icerock:mobile-multiplatform", version = "0.15.0" }
 mokoResourcesGeneratorGradlePlugin = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoResourcesVersion" }
 kotlinSerializationGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlinVersion" }
 

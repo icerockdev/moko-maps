@@ -39,12 +39,19 @@ cocoaPods {
         extraLinkerOpts = listOf(
             "GoogleMapsBase", "GoogleMapsCore", "CoreGraphics", "QuartzCore", "UIKit",
             "ImageIO", "OpenGLES", "CoreData", "CoreText", "SystemConfiguration", "Security",
-            "CoreTelephony", "CoreImage"
+            "CoreTelephony", "CoreImage", "Metal"
         ).map { "-framework $it" }
-    ) { podsDir ->
+    ) { podsDir, target ->
+        val sdkPath = when (target.konanTarget) {
+            is org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64,
+            is org.jetbrains.kotlin.konan.target.KonanTarget.IOS_X64 -> "ios-x86_64_arm64-simulator"
+            is org.jetbrains.kotlin.konan.target.KonanTarget.IOS_ARM64 -> "ios-arm64"
+            else -> throw IllegalArgumentException("invalid target $target")
+        }
         listOf(
-            File(podsDir, "GoogleMaps/Base/Frameworks"),
-            File(podsDir, "GoogleMaps/Maps/Frameworks")
-        )
+            "GoogleMapsBase",
+            "GoogleMapsCore",
+            "GoogleMaps"
+        ).map { File(podsDir, "GoogleMapsXC/$it.xcframework/$sdkPath") }
     }
 }
