@@ -73,9 +73,9 @@ actual class MapboxController(
 
     actual suspend fun readUiSettings(): UiSettings {
         val mapView = weakMapView.get()
+        val compass = mapView?.compassView?.compassVisibility
         return UiSettings(
-            compassEnabled = mapView?.compassView?.compassVisibility !=
-                    MGLOrnamentVisibility.MGLOrnamentVisibilityHidden,
+            compassEnabled = compass != MGLOrnamentVisibility.MGLOrnamentVisibilityHidden,
             myLocationEnabled = mapView?.showsUserLocation ?: false,
             scrollGesturesEnabled = mapView?.scrollEnabled ?: false,
             zoomGesturesEnabled = mapView?.zoomEnabled ?: false,
@@ -317,6 +317,7 @@ actual class MapboxController(
             mapView: MGLMapView,
             fillColorForPolygonAnnotation: MGLPolygon
         ): UIColor {
+            @Suppress("SwallowedException")
             return try {
                 val settings = polygonSettings.getValue(fillColorForPolygonAnnotation.hashCode())
                 settings.fillColor
@@ -330,6 +331,7 @@ actual class MapboxController(
             mapView: MGLMapView,
             strokeColorForShapeAnnotation: MGLShape
         ): UIColor {
+            @Suppress("SwallowedException")
             return try {
                 val settings = polygonSettings.getValue(strokeColorForShapeAnnotation.hashCode())
                 settings.lineColor

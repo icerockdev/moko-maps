@@ -3,7 +3,6 @@
  */
 
 plugins {
-    id("dev.icerock.mobile.multiplatform.android-manifest")
     id("dev.icerock.moko.gradle.multiplatform.mobile")
     id("dev.icerock.moko.gradle.publication")
     id("dev.icerock.moko.gradle.stub.javadoc")
@@ -17,13 +16,13 @@ dependencies {
 
     commonMainApi(projects.maps)
 
-    "androidMainImplementation"(libs.appCompat)
-    "androidMainImplementation"(libs.lifecycle)
-    "androidMainImplementation"(libs.playServicesLocation)
-    "androidMainImplementation"(libs.mapboxAnnotation)
-    "androidMainImplementation"(libs.mapboxServices)
-    "androidMainApi"(libs.mapbox)
-    "androidMainApi"(libs.mapboxNavigation)
+    androidMainImplementation(libs.appCompat)
+    androidMainImplementation(libs.lifecycle)
+    androidMainImplementation(libs.playServicesLocation)
+    androidMainImplementation(libs.mapboxAnnotation)
+    androidMainImplementation(libs.mapboxServices)
+    androidMainApi(libs.mapbox)
+    androidMainApi(libs.mapboxNavigation)
 }
 
 cocoaPods {

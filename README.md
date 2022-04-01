@@ -38,9 +38,9 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:maps:0.6.0")
-    commonMainApi("dev.icerock.moko:maps-google:0.6.0")
-    commonMainApi("dev.icerock.moko:maps-mapbox:0.6.0")
+    commonMainApi("dev.icerock.moko:maps:0.7.0")
+    commonMainApi("dev.icerock.moko:maps-google:0.7.0")
+    commonMainApi("dev.icerock.moko:maps-mapbox:0.7.0")
 }
 
 kotlin.targets

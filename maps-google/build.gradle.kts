@@ -3,7 +3,6 @@
  */
 
 plugins {
-    id("dev.icerock.mobile.multiplatform.android-manifest")
     id("dev.icerock.moko.gradle.multiplatform.mobile")
     id("dev.icerock.moko.gradle.publication")
     id("dev.icerock.moko.gradle.stub.javadoc")
@@ -23,14 +22,14 @@ dependencies {
     commonMainApi(libs.mokoGeo)
     commonMainApi(libs.mokoGraphics)
 
-    "androidMainImplementation"(libs.appCompat)
-    "androidMainImplementation"(libs.lifecycle)
-    "androidMainApi"(libs.playServicesLocation)
-    "androidMainApi"(libs.playServicesMaps)
-    "androidMainImplementation"(libs.googleMapsServices)
-    "androidMainImplementation"(libs.ktorClientOkHttp)
+    androidMainImplementation(libs.appCompat)
+    androidMainImplementation(libs.lifecycle)
+    androidMainApi(libs.playServicesLocation)
+    androidMainApi(libs.playServicesMaps)
+    androidMainImplementation(libs.googleMapsServices)
 
-    "iosMainImplementation"(libs.ktorClientIos)
+    androidMainImplementation(libs.ktorClientOkHttp)
+    iosMainImplementation(libs.ktorClientIos)
 }
 
 cocoaPods {

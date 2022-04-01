@@ -8,7 +8,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        mavenLocal()
         google()
 
         maven {
@@ -23,12 +22,6 @@ dependencyResolutionManagement {
                 // Use the secret token you stored in gradle.properties as the password
                 password = System.getenv("MAPBOX_SECRET_TOKEN")
                     ?: extra["mapbox.secretToken"] as? String
-            }
-        }
-
-        jcenter {
-            content {
-                includeGroup("org.jetbrains.kotlinx")
             }
         }
     }

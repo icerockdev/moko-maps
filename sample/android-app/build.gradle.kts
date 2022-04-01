@@ -1,7 +1,6 @@
 plugins {
     id("dev.icerock.moko.gradle.android.application")
     id("dev.icerock.moko.gradle.detekt")
-    id("kotlin-android")
     id("kotlin-kapt")
 }
 
@@ -9,6 +8,8 @@ android {
     buildFeatures.dataBinding = true
 
     defaultConfig {
+        minSdk = 21
+
         applicationId = "dev.icerock.moko.samples.maps"
 
         versionCode = 1
@@ -16,12 +17,12 @@ android {
 
         multiDexEnabled = true
 
-//        val googleMapsApiKey: String = (System.getenv("GOOGLE_MAPS_API_KEY") ?: extra["googleMaps.apiKey"] as? String).orEmpty()
-//        val mapboxPublicToken: String = (System.getenv("MAPBOX_PUBLIC_TOKEN") ?: extra["mapbox.publicToken"] as? String).orEmpty()
+        val googleMapsApiKey: String = (System.getenv("GOOGLE_MAPS_API_KEY") ?: extra["googleMaps.apiKey"] as? String).orEmpty()
+        val mapboxPublicToken: String = (System.getenv("MAPBOX_PUBLIC_TOKEN") ?: extra["mapbox.publicToken"] as? String).orEmpty()
 
-//        manifestPlaceholders["googleMapsApiKey"] = googleMapsApiKey
-//        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"$googleMapsApiKey\"")
-//        buildConfigField("String", "MAPBOX_PUBLIC_TOKEN", "\"$mapboxPublicToken\"")
+        manifestPlaceholders["googleMapsApiKey"] = googleMapsApiKey
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"$googleMapsApiKey\"")
+        buildConfigField("String", "MAPBOX_PUBLIC_TOKEN", "\"$mapboxPublicToken\"")
     }
 }
 
@@ -35,4 +36,5 @@ dependencies {
     implementation(libs.multidex)
 
     implementation(projects.sample.mppLibrary)
+    implementation(libs.mokoMvvmDataBinding)
 }

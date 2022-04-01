@@ -224,6 +224,7 @@ actual class GoogleMapController(
             takeFrom("https://maps.googleapis.com/maps/api/directions/json?$originStr&$destinationStr&$key$waypoints")
         }
 
+        @Suppress("SwallowedException")
         try {
             val result: String = httpClient.request(builder)
             return buildRoute(result, lineColor, markersImage)

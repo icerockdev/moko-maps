@@ -15,7 +15,6 @@ import dev.icerock.moko.mvvm.MvvmActivity
 import dev.icerock.moko.mvvm.createViewModelFactory
 import dev.icerock.moko.permissions.PermissionsController
 
-
 class MapboxActivity : MvvmActivity<ActivityMapboxBinding, MapboxViewModel>() {
     override val layoutId: Int = R.layout.activity_mapbox
     override val viewModelVariableId: Int = BR.viewModel

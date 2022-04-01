@@ -5,10 +5,7 @@
 buildscript {
     repositories {
         mavenCentral()
-        mavenLocal()
-
         google()
-
         gradlePluginPortal()
     }
 
@@ -24,13 +21,12 @@ buildscript {
     }
 }
 
+apply(plugin = "dev.icerock.moko.gradle.publication.nexus")
+val mokoVersion = libs.versions.mokoMapsVersion.get()
 allprojects {
-    plugins.withId("org.gradle.maven-publish") {
-        group = "dev.icerock.moko"
-        version = libs.versions.mokoMapsVersion.get()
-    }
+    group = "dev.icerock.moko"
+    version = mokoVersion
 }
-
 
 tasks.register("clean", Delete::class).configure {
     delete(rootProject.buildDir)
