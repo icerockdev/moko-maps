@@ -1,5 +1,5 @@
 [versions]
-kotlinVersion = "1.5.20"
+kotlinVersion = "1.6.20"
 lifecycleVersion = "2.2.0"
 androidAppCompatVersion = "1.2.0"
 espressoCoreVersion = "3.2.0"
@@ -14,15 +14,15 @@ mapboxAnnotationVersion = "0.9.0"
 mapboxServicesVersion = "5.8.0"
 multidexVersion = "2.0.1"
 kotlinxSerializationVersion = "1.2.1"
-coroutinesVersion = "1.5.0-native-mt"
-ktorClientVersion = "1.6.0"
+coroutinesVersion = "1.6.0-native-mt"
+ktorClientVersion = "2.0.0"
 mokoGraphicsVersion = "0.7.0"
 mokoParcelizeVersion = "0.7.1"
 mokoResourcesVersion = "0.16.1"
 mokoMvvmVersion = "0.11.0"
 mokoGeoVersion = "0.4.0"
 mokoPermissionsVersion = "0.10.1"
-mokoMapsVersion = "0.6.0"
+mokoMapsVersion = "0.7.0"
 
 [libraries]
 appCompat = { module = "androidx.appcompat:appcompat", version.ref = "androidAppCompatVersion" }
