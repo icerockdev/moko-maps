@@ -12,7 +12,7 @@ buildscript {
     dependencies {
         classpath(":maps-build-logic")
         classpath("dev.icerock.moko:resources-generator:0.16.1")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.5.20")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.6.20")
     }
 }
 

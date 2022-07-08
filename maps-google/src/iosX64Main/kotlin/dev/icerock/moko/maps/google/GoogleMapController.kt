@@ -34,6 +34,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.ReceivePipelineException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
+import io.ktor.client.statement.*
 import io.ktor.http.HttpMethod
 import io.ktor.http.takeFrom
 import kotlinx.cinterop.cValue
@@ -225,7 +226,7 @@ actual class GoogleMapController(
         }
 
         try {
-            val result: String = httpClient.request(builder)
+            val result: String = httpClient.request(builder).bodyAsText()
             return buildRoute(result, lineColor, markersImage)
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
